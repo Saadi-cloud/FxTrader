@@ -1,0 +1,82 @@
+@model WithdrawalOtpPageModel
+@{
+    ViewData["Title"] = "Verify Withdrawal";
+    ViewData["Subtitle"] = "Confirm this request using the code sent to your email";
+    var seconds = Math.Max(0, (int)Math.Ceiling((Model.ExpiresAtUtc - DateTime.UtcNow).TotalSeconds));
+}
+
+<div class="withdraw-otp-shell">
+    <div class="card card-pad withdraw-otp-card">
+        <div class="withdraw-otp-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="m4 7 8 6 8-6"/><path d="M16.5 15.5 18 17l3-3"/></svg>
+        </div>
+        <div class="withdraw-otp-heading">
+            <span class="eyebrow">EMAIL SECURITY CHECK</span>
+            <h2>Enter the 6-digit code</h2>
+            <p>We sent a withdrawal verification code to <strong>@Model.MaskedEmail</strong>. It expires in 2 minutes.</p>
+        </div>
+
+        <div class="withdraw-otp-summary">
+            <div><span>Amount</span><strong class="mono">$@Model.Amount.ToString("N2")</strong></div>
+            <div><span>Wallet</span><strong>@Model.WalletSource</strong></div>
+            <div><span>Method</span><strong>@Model.PaymentMethodName</strong></div>
+            <div><span>Destination</span><strong>@Model.DestinationDisplay</strong></div>
+        </div>
+
+        <form method="post" asp-action="VerifyOtp" class="withdraw-otp-form" autocomplete="off">
+            <input asp-for="Request.ChallengeId" type="hidden" />
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="field-group">
+                <label class="field-label" asp-for="Request.Code">Verification code</label>
+                <input class="field-input withdraw-otp-input mono" asp-for="Request.Code" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="000000" autofocus />
+                <span asp-validation-for="Request.Code"></span>
+            </div>
+            <div class="withdraw-otp-timer" data-otp-seconds="@seconds">
+                <span class="otp-timer-dot"></span>
+                <span>Code expires in</span>
+                <strong class="mono" id="withdrawOtpTimer">02:00</strong>
+            </div>
+            <button class="btn btn-gold btn-block" type="submit" id="verifyWithdrawalButton">Verify & Submit Withdrawal</button>
+        </form>
+
+        <div class="withdraw-otp-actions">
+            <form method="post" asp-action="ResendOtp" asp-route-id="@Model.ChallengeId">
+                <button type="submit" class="btn btn-outline" id="resendWithdrawalOtp">Send a new code</button>
+            </form>
+            <a asp-action="Create" class="btn btn-outline">Cancel withdrawal</a>
+        </div>
+        <div class="alert-box alert-warning"><span>Never share this code. OLX Trade support will never ask for your withdrawal OTP.</span></div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    const wrap = document.querySelector('[data-otp-seconds]');
+    const timer = document.getElementById('withdrawOtpTimer');
+    const verifyButton = document.getElementById('verifyWithdrawalButton');
+    let remaining = parseInt(wrap.dataset.otpSeconds || '0', 10);
+
+    function draw() {
+        const minutes = Math.floor(remaining / 60);
+        const seconds = remaining % 60;
+        timer.textContent = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+        if (remaining <= 0) {
+            wrap.classList.add('expired');
+            wrap.querySelector('span:nth-child(2)').textContent = 'Code expired';
+            verifyButton.disabled = true;
+            verifyButton.textContent = 'Code Expired — Send a New Code';
+            return;
+        }
+        remaining -= 1;
+        window.setTimeout(draw, 1000);
+    }
+    draw();
+
+    const input = document.getElementById('Request_Code');
+    input.addEventListener('input', function () {
+        input.value = input.value.replace(/\D/g, '').slice(0, 6);
+    });
+})();
+</script>
+}

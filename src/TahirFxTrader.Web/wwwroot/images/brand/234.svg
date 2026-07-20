@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220">
+<rect width="100%" height="100%" fill="transparent"/>
+<g fill="#F0B90B">
+<path d="M80 30 L140 65 L140 135 L80 170 L20 135 L20 65 Z" fill="none" stroke="#F0B90B" stroke-width="10"/>
+<path d="M55 80 L100 45 L125 70 L75 120 L50 95 Z"/>
+<path d="M95 120 L130 85 L155 110 L120 145 Z"/>
+<text x="190" y="95" font-family="Arial, sans-serif" font-size="80" font-weight="800">OLX</text>
+<text x="195" y="155" font-family="Arial, sans-serif" font-size="42" letter-spacing="18">Trade</text>
+<text x="195" y="200" font-family="Arial, sans-serif" font-size="24">Invest | Earn | Together</text>
+</g></svg>

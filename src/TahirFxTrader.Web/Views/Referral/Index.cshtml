@@ -1,0 +1,40 @@
+@model ReferralLandingViewModel
+@{
+    Layout = "_ReferralLayout";
+    var rate = Model.CommissionPercent.ToString("0.##");
+    var description = $"Join OLX Trade with this referral and earn rewards. Referrers receive {rate}% after the first approved deposit.";
+    ViewData["Title"] = $"Join OLX Trade — {rate}% Referral Commission";
+    ViewData["Description"] = description;
+    ViewData["ShareImage"] = Model.ShareImageUrl;
+    ViewData["ShareUrl"] = Model.ShareUrl;
+    ViewData["CanonicalUrl"] = Model.CanonicalUrl;
+
+    var whatsappMessage = Uri.EscapeDataString($"Join OLX Trade — {rate}% Referral Commission\nEarn rewards after your first approved deposit.\nReferral code: {Model.ReferralCode}\n\n{Model.ShareUrl}");
+    var telegramText = Uri.EscapeDataString($"Join OLX Trade — {rate}% Referral Commission. Referral code: {Model.ReferralCode}");
+    var telegramUrl = Uri.EscapeDataString(Model.ShareUrl);
+}
+<div class="ref-public-shell">
+    <div class="ref-public-glow ref-public-glow-a"></div><div class="ref-public-glow ref-public-glow-b"></div>
+    <header class="ref-public-header"><a asp-controller="Auth" asp-action="Login" class="ref-public-brand"><span>@* OT *@</span><strong>@* OLX *@ <b>@* Trade *@</b></strong></a><a asp-controller="Auth" asp-action="Login" class="ref-public-login">Log in</a></header>
+    <main class="ref-public-main">
+        <section class="ref-public-card">
+            <div class="ref-public-poster"><img src="~/images/referral/olx-referral-og.jpg" alt="OLX Trade @rate% referral commission poster" width="1200" height="630" loading="eager" decoding="async"></div>
+            <div class="ref-public-content">
+                <div class="ref-public-eyebrow">Official referral invitation</div>
+                <h1>Join OLX Trade and start earning together.</h1>
+                <p>Your invitation is ready. Register through this page and the referral code will be filled automatically.</p>
+                <div class="ref-public-rate"><strong>@rate%</strong><span>Referral commission after the first approved deposit</span></div>
+                <div class="ref-public-grid">
+                    <div class="ref-public-code"><span>Referral code</span><strong class="mono">@Model.ReferralCode</strong><button type="button" data-copy-value="@Model.ReferralCode" aria-label="Copy referral code">Copy</button></div>
+                    <div class="ref-public-qr"><span>Scan to register</span><div class="ref-public-qr-code" data-qr-text="@Model.RegisterUrl" data-qr-size="150" aria-label="QR code that opens registration with referral code @Model.ReferralCode"></div><small>Referral code is applied automatically.</small></div>
+                </div>
+                <a class="ref-public-cta" href="@Model.RegisterUrl">Create OLX Trade Account</a>
+                <div class="ref-public-share">
+                    <a href="https://wa.me/?text=@whatsappMessage" target="_blank" rel="noopener noreferrer">Share on WhatsApp</a>
+                    <a href="https://t.me/share/url?url=@telegramUrl&text=@telegramText" target="_blank" rel="noopener noreferrer">Share on Telegram</a>
+                </div>
+                <div class="ref-public-trust"><span>Fast deposits</span><span>Secure platform</span><span>24/7 support</span></div>
+            </div>
+        </section>
+    </main>
+</div>

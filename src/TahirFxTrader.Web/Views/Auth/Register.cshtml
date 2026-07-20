@@ -1,0 +1,197 @@
+@model RegisterRequest
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Create account";
+    var countries = new[]
+{
+    new { Name = "Pakistan", Code = "pk", Dial = "+92" },
+    new { Name = "Saudi Arabia", Code = "sa", Dial = "+966" },
+    new { Name = "United Arab Emirates", Code = "ae", Dial = "+971" },
+    new { Name = "Qatar", Code = "qa", Dial = "+974" },
+    new { Name = "Oman", Code = "om", Dial = "+968" },
+    new { Name = "Bahrain", Code = "bh", Dial = "+973" },
+    new { Name = "Kuwait", Code = "kw", Dial = "+965" },
+    new { Name = "United Kingdom", Code = "gb", Dial = "+44" },
+    new { Name = "United States", Code = "us", Dial = "+1" },
+    new { Name = "Canada", Code = "ca", Dial = "+1" },
+    new { Name = "Australia", Code = "au", Dial = "+61" },
+    new { Name = "India", Code = "in", Dial = "+91" },
+    new { Name = "Bangladesh", Code = "bd", Dial = "+880" },
+    new { Name = "Malaysia", Code = "my", Dial = "+60" },
+    new { Name = "Singapore", Code = "sg", Dial = "+65" },
+    new { Name = "Turkey", Code = "tr", Dial = "+90" },
+    new { Name = "Other", Code = "other", Dial = "" }
+};
+}
+<div class="olx-auth-title-row olx-register-heading">
+    <div>
+        <h1>Welcome to OLX Trade</h1>
+        <p>Create your account and verify your email before your first login.</p>
+    </div>
+</div>
+
+<form method="post" class="olx-auth-form olx-register-form">
+    <div asp-validation-summary="ModelOnly"></div>
+
+    <div class="field-group">
+        <label class="field-label" asp-for="FullName">Full name</label>
+        <input class="field-input olx-auth-input" asp-for="FullName" autocomplete="name" placeholder="Enter your full name">
+        <span asp-validation-for="FullName"></span>
+    </div>
+
+    <div class="form-grid-2 olx-auth-grid">
+        <div class="field-group">
+            <label class="field-label" asp-for="Country"></label>
+            <div class="country-select" data-country-select>
+                <select class="field-input olx-auth-input country-native-select" asp-for="Country" data-country-native>
+                    <option value="" data-flag="" data-dial="">Select country</option>
+                    @foreach (var country in countries)
+                    {
+                        var flagUrl = Url.Content($"~/images/flags/{country.Code}.svg");
+                        <option value="@country.Name" data-flag="@flagUrl" data-dial="@country.Dial">@country.Name</option>
+                    }
+                </select>
+
+                <button type="button" class="country-select-trigger" data-country-trigger aria-haspopup="listbox" aria-expanded="false">
+                    <span class="country-selected-flag-wrap" data-country-selected-flag-wrap hidden>
+                        <img class="country-selected-flag" data-country-selected-flag src="" alt="">
+                    </span>
+                    <span class="country-selected-text" data-country-selected-text>Select country</span>
+                    <svg class="country-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+
+                <div class="country-select-menu" data-country-menu role="listbox" aria-label="Country">
+                    @foreach (var country in countries)
+                    {
+                        var flagUrl = Url.Content($"~/images/flags/{country.Code}.svg");
+                        <button type="button" class="country-select-option" data-country-option
+                                data-country-value="@country.Name" data-country-flag="@flagUrl"
+                                data-dial="@country.Dial" role="option" aria-selected="false">
+                            <img src="@flagUrl" alt="" class="country-option-flag">
+                            <span>@country.Name</span>
+                        </button>
+                    }
+                </div>
+            </div>
+            <span asp-validation-for="Country"></span>
+        </div>
+        <div class="field-group">
+            <label class="field-label" asp-for="PhoneNumber">Phone number</label>
+            <input class="field-input olx-auth-input" asp-for="PhoneNumber" id="phoneInput" data-phone-input autocomplete="tel" placeholder=" phone number">            <span asp-validation-for="PhoneNumber"></span>
+        </div>
+    </div>
+
+    <div class="field-group">
+        <label class="field-label" asp-for="Email">Email address</label>
+        <input class="field-input olx-auth-input" asp-for="Email" autocomplete="email" placeholder="Enter your email address">
+        <span asp-validation-for="Email"></span>
+    </div>
+
+    <div class="field-group">
+        <label class="field-label" asp-for="ReferralCode">Referral code <span class="olx-label-optional">(optional)</span></label>
+        <input class="field-input olx-auth-input mono" asp-for="ReferralCode" placeholder="USR-20260715-000001">
+        <span asp-validation-for="ReferralCode"></span>
+        @if (!string.IsNullOrWhiteSpace(Model.ReferralCode))
+        {
+            <small class="olx-referral-applied">Referral link applied. It qualifies after your first approved deposit.</small>
+        }
+    </div>
+
+    <div class="form-grid-2 olx-auth-grid">
+        <div class="field-group">
+            <label class="field-label" asp-for="Password"></label>
+            <div class="field-wrap-pass">
+                <input class="field-input olx-auth-input" asp-for="Password" autocomplete="new-password" placeholder="Minimum 8 characters">
+                <button type="button" class="pass-toggle" aria-label="Show or hide password">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+            </div>
+            <span asp-validation-for="Password"></span>
+        </div>
+        <div class="field-group">
+            <label class="field-label" asp-for="ConfirmPassword">Confirm password</label>
+            <div class="field-wrap-pass">
+                <input class="field-input olx-auth-input" asp-for="ConfirmPassword" autocomplete="new-password" placeholder="Re-enter password">
+                <button type="button" class="pass-toggle" aria-label="Show or hide password">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+            </div>
+            <span asp-validation-for="ConfirmPassword"></span>
+        </div>
+    </div>
+
+    <label class="olx-terms-check">
+        <input type="checkbox" required>
+        <span>By creating an account, I agree to OLX Trade’s <a href="#">Terms</a> and <a href="#">Privacy Notice</a>.</span>
+    </label>
+
+    <button class="btn btn-gold btn-block olx-auth-submit" type="submit">Register</button>
+</form>
+
+<div class="olx-auth-bottom-links olx-register-bottom-links">
+    <span>Already have an account?</span>
+    <a asp-action="Login">Log in</a>
+</div>
+@section Scripts {
+    <script>
+        (function () {
+            var phoneInput = document.querySelector('[data-phone-input]');
+            var nativeSelect = document.querySelector('[data-country-native]');
+            var optionButtons = document.querySelectorAll('[data-country-option]');
+
+            // Matches a leading dial code like "+92", "+971", "+1" etc.
+            var dialCodeRegex = /^\+\d{1,4}\s*/;
+
+            function applyDialCode(dial) {
+                if (!phoneInput || !dial) return;
+
+                var current = phoneInput.value || '';
+                var withoutOldCode = current.replace(dialCodeRegex, '').trim();
+
+                phoneInput.value = withoutOldCode ? (dial + ' ' + withoutOldCode) : (dial + ' ');
+                phoneInput.focus();
+                // put cursor at the end
+                var len = phoneInput.value.length;
+                phoneInput.setSelectionRange(len, len);
+            }
+
+            // Native <select> path (e.g. mobile fallback)
+            if (nativeSelect) {
+                nativeSelect.addEventListener('change', function () {
+                    var opt = nativeSelect.options[nativeSelect.selectedIndex];
+                    var dial = opt ? opt.getAttribute('data-dial') : '';
+                    applyDialCode(dial);
+                });
+            }
+
+            // Custom dropdown buttons
+            optionButtons.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var dial = btn.getAttribute('data-dial');
+                    applyDialCode(dial);
+                });
+            });
+        })();
+    </script>
+}
+<style>
+    
+
+@@media (max-width: 768px) {
+    input:not([type="checkbox"]):not([type="radio"]),
+    select,
+    textarea,
+    .form-control {
+        width:100% !important;
+        box-sizing:border-box;
+    }
+
+    /* Belt-and-braces: pin size regardless of any other rule order */
+    input[type="checkbox"],
+    input[type="radio"] {
+        width:16px !important;
+        height:16px !important;
+        flex:0 0 auto !important;
+    }
+}
+</style>

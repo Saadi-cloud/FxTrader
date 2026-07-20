@@ -1,0 +1,11 @@
+**/bin/
+**/obj/
+.vs/
+.vscode/
+*.user
+*.suo
+src/TahirFxTrader.Web/wwwroot/uploads/payment-proofs/*
+!src/TahirFxTrader.Web/wwwroot/uploads/payment-proofs/.gitkeep
+src/TahirFxTrader.Web/wwwroot/uploads/payment-methods/*
+!src/TahirFxTrader.Web/wwwroot/uploads/payment-methods/.gitkeep
+appsettings.Production.json

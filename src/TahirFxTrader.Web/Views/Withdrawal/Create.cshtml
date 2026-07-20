@@ -1,0 +1,265 @@
+@model WithdrawalPageViewModel
+@{
+    ViewData["Title"] = "Withdraw Funds";
+    ViewData["Subtitle"] = "Choose a wallet balance, then select your payout destination";
+    var first = Model.Methods.FirstOrDefault();
+    var selectedSource = string.IsNullOrWhiteSpace(Model.Request.WalletSource) ? "ProfitCommission" : Model.Request.WalletSource;
+}
+
+<div class="mini-stat-row withdrawal-wallet-stats">
+    <div class="mini-stat"><div class="mini-stat-label">Investment Wallet</div><div class="mini-stat-value mono">$@Model.InvestmentBalance.ToString("N2")</div><div class="mini-stat-hint">Fee applies</div></div>
+    
+    @* <div class="mini-stat"><div class="mini-stat-label">Profit Wallet</div><div class="mini-stat-value mono" style="color:var(--green);">$@Model.ProfitBalance.ToString("N2")</div></div> *@
+    
+    @* <div class="mini-stat"><div class="mini-stat-label">Commission Wallet</div><div class="mini-stat-value mono" style="color:var(--gold);">$@Model.CommissionBalance.ToString("N2")</div></div> *@
+    
+    <div class="mini-stat"><div class="mini-stat-label">Profit + Commission</div><div class="mini-stat-value mono" style="color:var(--green);">$@Model.ProfitCommissionBalance.ToString("N2")</div><div class="mini-stat-hint">No withdrawal fee</div></div>
+</div>
+
+@if (Model.Methods.Count == 0)
+{
+    <div class="card card-pad empty-state">No withdrawal methods are currently available.</div>
+}
+else
+{
+    <div class="withdraw-layout">
+        <div class="card card-pad">
+            <div class="card-head"><h3>Withdrawal request</h3><a asp-action="History" class="btn btn-outline btn-sm">View History</a></div>
+
+            <form method="post" id="withdrawForm" novalidate>
+                <div asp-validation-summary="ModelOnly"></div>
+                <input asp-for="Request.PaymentMethodId" type="hidden" value="@first?.Id">
+                <input asp-for="Request.DestinationJson" type="hidden">
+                <input asp-for="Request.DestinationDisplay" type="hidden">
+
+                <div class="field-group wallet-source-group">
+                    <label class="field-label" asp-for="Request.WalletSource">Withdraw from wallet</label>
+                    <select class="field-input wallet-source-select" name="Request.WalletSource" id="walletSource">
+                        <option value="ProfitCommission" selected="@(selectedSource == "ProfitCommission" ? "selected" : null)">Profit + Commission — $@Model.ProfitCommissionBalance.ToString("N2")</option>
+                        <option value="Investment" selected="@(selectedSource == "Investment" ? "selected" : null)">Investment Wallet — $@Model.InvestmentBalance.ToString("N2")</option>
+                    </select>
+                    <span asp-validation-for="Request.WalletSource"></span>
+                    <div class="wallet-source-preview">
+                        <div><span>Selected balance</span><strong class="mono" id="sourceBalance">$0.00</strong></div>
+                        <div><span>Fee rule</span><strong id="sourceFeeRule">—</strong></div>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Withdrawal method</label>
+                    <div class="tabs-row withdraw-method-tabs">
+                        @for (var i = 0; i < Model.Methods.Count; i++)
+                        {
+                            var m = Model.Methods[i];
+                            <button type="button" class="tab-btn @(i == 0 ? "active" : "")" data-target="@m.Id" data-name="@m.Name" data-min="@m.MinWithdrawal" data-max="@(m.MaxWithdrawal?.ToString() ?? "")">@m.Name</button>
+                        }
+                    </div>
+                </div>
+
+                @for (var i = 0; i < Model.Methods.Count; i++)
+                {
+                    var m = Model.Methods[i];
+                    <div data-withdraw-fields="@m.Id" style="@(i == 0 ? "" : "display:none;")">
+                        @if (m.MethodType == PaymentMethodType.Bank)
+                        {
+                            <div class="form-grid-2">
+                                <div class="field-group"><label class="field-label">Bank name</label><input class="field-input" type="text" data-destination="BankName" data-required="true" data-field-label="Bank name" placeholder="e.g. HBL, Meezan Bank"><span class="field-validation-error" data-error-for="BankName"></span></div>
+                                <div class="field-group"><label class="field-label">Account title</label><input class="field-input" type="text" data-destination="AccountTitle" data-required="true" data-field-label="Account title" placeholder="Name on account"><span class="field-validation-error" data-error-for="AccountTitle"></span></div>
+                            </div>
+                            <div class="form-grid-2">
+                                <div class="field-group"><label class="field-label">Account number / IBAN</label><input class="field-input mono" type="text" data-destination="AccountNumber" data-required="true" data-field-label="Account number / IBAN" placeholder="PKXX XXXX XXXX XXXX"><span class="field-validation-error" data-error-for="AccountNumber"></span></div>
+                                <div class="field-group"><label class="field-label">Branch code</label><input class="field-input" type="text" data-destination="BranchCode" placeholder="Optional"></div>
+                            </div>
+                        }
+                        else if (m.MethodType == PaymentMethodType.Crypto)
+                        {
+                            <div class="form-grid-2">
+                                <div class="field-group"><label class="field-label">Wallet address</label><input class="field-input mono" type="text" data-destination="WalletAddress" data-required="true" data-field-label="Wallet address" placeholder="Paste wallet address"><span class="field-validation-error" data-error-for="WalletAddress"></span></div>
+                                <div class="field-group"><label class="field-label">Network</label><input class="field-input" type="text" data-destination="Network" data-required="true" data-field-label="Network" value="@m.Network" placeholder="TRC20 / BEP20"><span class="field-validation-error" data-error-for="Network"></span></div>
+                            </div>
+                            <div class="alert-box alert-warning"><span>Double-check the wallet address and network. Crypto transfers cannot be reversed.</span></div>
+                        }
+                        else
+                        {
+                            <div class="form-grid-2">
+                                <div class="field-group"><label class="field-label">Account number</label><input class="field-input mono" type="text" data-destination="AccountNumber" data-required="true" data-field-label="Account number" placeholder="Mobile wallet account number"><span class="field-validation-error" data-error-for="AccountNumber"></span></div>
+                                <div class="field-group"><label class="field-label">Account holder name</label><input class="field-input" type="text" data-destination="AccountTitle" data-required="true" data-field-label="Account holder name" placeholder="Registered account holder"><span class="field-validation-error" data-error-for="AccountTitle"></span></div>
+                            </div>
+                        }
+                    </div>
+                }
+
+                <div class="field-group" style="margin-top:8px;">
+                    <label class="field-label" asp-for="Request.Amount">Amount to withdraw</label>
+                    <div class="amount-input-wrap"><span class="amount-currency">$</span><input class="field-input" asp-for="Request.Amount" placeholder="0.00"></div>
+                    <span asp-validation-for="Request.Amount"></span>
+                    <div class="quick-amount-row"><button type="button" class="quick-amount-btn" data-fixed-amount="100" data-amount="100">$100</button><button type="button" class="quick-amount-btn" data-fixed-amount="500" data-amount="500">$500</button><button type="button" class="quick-amount-btn" data-fixed-amount="1000" data-amount="1000">$1,000</button><button type="button" class="quick-amount-btn" id="maxWithdrawalButton" data-amount="@Model.InvestmentBalance.ToString(System.Globalization.CultureInfo.InvariantCulture)">Max</button></div>
+                    <small class="wallet-limit-note" id="walletLimitNote"></small>
+                </div>
+
+                <div class="field-group"><label class="remember-check"><input asp-for="Request.Confirmed"> I confirm these payment details are correct and belong to me</label><span asp-validation-for="Request.Confirmed"></span></div>
+                <div class="alert-box alert-info"><span>A 6-digit verification code will be sent to your registered email. The code expires in 2 minutes.</span></div>
+                <button type="submit" class="btn btn-gold btn-block">Continue to Email Verification</button>
+            </form>
+        </div>
+
+        <div class="card card-pad">
+            <div class="card-head"><h3>Summary</h3></div>
+            <div class="summary-row"><span>Selected wallet</span><span id="wd-wallet">Investment Wallet</span></div>
+            <div class="summary-row"><span>Wallet balance</span><span class="mono" id="wd-balance">$0.00</span></div>
+            <div class="summary-row"><span>Method</span><span id="wd-method">@first?.Name</span></div>
+            <div class="summary-row"><span>Withdrawal fee</span><span class="mono" id="wd-fee-percent">@Model.InvestmentWithdrawalFeePercent.ToString("0.##")%</span></div>
+            <div class="summary-row"><span>Fee amount</span><span class="mono" id="wd-fee">$0.00</span></div>
+            <div class="summary-row"><span>You will receive</span><span class="mono" id="wd-receive">$0.00</span></div>
+            <div class="alert-box alert-info" id="walletRuleMessage"><span>Investment withdrawals use only the Investment Wallet and the admin-controlled investment withdrawal fee applies.</span></div>
+        </div>
+    </div>
+
+}
+
+@section Scripts {
+    @if (Model.Methods.Count > 0)
+    {
+        <script>
+            (function () {
+                const investmentBalance = @Model.InvestmentBalance.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                const profitBalance = @Model.ProfitBalance.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                const commissionBalance = @Model.CommissionBalance.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                const profitCommissionBalance = profitBalance + commissionBalance;
+                const investmentFee = @Model.InvestmentWithdrawalFeePercent.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                const source = document.getElementById('walletSource');
+                const amount = document.getElementById('Request_Amount');
+                const maxButton = document.getElementById('maxWithdrawalButton');
+
+                function money(value) {
+                    return '$' + Number(value || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                }
+                function currentBalance() {
+                    return source.value === 'Investment' ? investmentBalance : profitCommissionBalance;
+                }
+                function currentFee() {
+                    return source.value === 'Investment' ? investmentFee : 0;
+                }
+                function syncSummary() {
+                    const balance = currentBalance();
+                    const feePercent = currentFee();
+                    const value = parseFloat(amount.value) || 0;
+                    const feeAmount = value * feePercent / 100;
+                    const isInvestment = source.value === 'Investment';
+
+                    document.getElementById('sourceBalance').textContent = money(balance);
+                    document.getElementById('sourceFeeRule').textContent = isInvestment ? feePercent.toFixed(2).replace(/\.00$/, '') + '% investment fee' : '0% fee';
+                    document.getElementById('wd-wallet').textContent = isInvestment ? 'Investment Wallet' : 'Profit + Commission';
+                    document.getElementById('wd-balance').textContent = money(balance);
+                    document.getElementById('wd-fee-percent').textContent = feePercent.toFixed(2).replace(/\.00$/, '') + '%';
+                    document.getElementById('wd-fee').textContent = money(feeAmount);
+                    document.getElementById('wd-receive').textContent = money(Math.max(0, value - feeAmount));
+                    document.getElementById('walletLimitNote').textContent = 'Maximum available from this wallet: ' + money(balance);
+                    maxButton.setAttribute('data-amount', balance.toFixed(4));
+                    document.getElementById('walletRuleMessage').innerHTML = isInvestment
+                        ? '<span>Investment withdrawals use only the Investment Wallet. The admin-controlled investment withdrawal fee applies.</span>'
+                        : '<span>Profit + Commission withdrawals have no fee. Profit is reserved first, then Commission. Investment is never used for this option.</span>';
+                }
+
+                source.addEventListener('change', function () {
+                    const balance = currentBalance();
+                    if ((parseFloat(amount.value) || 0) > balance) amount.value = '';
+                    syncSummary();
+                });
+                amount.addEventListener('input', syncSummary);
+                document.querySelectorAll('[data-fixed-amount]').forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        amount.value = Math.min(parseFloat(button.dataset.fixedAmount), currentBalance()).toFixed(2);
+                        syncSummary();
+                    });
+                });
+                maxButton.addEventListener('click', function () { amount.value = currentBalance().toFixed(2); syncSummary(); });
+
+                document.querySelectorAll('.withdraw-method-tabs .tab-btn').forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        document.getElementById('Request_PaymentMethodId').value = button.dataset.target;
+                        document.getElementById('wd-method').textContent = button.dataset.name;
+                        clearAllFieldErrors();
+                    });
+                });
+
+                // ---- Inline destination-field validation (e.g. empty Wallet Address) ----
+                function activePanel() {
+                    const id = document.getElementById('Request_PaymentMethodId').value;
+                    return document.querySelector('[data-withdraw-fields="' + id + '"]');
+                }
+
+                function setFieldError(input, message) {
+                    input.classList.add('input-validation-error');
+                    const errorEl = input.parentElement.querySelector('[data-error-for="' + input.dataset.destination + '"]');
+                    if (errorEl) errorEl.textContent = message || '';
+                }
+
+                function clearFieldError(input) {
+                    input.classList.remove('input-validation-error');
+                    const errorEl = input.parentElement.querySelector('[data-error-for="' + input.dataset.destination + '"]');
+                    if (errorEl) errorEl.textContent = '';
+                }
+
+                function clearAllFieldErrors() {
+                    document.querySelectorAll('[data-destination]').forEach(clearFieldError);
+                }
+
+                // Clear a field's error as soon as the user starts fixing it
+                document.querySelectorAll('[data-destination]').forEach(function (input) {
+                    input.addEventListener('input', function () {
+                        if (input.value.trim()) clearFieldError(input);
+                    });
+                });
+
+                function validateDestinationFields() {
+                    const panel = activePanel();
+                    let firstInvalid = null;
+                    const data = {};
+                    const display = [];
+
+                    panel.querySelectorAll('[data-destination]').forEach(function (input) {
+                        const value = input.value.trim();
+                        const isRequired = input.dataset.required === 'true';
+
+                        if (isRequired && !value) {
+                            setFieldError(input, (input.dataset.fieldLabel || 'This field') + ' is required.');
+                            if (!firstInvalid) firstInvalid = input;
+                            return;
+                        }
+
+                        clearFieldError(input);
+                        if (value) { data[input.dataset.destination] = value; display.push(value); }
+                    });
+
+                    if (firstInvalid) {
+                        firstInvalid.focus();
+                        return null;
+                    }
+
+                    return { data: data, display: display };
+                }
+
+                document.getElementById('withdrawForm').addEventListener('submit', function (event) {
+                    if ((parseFloat(amount.value) || 0) > currentBalance()) {
+                        event.preventDefault();
+                        alert('The amount is greater than the selected wallet balance.');
+                        return;
+                    }
+
+                    const result = validateDestinationFields();
+                    if (!result) {
+                        event.preventDefault();
+                        return;
+                    }
+
+                    document.getElementById('Request_DestinationJson').value = JSON.stringify(result.data);
+                    document.getElementById('Request_DestinationDisplay').value = result.display.join(' · ');
+                });
+
+                source.value = '@selectedSource';
+                syncSummary();
+            })();
+        </script>
+    }
+}

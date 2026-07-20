@@ -1,0 +1,54 @@
+@{
+    var title = ViewData["Title"]?.ToString() ?? "OLX Trade Referral Program";
+    var description = ViewData["Description"]?.ToString() ?? "Join OLX Trade and earn referral rewards.";
+    var image = ViewData["ShareImage"]?.ToString() ?? string.Empty;
+    var url = ViewData["ShareUrl"]?.ToString() ?? string.Empty;
+    var canonical = ViewData["CanonicalUrl"]?.ToString() ?? url;
+}
+<!DOCTYPE html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>@title</title>
+<meta name="description" content="@description">
+<meta name="robots" content="index,follow,max-image-preview:large">
+
+<!-- WhatsApp, Facebook, Telegram and LinkedIn rich-link preview -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="OLX Trade">
+<meta property="og:title" content="@title">
+<meta property="og:description" content="@description">
+<meta property="og:url" content="@url">
+<meta property="og:image" content="@image">
+<meta property="og:image:secure_url" content="@image">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="OLX Trade 5% referral commission promotional card">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="@title">
+<meta name="twitter:description" content="@description">
+<meta name="twitter:image" content="@image">
+<meta name="twitter:image:alt" content="OLX Trade 5% referral commission promotional card">
+
+<meta itemprop="name" content="@title">
+<meta itemprop="description" content="@description">
+<meta itemprop="image" content="@image">
+<link rel="image_src" href="@image">
+<link rel="canonical" href="@canonical">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+</head>
+<body class="referral-public-body">
+@RenderBody()
+<script src="~/js/vendor/olx-qr.js" asp-append-version="true"></script>
+<script src="~/js/app.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required:false)
+</body>
+</html>

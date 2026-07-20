@@ -1,0 +1,175 @@
+@model DashboardData
+@{
+    ViewData["Title"] = "Dashboard";
+    // ViewData["Subtitle"] = $"Welcome back, {Model.FullName}";
+
+    var compactUserId = string.Concat((Model.UserTraceId ?? string.Empty).Where(char.IsDigit));
+    var totalPortfolio = Model.AvailableBalance + Model.HeldBalance;
+    var pnlClass = Model.TodayPnl > 0 ? "positive" : Model.TodayPnl < 0 ? "negative" : "neutral";
+    var pnlPrefix = Model.TodayPnl > 0 ? "+" : Model.TodayPnl < 0 ? "-" : string.Empty;
+    var pnlAmount = Math.Abs(Model.TodayPnl);
+    var rate = Model.ReferralCommissionPercent > 0 ? Model.ReferralCommissionPercent : 5m;
+    var rateText = rate.ToString("0.##");
+    var investmentPercent = totalPortfolio > 0 ? Math.Clamp(Model.InvestmentBalance / totalPortfolio * 100m, 0m, 100m) : 0m;
+    var profitPercent = totalPortfolio > 0 ? Math.Clamp(Model.ProfitBalance / totalPortfolio * 100m, 0m, 100m) : 0m;
+    var commissionPercent = totalPortfolio > 0 ? Math.Clamp(Model.CommissionBalance / totalPortfolio * 100m, 0m, 100m) : 0m;
+    var ringInvestmentEnd = investmentPercent;
+    var ringProfitEnd = investmentPercent + profitPercent;
+    var investmentCss = investmentPercent.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+    var profitCss = profitPercent.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+    var commissionCss = commissionPercent.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+    var ringInvestmentCss = ringInvestmentEnd.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+    var ringProfitCss = ringProfitEnd.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+    var encodedShareUrl = Uri.EscapeDataString(Model.ReferralLink);
+    var whatsappMessage = Uri.EscapeDataString($"Join OLX Trade — {rateText}% Referral Commission\nEarn rewards after your first approved deposit.\nReferral code: {Model.UserTraceId}\n\n{Model.ReferralLink}");
+    var telegramMessage = Uri.EscapeDataString($"Join OLX Trade — {rateText}% Referral Commission. Referral code: {Model.UserTraceId}");
+}
+<style>
+    .trade-uid {
+        font-size: 09px;
+    }
+
+        .trade-uid span {
+            font-size: 09px;
+        }
+
+        .trade-uid b {
+            font-size: 010px;
+        }
+</style>
+
+<div class="trade-dashboard" data-referral-url="@Model.ReferralLink" data-referral-code="@Model.UserTraceId" data-referral-rate="@rateText">
+    <section class="trade-hero" id="tradeHero">
+        <div class="trade-hero-grid">
+            <div class="trade-hero-main">
+            <div class="trade-uid" title="@Model.UserTraceId">
+                    <span>UID</span><b class="mono">@compactUserId</b>
+                    <button type="button" data-copy-value="@Model.UserTraceId" aria-label="Copy full user ID">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg><em class="uid-copy-label"></em>
+                    </button>
+                </div>
+                <div class="trade-eyebrow"><span class="trade-live-dot"></span> Portfolio overview</div>
+                <h1>Welcome, <span>@Model.FullName</span></h1>
+                
+                <div class="trade-portfolio-label">Total Avalible Balance</div>
+                <div class="trade-portfolio-value mono">$@totalPortfolio.ToString("N2") <small>USD</small></div>
+          
+                <div class="trade-hero-actions">
+                    <a asp-controller="Deposit" asp-action="Create" class="trade-btn trade-btn-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>Deposit</a>
+                    <a asp-controller="Withdrawal" asp-action="Create" class="trade-btn trade-btn-dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>Withdraw</a>
+                </div>
+            </div>
+            <div class="trade-hero-side">
+                <article class="trade-pnl-card @pnlClass">
+                    <div class="trade-pnl-head"><span>Today's PnL</span><b>Live</b></div>
+                    <div class="trade-pnl-value mono">@pnlPrefix$@pnlAmount.ToString("N2")</div>
+                    <div class="trade-pnl-sub">Profit-wallet movement today</div>
+                    <div class="trade-sparkline">
+                        <svg viewBox="0 0 320 70" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="tradeSparkFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#18d990" stop-opacity=".35"/><stop offset="1" stop-color="#18d990" stop-opacity="0"/></linearGradient></defs><path class="trade-spark-area" d="M0 58 C30 58,36 47,62 50 S95 64,122 41 S159 51,184 30 S221 42,248 20 S281 27,320 8 L320 70 L0 70 Z"/><path class="trade-spark-line" d="M0 58 C30 58,36 47,62 50 S95 64,122 41 S159 51,184 30 S221 42,248 20 S281 27,320 8"/></svg>
+                    </div>
+                </article>
+                <div class="trade-quick-row">
+                    <div><span>Pending deposits</span><strong>@Model.PendingDeposits</strong></div>
+                    <div><span>Pending withdrawals</span><strong>@Model.PendingWithdrawals</strong></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="trade-metrics">
+        <article class="trade-metric-card"><div class="trade-metric-icon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M16 15h2"/></svg></div><div><span>Investment Wallet</span><strong class="mono">$@Model.InvestmentBalance.ToString("N2")</strong><small>@* Original deposit principal *@</small></div></article>
+        <article class="trade-metric-card"><div class="trade-metric-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 17l5-5 4 4 7-9"/><path d="M15 7h5v5"/></svg></div><div><span>Profit Wallet</span><strong class="mono green-text">$@Model.ProfitBalance.ToString("N2")</strong><small>@* Compounds with investment *@</small></div></article>
+        <article class="trade-metric-card"><div class="trade-metric-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M17 8h4M19 6v4"/></svg></div><div><span>Commission Wallet</span><strong class="mono">$@Model.CommissionBalance.ToString("N2")</strong><small>Referral earnings balance</small></div></article>
+        <article class="trade-metric-card"><div class="trade-metric-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><span>Next Profit Base</span><strong class="mono">$@Model.CompoundProfitBase.ToString("N2")</strong><small>Investment + existing profit</small></div></article>
+    </section>
+
+    <section class="trade-content-grid">
+        <article class="trade-panel trade-portfolio-panel">
+            <div class="trade-panel-head"><div><h2>Portfolio Distribution</h2><p>Your available value separated by wallet type.</p></div><a asp-controller="Statement" asp-action="Index">View statement →</a></div>
+            <div class="trade-wallet-overview">
+                <div class="trade-ring"
+                     style="--investment-end:@ringInvestmentCss%; --profit-end:@ringProfitCss%;">
+
+                    <div>
+                        <span style="text-transform: none;">Total Available Balance</span>
+                        <strong class="mono">$@totalPortfolio.ToString("N2")</strong>
+                    </div>
+                </div>                <div class="trade-wallet-list">
+                    <div class="trade-wallet-item"><div class="trade-wallet-row"><i class="invest"></i><span>Investment Wallet<small>@investmentPercent.ToString("0.0")% of portfolio</small></span><strong class="mono">$@Model.InvestmentBalance.ToString("N2")</strong></div><div class="trade-wallet-bar"><b style="width:@investmentCss%"></b></div></div>
+                    <div class="trade-wallet-item"><div class="trade-wallet-row"><i class="profit"></i><span>Profit Wallet<small>@profitPercent.ToString("0.0")% of portfolio</small></span><strong class="mono">$@Model.ProfitBalance.ToString("N2")</strong></div><div class="trade-wallet-bar"><b class="profit" style="width:@profitCss%"></b></div></div>
+                    <div class="trade-wallet-item"><div class="trade-wallet-row"><i class="commission"></i><span>Commission Wallet<small>@commissionPercent.ToString("0.0")% of portfolio</small></span><strong class="mono">$@Model.CommissionBalance.ToString("N2")</strong></div><div class="trade-wallet-bar"><b class="commission" style="width:@commissionCss%"></b></div></div>
+                </div>
+            </div>
+        </article>
+
+        <article class="trade-panel trade-referral-panel">
+            <div class="trade-panel-head"><div><h2>Invite & Earn</h2><p>Share a preview-ready referral link with your network.</p></div><span class="trade-rate-badge">@rateText%</span></div>
+            <div class="trade-referral-preview">
+                <div class="trade-referral-poster"><img src="~/images/referral/olx-referral-og.jpg" alt="OLX Trade referral preview image"></div>
+                <!-- <div class="trade-referral-qr"><div class="trade-qr-label">Scan to register</div><div class="trade-qr-code" data-qr-text="@Model.ReferralRegisterUrl" data-qr-size="91" aria-label="QR code for referral registration"></div><small>Code auto-filled</small></div> -->
+            </div>
+            <div class="trade-referral-copy"><span class="mono">@Model.ReferralLink</span><button type="button" data-copy-value="@Model.ReferralLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><em class="uid-copy-label"></em></button></div>
+            <div class="trade-share-row">
+                <a class="trade-share wa" href="https://wa.me/?text=@whatsappMessage" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M20.5 3.5A11.8 11.8 0 0 0 12.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.5 4.1 1.6 5.9L.2 24l6.5-1.7a11.7 11.7 0 0 0 5.4 1.4h.1c6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.2-6.1-3.5-8.4Z"/></svg>WhatsApp</a>
+                @* <a class="trade-share tg" href="https://t.me/share/url?url=@encodedShareUrl&text=@telegramMessage" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M21.8 3.1 18.5 20c-.2 1.2-.9 1.5-1.8.9l-5-3.7-2.4 2.3-.4-5 9.3-8.4c.4-.4-.1-.6-.6-.2L5.9 13.5 1 12c-1.1-.3-1.1-1.1.2-1.6L20.4 3c.9-.3 1.7.2 1.4 1.1Z"/></svg>Telegram</a> *@
+                <a class="trade-share fb"
+                   href="https://www.facebook.com/sharer/sharer.php?u=@encodedShareUrl"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Share on Facebook">
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor"
+                              d="M22 12.07C22 6.51 17.52 2 12 2S2 6.51 2 12.07C2 17.09 5.66 21.26 10.44 22v-7.03H7.9v-2.9h2.54V9.86c0-2.52 1.49-3.91 3.77-3.91 1.09 0 2.23.2 2.23.2V8.6h-1.25c-1.24 0-1.63.77-1.63 1.56v1.88h2.77l-.44 2.9h-2.33V22C18.34 21.26 22 17.09 22 12.07Z" />
+                    </svg>
+
+                    Facebook
+                </a>
+                <button type="button" class="trade-share native" data-native-share data-share-url="@Model.ReferralLink" data-share-title="OLX Trade — 5% Referral Commission" data-share-text="Join OLX Trade with my referral. Earn rewards after your first approved deposit.">Share</button>
+@*                 <a class="trade-share preview" href="@Model.ReferralLink" target="_blank" rel="noopener">Open preview</a>
+ *@            </div>
+            <div class="trade-referral-stats"><div><span>Active referrals</span><strong>@Model.SuccessfulReferralCount</strong></div><div><span>Commission earned</span><strong class="mono">$@Model.ReferralCommissionEarned.ToString("N2")</strong></div></div>
+        </article>
+    </section>
+
+    <section class="trade-lower-grid">
+        <article class="trade-panel">
+            <div class="trade-panel-head"><div><h2>Account Status</h2><p>Pending actions and account availability.</p></div></div>
+            <div class="trade-activity-list">
+                <div><i class="gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 19V5M5 12l7-7 7 7"/></svg></i><span>Pending Deposits<small>Waiting for verification</small></span><strong>@Model.PendingDeposits</strong></div>
+                <div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12l7 7 7-7"/></svg></i><span>Pending Withdrawals<small>Payment processing queue</small></span><strong>@Model.PendingWithdrawals</strong></div>
+                <div><i class="green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 4 4L19 6"/><circle cx="12" cy="12" r="9"/></svg></i><span>Account Verification<small>Email verified and active</small></span><strong class="active">Active</strong></div>
+            </div>
+        </article>
+
+        <article class="trade-panel">
+            <div class="trade-panel-head"><div><h2>Connect with OLX Trade</h2><p>Official channels, announcements and support.</p></div></div>
+            <div class="trade-social-grid">
+                <a class="wa" href="https://whatsapp.com/channel/0029VbCuWm0LY6d1ZmRsAM2u" target="_blank" rel="noopener"><span>W</span>WhatsApp</a>
+                <a class="fb" href="https://www.facebook.com/share/1DB4gHAxuo/" target="_blank" rel="noopener"><span>f</span>Facebook</a>
+                <a class="ig" href="https://www.instagram.com/olxtrade?igsh=ZHpkdHl3Z3FlOGl3" target="_blank" rel="noopener"><span>◎</span>Instagram</a>
+                <a class="tt" href="https://vt.tiktok.com/ZSX5r5xFf/" target="_blank" rel="noopener"><span>♪</span>TikTok</a>
+                <a class="tg" href="https://t.me/olxtradeofficial" target="_blank" rel="noopener"><span>➤</span>Telegram</a>
+                <a class="th" href="https://www.threads.com/@@olxtrade" target="_blank" rel="noopener"><span>@@</span>Threads</a>
+                <a class="dc" href="https://discord.gg/GQrmrafAc" target="_blank" rel="noopener"><span>◉</span>Discord</a>
+               
+                <a class="sp youtube"
+                   href="#"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Visit our YouTube channel">
+
+                    <span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill="currentColor"
+                                  d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4L15.8 12l-6.2 3.6Z" />
+                        </svg>
+                    </span>
+
+                    YouTube
+                </a>
+            </div>
+        </article>
+    </section>
+
+</div>

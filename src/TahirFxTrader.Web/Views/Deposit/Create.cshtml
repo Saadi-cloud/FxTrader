@@ -1,0 +1,182 @@
+<style>
+    /* ===========================================================
+       Deposit screenshot preview — append to your existing site.css
+       =========================================================== */
+
+    .upload-preview-wrap {
+        margin-top: 2px;
+    }
+
+    .upload-preview-card {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        background: var(--bg-soft);
+    }
+
+        .upload-preview-card img {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+            background: #000;
+        }
+
+    .upload-preview-meta {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .upload-preview-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .upload-preview-size {
+        margin-top: 3px;
+        font-size: 11.5px;
+        color: var(--text-muted);
+    }
+
+    .upload-preview-remove {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--surface-2);
+        color: var(--text-muted);
+        transition: border-color .15s, color .15s, background .15s;
+    }
+
+        .upload-preview-remove svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .upload-preview-remove:hover {
+            border-color: var(--red);
+            color: var(--red);
+            background: var(--red-soft);
+        }
+
+    @@media(max-width:420px) {
+        .upload-preview-card img
+
+    {
+        width: 52px;
+        height: 52px;
+    }
+
+    .upload-preview-name {
+        font-size: 12px;
+    }
+
+    }
+</style>
+@model DepositPageViewModel
+@{ ViewData["Title"] = "Deposit Funds"; ViewData["Subtitle"] = "Choose a payment method and submit your payment proof"; var first = Model.Methods.FirstOrDefault(); }
+@if (Model.Methods.Count == 0) { <div class="card card-pad empty-state">No deposit methods are currently available. Please contact support.</div> }
+else {
+<div class="card card-pad"><div class="card-head"><h3>1. Choose deposit method</h3><a asp-action="History" class="btn btn-outline btn-sm">View History</a></div>
+<div class="method-grid">@for(var i=0;i<Model.Methods.Count;i++){var m=Model.Methods[i];<label class="method-card @(i==0?"active":"")" data-method="@m.Id" data-name="@m.Name" data-min="@m.MinDeposit" data-max="@(m.MaxDeposit?.ToString() ?? "")" data-fee="@m.DepositFeePercent"><input type="radio" name="methodPicker" value="@m.Id" @(i==0?"checked":"")><div class="method-icon">@(m.MethodType == PaymentMethodType.Crypto ? "₮" : m.Name[..Math.Min(2,m.Name.Length)].ToUpperInvariant())</div><div><div class="method-name">@m.Name</div><div class="method-meta">Min $@m.MinDeposit.ToString("N2") · Fee @m.DepositFeePercent.ToString("0.##")%</div></div></label>}</div>
+@for(var i=0;i<Model.Methods.Count;i++){var m=Model.Methods[i];<div class="pay-detail-panel @(i==0?"show":"")" data-method-panel="@m.Id"><div class="payment-instructions"><div><div class="copy-field"><div><div class="copy-field-label">Account title</div><div class="copy-field-value">@(m.AccountTitle ?? "Not applicable")</div></div><button type="button" class="copy-btn"><span class="copy-btn-label">Copy</span></button></div><div class="copy-field"><div><div class="copy-field-label">@(m.MethodType == PaymentMethodType.Crypto ? "Wallet address" : "Account number")</div><div class="copy-field-value mono">@(m.MethodType == PaymentMethodType.Crypto ? m.WalletAddress : m.AccountNumber)</div></div><button type="button" class="copy-btn"><span class="copy-btn-label">Copy</span></button></div>@if(!string.IsNullOrWhiteSpace(m.Network)){<div class="copy-field"><div><div class="copy-field-label">Network</div><div class="copy-field-value">@m.Network</div></div></div>}@if(!string.IsNullOrWhiteSpace(m.Instructions)){<div class="alert-box alert-info"><span>@m.Instructions</span></div>}</div>@if(!string.IsNullOrWhiteSpace(m.QrImagePath)){<div><img src="@m.QrImagePath" alt="@m.Name QR" style="width:170px;max-width:100%;border-radius:10px;"></div>}</div></div>}</div>
+<div class="deposit-layout"><div class="card card-pad"><div class="card-head"><h3>2. Submit deposit details</h3></div><form method="post" enctype="multipart/form-data" id="depositForm"><div asp-validation-summary="ModelOnly"></div><input asp-for="Request.PaymentMethodId" type="hidden" value="@first?.Id">
+<div class="form-grid-2"><div class="field-group"><label class="field-label" asp-for="Request.Amount">Amount sent</label><div class="amount-input-wrap"><span class="amount-currency">$</span><input class="field-input" asp-for="Request.Amount" placeholder="0.00"></div><span asp-validation-for="Request.Amount"></span><div class="quick-amount-row"><button type="button" class="quick-amount-btn" data-amount="100">$100</button><button type="button" class="quick-amount-btn" data-amount="500">$500</button><button type="button" class="quick-amount-btn" data-amount="1000">$1,000</button><button type="button" class="quick-amount-btn" data-amount="5000">$5,000</button></div></div><div class="field-group"><label class="field-label" asp-for="Request.TransactionReference">Tx ID.</label><input class="field-input" asp-for="Request.TransactionReference" placeholder="e.g. transaction or trail ID"><span asp-validation-for="Request.TransactionReference"></span></div></div>
+@* <div class="field-group"><label class="field-label" asp-for="Request.SenderAccount">Sender account number / wallet used</label><input class="field-input" asp-for="Request.SenderAccount" placeholder="The account or wallet you sent from"><span asp-validation-for="Request.SenderAccount"></span></div>
+ *@<div class="field-group">
+    <label class="field-label" asp-for="Screenshot">Upload payment screenshot</label>
+    <div class="upload-box" id="uploadBox">
+        <input asp-for="Screenshot" accept="image/png,image/jpeg,image/webp" id="screenshotInput">
+        <div id="uploadPlaceholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+            <div class="upload-box-title">Click to upload payment proof</div>
+            <div class="upload-box-sub">PNG, JPG or WEBP, up to 5MB</div>
+        </div>
+    </div>
+    <div class="upload-preview-wrap" id="uploadPreviewWrap" style="display:none;">
+        <div class="upload-preview-card">
+            <img id="uploadPreviewImg" alt="Payment proof preview">
+            <div class="upload-preview-meta">
+                <div class="upload-preview-name" id="uploadPreviewName"></div>
+                <div class="upload-preview-size" id="uploadPreviewSize"></div>
+            </div>
+            <button type="button" class="upload-preview-remove" id="uploadPreviewRemove" aria-label="Remove uploaded image">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+    </div>
+    <span asp-validation-for="Screenshot"></span>
+</div>
+<button class="btn btn-gold btn-block" type="submit">Submit Deposit Request</button></form></div>
+<div class="card card-pad"><div class="card-head"><h3>Summary</h3></div><div class="summary-row"><span>Method</span><span id="summary-method">@first?.Name</span></div><div class="summary-row"><span>Minimum deposit</span><span class="mono" id="summary-min">$@first?.MinDeposit.ToString("N2")</span></div><div class="summary-row"><span>Maximum deposit</span><span class="mono" id="summary-max">@(first?.MaxDeposit.HasValue == true ? "$"+first.MaxDeposit.Value.ToString("N2") : "No fixed maximum")</span></div><div class="summary-row"><span>Fee</span><span class="mono" id="summary-fee">@first?.DepositFeePercent.ToString("0.##")%</span></div><div class="summary-row"><span>Status after submit</span><span>Pending review</span></div><div class="alert-box alert-info"><span>Your balance is credited only after an administrator verifies and approves the transaction.</span></div></div></div>
+@section Scripts {
+<script>
+document.querySelectorAll('.method-card').forEach(function(card){card.addEventListener('click',function(){document.getElementById('Request_PaymentMethodId').value=card.dataset.method;document.getElementById('summary-method').textContent=card.dataset.name;document.getElementById('summary-min').textContent='$'+Number(card.dataset.min).toLocaleString(undefined,{minimumFractionDigits:2});document.getElementById('summary-max').textContent=card.dataset.max?'$'+Number(card.dataset.max).toLocaleString(undefined,{minimumFractionDigits:2}):'No fixed maximum';document.getElementById('summary-fee').textContent=card.dataset.fee+'%';});});
+
+(function () {
+    var input = document.getElementById('screenshotInput');
+    var uploadBox = document.getElementById('uploadBox');
+    var placeholder = document.getElementById('uploadPlaceholder');
+    var previewWrap = document.getElementById('uploadPreviewWrap');
+    var previewImg = document.getElementById('uploadPreviewImg');
+    var previewName = document.getElementById('uploadPreviewName');
+    var previewSize = document.getElementById('uploadPreviewSize');
+    var removeBtn = document.getElementById('uploadPreviewRemove');
+    var currentUrl = null;
+
+    function formatSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    function clearPreview() {
+        if (currentUrl) { URL.revokeObjectURL(currentUrl); currentUrl = null; }
+        previewImg.src = '';
+        previewWrap.style.display = 'none';
+        uploadBox.style.display = '';
+    }
+
+    input.addEventListener('change', function () {
+        var file = input.files && input.files[0];
+        if (!file) { clearPreview(); return; }
+
+        if (!/^image\/(png|jpeg|webp)$/.test(file.type)) {
+            clearPreview();
+            input.value = '';
+            return;
+        }
+
+        if (currentUrl) URL.revokeObjectURL(currentUrl);
+        currentUrl = URL.createObjectURL(file);
+
+        previewImg.src = currentUrl;
+        previewName.textContent = file.name;
+        previewSize.textContent = formatSize(file.size);
+
+        uploadBox.style.display = 'none';
+        previewWrap.style.display = 'block';
+    });
+
+    removeBtn.addEventListener('click', function () {
+        input.value = '';
+        clearPreview();
+    });
+})();
+</script>
+}
+}

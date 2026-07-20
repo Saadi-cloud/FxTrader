@@ -1,0 +1,15 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace TahirFxTrader.Web.Controllers;
+
+[Authorize]
+public sealed class CompanyInfoController : Controller
+{
+    public IActionResult Index()
+    {
+        ViewData["Title"] = "Company Info";
+        ViewData["Subtitle"] = "About OLX Trade and our global presence";
+        return View();
+    }
+}

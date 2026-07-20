@@ -1,0 +1,8 @@
+No database migration is required for this update.
+
+Deployment requirements:
+1. Deploy to a public HTTPS domain.
+2. Set Site:PublicBaseUrl in appsettings.json to the live domain.
+3. Confirm this image opens without login: /images/referral/olx-referral-og.jpg
+4. Share the /invite/USR-... URL, not the direct registration URL.
+5. Increase Site:ReferralPreviewVersion when forcing WhatsApp/Facebook to refresh a cached card.

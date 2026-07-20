@@ -1,0 +1,95 @@
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    string Active(string name) => controller.Equals(name, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+    var title = /* ViewData["Title"]?.ToString() ?? */ "Dashboard";
+    var sub = ViewData["Subtitle"]?.ToString() ?? "Manage your wallet and transactions";
+
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@title — OLX Trade</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+</head>
+<style>
+    .topbar-mobile-logo {
+        display: none;
+        height: 50px;
+        width: auto;
+        margin-bottom: 5px;
+    }
+
+    @@media (max-width:900px) {
+        .topbar-title-wrap {
+            display: none;
+        }
+
+        .topbar-mobile-logo {
+            display: block;
+        }
+    }
+</style>
+<body>
+    <div class="app-shell">
+        <div class="sidebar-overlay"></div>
+        <aside class="sidebar">
+            <div class="brand"><a href="/"><img class="brand-logo" src="/images/brand/logo.png" alt="OLX Trade"></a></div>
+            @*  <div class="brand"><div class="brand-mark">OT</div><div class="brand-name">OLX <span>Trade</span></div></div> *@
+
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Main</div>
+                <a asp-controller="Dashboard" asp-action="Index" class="nav-link @Active("Dashboard")"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5" /><rect x="14" y="3" width="7" height="5" rx="1.5" /><rect x="14" y="12" width="7" height="9" rx="1.5" /><rect x="3" y="16" width="7" height="5" rx="1.5" /></svg>Dashboard</a>
+                @if (User.IsInRole("Admin") || User.HasClaim("permission", Permissions.DepositCreate))
+                {
+                    <a asp-controller="Deposit" asp-action="Create" class="nav-link @Active("Deposit")"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2" /><path d="M2 10h20" /><circle cx="16" cy="15" r="1.5" /></svg>Deposit</a>
+                }
+                @if (User.IsInRole("Admin") || User.HasClaim("permission", Permissions.WithdrawalCreate))
+                {
+                    <a asp-controller="Withdrawal" asp-action="Create" class="nav-link @Active("Withdrawal")"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2" /><path d="M2 10h20" /><path d="M6 15h4" /></svg>Withdraw</a>
+                }
+                @if (User.IsInRole("Admin") || User.HasClaim("permission", Permissions.DepositHistory))
+                {
+                    <a asp-controller="Deposit" asp-action="History" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7" /></svg>Deposit History</a>
+                }
+                @if (User.IsInRole("Admin") || User.HasClaim("permission", Permissions.WithdrawalHistory))
+                {
+                    <a asp-controller="Withdrawal" asp-action="History" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7" /></svg>Withdraw History</a>
+                }
+                @if (User.IsInRole("Admin") || User.HasClaim("permission", Permissions.StatementView))
+                {
+                    <a asp-controller="Statement" asp-action="Index" class="nav-link @Active("Statement")"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6M9 13h6M9 17h6" /></svg>Statement</a>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="nav-section-label">Administration</div>
+                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 7 .9-5 4.8 1.3 6.8L12 17l-6.3 3.5L7 13.7 2 8.9 9 8z" /></svg>Admin Panel</a>
+ }
+                <div class="nav-section-label">Account</div>
+                <a asp-controller="CompanyInfo" asp-action="Index" class="nav-link @Active("CompanyInfo")"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-6h6v6M9 10h.01M15 10h.01M12 10h.01" /></svg>Company Info</a>
+                <a asp-controller="Profile" asp-action="Security" class="nav-link @Active("Profile")"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" /></svg>Account Security</a>
+                @*     <a href="https://t.me/olxtradesupport" target="_blank" rel="noopener noreferrer" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 3 3 10l7 3 3 7 8-17Z"/><path d="m10 13 5-5"/></svg>Telegram Support</a> *@
+                <a href="https://t.me/olxolxtradesupport" target="_blank" rel="noopener noreferrer" class="nav-telegram"><div class="nav-telegram-icon"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.568 8.16l-1.92 9.05c-.144.64-.523.8-1.06.5l-2.94-2.17-1.42 1.37-.38-2.67 6.34-5.72c.28-.25-.06-.39-.43-.14l-7.84 4.94-3.37-1.05c-.73-.23-.75-.73.15-1.08l13.18-5.09c.61-.23 1.14.15.95 1.11z" /></svg></div><div class="nav-telegram-text"><strong>24 / 7 Live Support</strong><small>Live updates on Telegram</small></div></a>
+            </nav>
+            <div class="sidebar-footer"><form asp-controller="Auth" asp-action="Logout" method="post"><button type="submit" class="logout-link" style="border:0;background:none;width:100%;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="M16 17l5-5-5-5M21 12H9" /></svg>Log out</button></form></div>
+        </aside>
+        <div class="main">
+            <header class="topbar"><div class="topbar-left"><button class="menu-toggle" aria-label="Toggle menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18" /></svg></button><a href="/" class="topbar-logo"><img class="topbar-mobile-logo" src="/images/brand/logo.png" alt="OLX Trade"></a><div class="topbar-title-wrap"><div class="page-title">@title</div><div class="page-sub">@sub</div></div></div><div class="topbar-right"><div class="user-chip"><div class="user-avatar">@User.Initials()</div><div><div class="user-chip-name">@User.Identity?.Name</div><div class="user-chip-tier">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value · <span class="mono">@User.FindFirst("user_trace_id")?.Value</span></div></div></div></div></header>
+            <main class="content"><partial name="_Flash" />@RenderBody()</main>
+            <footer class="app-footer"><span>&copy; @DateTime.UtcNow.Year OLX Trade. All rights reserved.</span><span><a asp-controller="CompanyInfo" asp-action="Index">Company Info</a> &middot; <a href="https://t.me/olxtradesupport" target="_blank" rel="noopener noreferrer">Support</a> &middot; <a href="#">Terms</a> &middot; <a href="#">Privacy</a></span></footer>
+        </div>
+    </div>
+    <script src="~/js/vendor/olx-qr.js" asp-append-version="true"></script>
+    <script src="~/js/app.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

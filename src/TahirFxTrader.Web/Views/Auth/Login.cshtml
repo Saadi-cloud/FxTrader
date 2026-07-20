@@ -1,0 +1,52 @@
+@model LoginRequest
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Log in";
+}
+<div class="olx-auth-title-row">
+    <div>
+        <h1>Log in</h1>
+        <p>Access your OLX Trade wallet and account dashboard.</p>
+    </div>
+    <span class="olx-auth-security-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg>
+    </span>
+</div>
+
+<form id="loginForm" method="post" class="olx-auth-form">
+    <div asp-validation-summary="ModelOnly"></div>
+
+    <div class="field-group">
+        <label class="field-label" asp-for="Email">Email address</label>
+        <input class="field-input olx-auth-input" asp-for="Email" autocomplete="email" placeholder="Enter your email address">
+        <span asp-validation-for="Email"></span>
+    </div>
+
+    <div class="field-group">
+        <label class="field-label" asp-for="Password"></label>
+        <div class="field-wrap-pass">
+            <input class="field-input olx-auth-input" asp-for="Password" autocomplete="current-password" placeholder="Enter your password">
+            <button type="button" class="pass-toggle" aria-label="Show or hide password">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+        </div>
+        <span asp-validation-for="Password"></span>
+    </div>
+
+    <div class="login-row-between olx-auth-options">
+        <label class="remember-check"><input asp-for="RememberMe"> Remember me</label>
+        <a asp-action="ForgotPassword" class="forgot-link">Can’t log in?</a>
+    </div>
+
+    <button type="submit" class="btn btn-gold btn-block olx-auth-submit">Log In</button>
+</form>
+
+<div class="olx-auth-divider"><span>secure account access</span></div>
+<div class="olx-auth-security-note">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 4 6v5c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-3Z"/><path d="m9 12 2 2 4-5"/></svg>
+    <span>Your password is transmitted over an encrypted connection.</span>
+</div>
+<div class="olx-auth-bottom-links">
+    <a asp-action="Register">Create an OLX Trade Account</a>
+    <a asp-action="ForgotPassword">Forgot password?</a>
+</div>
