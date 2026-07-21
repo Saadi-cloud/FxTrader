@@ -58,7 +58,7 @@ public sealed class WithdrawalService : IWithdrawalService
         try
         {
             var walletLabel = request.WalletSource == "Investment" ? "Investment Wallet" : "Profit + Commission Wallet";
-            await _email.SendWithdrawalVerificationCodeAsync(user.Email, user.FullName, code, request.Amount, walletLabel, ct);
+            await _email.SendWithdrawalVerificationCodeAsync(user.Email, user.FullName, code, request.Amount.Value, walletLabel, ct);
         }
         catch
         {

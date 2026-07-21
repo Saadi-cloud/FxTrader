@@ -36,7 +36,132 @@
         .trade-uid b {
             font-size: 010px;
         }
+
+    .trade-portfolio-value {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .balance-eye-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        border: none;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 8px;
+        color: #848e9c;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+    }
+
+        .balance-eye-btn:hover {
+            background: rgba(240, 185, 11, 0.1);
+            color: var(--gold, #f0b90b);
+        }
+
+        .balance-eye-btn svg {
+            width: 17px;
+            height: 17px;
+        }
+
+    .trade-social-grid .sp.youtube span {
+        background: transparent;
+    }
+
+        .trade-social-grid .sp.youtube span svg {
+            width: 26px;
+            height: 26px;
+            display: block;
+        }
+
+    .trade-social-grid .sp.youtube:hover {
+        border-color: #ff0000;
+        transform: translateY(-3px);
+    }
+
+        .trade-social-grid .sp.youtube:hover span svg rect {
+            fill: #e60000;
+        }
+
+    .trade-social-grid .sp.youtube span svg {
+        width: 26px;
+        height: 26px;
+        display: block;
+        animation: yt-pulse 2.4s ease-in-out infinite;
+    }
+
+    @@keyframes yt-pulse {
+        0%, 100%
+
+    {
+        transform: scale(1);
+        filter: drop-shadow(0 0 0 rgba(255, 0, 0, 0));
+    }
+
+    50% {
+        transform: scale(1.08);
+        filter: drop-shadow(0 0 6px rgba(255, 0, 0, 0.55));
+    }
+
+    }
+
+    .trade-social-grid .sp.youtube:hover span svg {
+        animation: none;
+        transform: scale(1.15);
+        filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.7));
+        transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .trade-social-grid .sp.youtube:hover {
+        border-color: #ff0000;
+        transform: translateY(-3px);
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .trade-social-grid .sp.youtube span svg
+
+    {
+        animation: none;
+    }
+
+    }
 </style>
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var display = document.getElementById('balanceDisplay');
+            var toggleBtn = document.getElementById('balanceToggle');
+            var eyeOpen = document.getElementById('eyeOpen');
+            var eyeClosed = document.getElementById('eyeClosed');
+            if (!display || !toggleBtn) {
+                console.warn('Balance toggle elements not found');
+                return;
+            }
+
+            var realValue = '$' + display.dataset.realValue;
+            var maskedValue = '*****';
+            var isHidden = localStorage.getItem('olx_balance_hidden') === 'true';
+
+            function render() {
+                display.textContent = isHidden ? maskedValue : realValue;
+                eyeOpen.style.display = isHidden ? 'none' : '';
+                eyeClosed.style.display = isHidden ? '' : 'none';
+            }
+
+            toggleBtn.addEventListener('click', function () {
+                isHidden = !isHidden;
+                localStorage.setItem('olx_balance_hidden', isHidden);
+                render();
+            });
+
+            render();
+        });
+    </script>
+}
 
 <div class="trade-dashboard" data-referral-url="@Model.ReferralLink" data-referral-code="@Model.UserTraceId" data-referral-rate="@rateText">
     <section class="trade-hero" id="tradeHero">
@@ -51,9 +176,17 @@
                 <div class="trade-eyebrow"><span class="trade-live-dot"></span> Portfolio overview</div>
                 <h1>Welcome, <span>@Model.FullName</span></h1>
                 
-                <div class="trade-portfolio-label">Total Avalible Balance</div>
-                <div class="trade-portfolio-value mono">$@totalPortfolio.ToString("N2") <small>USD</small></div>
-          
+               @*  <div class="trade-portfolio-label">Total Avalible Balance</div>
+                <div class="trade-portfolio-value mono">$@totalPortfolio.ToString("N2") <small>USD</small></div> *@
+                <div class="trade-portfolio-label">Available Balance</div>
+                <div class="trade-portfolio-value mono">
+                    <span id="balanceDisplay" data-real-value="@totalPortfolio.ToString("N2")">$@totalPortfolio.ToString("N2")</span>
+                    <small>USD</small>
+                    <button type="button" id="balanceToggle" class="balance-eye-btn" aria-label="Toggle balance visibility">
+                        <svg id="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+                        <svg id="eyeClosed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none;"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.3 20.3 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 5c7 0 11 7 11 7a20.3 20.3 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24" /><path d="M1 1l22 22" /></svg>
+                    </button>
+                </div>
                 <div class="trade-hero-actions">
                     <a asp-controller="Deposit" asp-action="Create" class="trade-btn trade-btn-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>Deposit</a>
                     <a asp-controller="Withdrawal" asp-action="Create" class="trade-btn trade-btn-dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>Withdraw</a>
@@ -76,16 +209,16 @@
         </div>
     </section>
 
-    <section class="trade-metrics">
-        <article class="trade-metric-card"><div class="trade-metric-icon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M16 15h2"/></svg></div><div><span>Investment Wallet</span><strong class="mono">$@Model.InvestmentBalance.ToString("N2")</strong><small>@* Original deposit principal *@</small></div></article>
-        <article class="trade-metric-card"><div class="trade-metric-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 17l5-5 4 4 7-9"/><path d="M15 7h5v5"/></svg></div><div><span>Profit Wallet</span><strong class="mono green-text">$@Model.ProfitBalance.ToString("N2")</strong><small>@* Compounds with investment *@</small></div></article>
-        <article class="trade-metric-card"><div class="trade-metric-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M17 8h4M19 6v4"/></svg></div><div><span>Commission Wallet</span><strong class="mono">$@Model.CommissionBalance.ToString("N2")</strong><small>Referral earnings balance</small></div></article>
-        <article class="trade-metric-card"><div class="trade-metric-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><span>Next Profit Base</span><strong class="mono">$@Model.CompoundProfitBase.ToString("N2")</strong><small>Investment + existing profit</small></div></article>
+    <section class="trade-metrics trade-metrics-compact">
+        <article class="trade-metric-card"><div class="trade-metric-icon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18M16 15h2" /></svg></div><div><span>Investment Wallet</span><strong class="mono">$@Model.InvestmentBalance.ToString("N2")</strong></div></article>
+        <article class="trade-metric-card"><div class="trade-metric-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 17l5-5 4 4 7-9" /><path d="M15 7h5v5" /></svg></div><div><span>Profit Wallet</span><strong class="mono green-text">$@Model.ProfitBalance.ToString("N2")</strong></div></article>
+        <article class="trade-metric-card"><div class="trade-metric-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3" /><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M17 8h4M19 6v4" /></svg></div><div><span>Commission Wallet</span><strong class="mono">$@Model.CommissionBalance.ToString("N2")</strong></div></article>
+        <article class="trade-metric-card"><div class="trade-metric-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg></div><div><span>Next Profit Base</span><strong class="mono">$@Model.CompoundProfitBase.ToString("N2")</strong></div></article>
     </section>
 
     <section class="trade-content-grid">
         <article class="trade-panel trade-portfolio-panel">
-            <div class="trade-panel-head"><div><h2>Portfolio Distribution</h2><p>Your available value separated by wallet type.</p></div><a asp-controller="Statement" asp-action="Index">View statement →</a></div>
+            <div class="trade-panel-head"><div><h2>Portfolio Distribution</h2><p>Your available value separated by wallet type.</p></div><a asp-controller="Statement" asp-action="Index">View statement</a></div>
             <div class="trade-wallet-overview">
                 <div class="trade-ring"
                      style="--investment-end:@ringInvestmentCss%; --profit-end:@ringProfitCss%;">
@@ -133,14 +266,14 @@
     </section>
 
     <section class="trade-lower-grid">
-        <article class="trade-panel">
+@*         <article class="trade-panel">
             <div class="trade-panel-head"><div><h2>Account Status</h2><p>Pending actions and account availability.</p></div></div>
             <div class="trade-activity-list">
                 <div><i class="gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 19V5M5 12l7-7 7 7"/></svg></i><span>Pending Deposits<small>Waiting for verification</small></span><strong>@Model.PendingDeposits</strong></div>
                 <div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12l7 7 7-7"/></svg></i><span>Pending Withdrawals<small>Payment processing queue</small></span><strong>@Model.PendingWithdrawals</strong></div>
                 <div><i class="green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 4 4L19 6"/><circle cx="12" cy="12" r="9"/></svg></i><span>Account Verification<small>Email verified and active</small></span><strong class="active">Active</strong></div>
             </div>
-        </article>
+        </article> *@
 
         <article class="trade-panel">
             <div class="trade-panel-head"><div><h2>Connect with OLX Trade</h2><p>Official channels, announcements and support.</p></div></div>
@@ -152,24 +285,343 @@
                 <a class="tg" href="https://t.me/olxtradeofficial" target="_blank" rel="noopener"><span>➤</span>Telegram</a>
                 <a class="th" href="https://www.threads.com/@@olxtrade" target="_blank" rel="noopener"><span>@@</span>Threads</a>
                 <a class="dc" href="https://discord.gg/GQrmrafAc" target="_blank" rel="noopener"><span>◉</span>Discord</a>
-               
+
                 <a class="sp youtube"
-                   href="#"
+                   href="https://www.youtube.com/shorts/Nx47MYamFC4"
                    target="_blank"
                    rel="noopener noreferrer"
                    aria-label="Visit our YouTube channel">
-
                     <span>
                         <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill="currentColor"
-                                  d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4L15.8 12l-6.2 3.6Z" />
+                            <rect x="0.5" y="4.5" width="23" height="15" rx="6" fill="#FF0000" />
+                            <path fill="#fff" d="M9.6 15.6V8.4L15.8 12l-6.2 3.6Z" />
                         </svg>
                     </span>
-
                     YouTube
                 </a>
+                <a class="sp google"
+                   href="https://share.google/JMz4HSID0d6eMWZGB"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Visit our Google page">
+                    <span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill="#4285F4" d="M23.5 12.27c0-.85-.08-1.67-.22-2.45H12v4.63h6.46c-.28 1.5-1.13 2.77-2.4 3.62v3.01h3.88c2.27-2.09 3.56-5.17 3.56-8.81Z" />
+                            <path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.94-2.92l-3.88-3.01c-1.08.72-2.45 1.15-4.06 1.15-3.13 0-5.78-2.11-6.73-4.96H1.27v3.11C3.24 21.3 7.29 24 12 24Z" />
+                            <path fill="#FBBC05" d="M5.27 14.26a7.2 7.2 0 0 1 0-4.52V6.63H1.27a12 12 0 0 0 0 10.74l4-3.11Z" />
+                            <path fill="#EA4335" d="M12 4.75c1.76 0 3.34.6 4.59 1.79l3.44-3.44C17.95 1.19 15.24 0 12 0 7.29 0 3.24 2.7 1.27 6.63l4 3.11C6.22 6.86 8.87 4.75 12 4.75Z" />
+                        </svg>
+                    </span>
+                    Google
+                </a>
+
             </div>
         </article>
     </section>
+
+</div>
+@{
+    ViewData["Title"] = "Investment Company";
+    ViewData["Subtitle"] = "About OLX Trade, our investment model, and our precious-metals strategy";
+}
+
+<div class="ci-page">
+@*     <nav class="ci-breadcrumb" aria-label="Breadcrumb">
+        <a asp-controller="Dashboard" asp-action="Index">Home</a>
+        <span class="ci-breadcrumb-sep">›</span>
+        <span>About Us</span>
+    </nav> *@
+    <!-- Global Presence -->
+    <section class="ci-global">
+        <a asp-controller="Auth" asp-action="Register" class="ci-register-btn">Start Investing</a>
+
+        <h2 class="ci-global-title">
+            Connecting Investors Across
+            <span class="ci-gold-grad">Global Markets</span>
+        </h2>
+        <p class="ci-global-lead">
+            OLX Trade connects investors with a professionally managed investment approach focused mainly
+            on gold and silver trading. We manage trading activities, share clear performance updates,
+            and distribute profits according to the selected investment plan and actual trading results.
+        </p>
+
+        <div class="ci-map" aria-hidden="true">
+            <img class="ci-map-img" src="~/images/company/world-map.png" alt="" width="1000" height="562" loading="lazy" decoding="async">
+        </div>
+
+        <div class="ci-office-grid">
+            <article class="ci-office-card">
+                <span class="ci-office-accent" style="--dot:#14b8a6"></span>
+                <img class="ci-flag" src="~/images/flags/ch.svg" alt="" width="44" height="44">
+                <div>
+                    <strong>Switzerland Investor Relations</strong>
+                    <span>Switzerland</span>
+                </div>
+            </article>
+           
+            <article class="ci-office-card">
+                <span class="ci-office-accent" style="--dot:#22c55e"></span>
+                <img class="ci-flag" src="~/images/flags/ae.svg" alt="" width="44" height="44">
+                <div>
+                    <strong>Emirates Investor Relations</strong>
+                    <span>United Arab Emirates</span>
+                </div>
+            </article>
+            <article class="ci-office-card">
+                <span class="ci-office-accent" style="--dot:#a78bfa"></span>
+                <img class="ci-flag" src="~/images/flags/in.svg" alt="" width="44" height="44">
+                <div>
+                    <strong>South Asia Investor Relations</strong>
+                    <span>India</span>
+                </div>
+            </article>
+            <article class="ci-office-card">
+                <span class="ci-office-accent" style="--dot:#38bdf8"></span>
+                <img class="ci-flag" src="~/images/flags/sg.svg" alt="" width="44" height="44">
+                <div>
+                    <strong>Asia Pacific Investor Relations</strong>
+                    <span>Singapore</span>
+                </div>
+            </article>
+            <article class="ci-office-card">
+                <span class="ci-office-accent" style="--dot:#f472b6"></span>
+                <img class="ci-flag" src="~/images/flags/gb.svg" alt="" width="44" height="44">
+                <div>
+                    <strong>Europe Investor Relations</strong>
+                    <span>United Kingdom</span>
+                </div>
+            </article>
+            <article class="ci-office-card">
+                <span class="ci-office-accent" style="--dot:#84cc16"></span>
+                <img class="ci-flag" src="~/images/flags/us.svg" alt="" width="44" height="44">
+                <div>
+                    <strong>Americas Investor Relations</strong>
+                    <span>United States</span>
+                </div>
+            </article>
+            <article class="ci-office-card">
+                <span class="ci-office-accent" style="--dot:#ef4444"></span>
+                <img class="ci-flag" src="~/images/flags/au.svg" alt="" width="44" height="44">
+                <div>
+                    <strong>Oceania Investor Relations</strong>
+                    <span>Australia</span>
+                </div>
+            </article>
+            <article class="ci-office-card">
+                <span class="ci-office-accent" style="--dot:#2dd4bf"></span>
+                <img class="ci-flag" src="~/images/flags/tr.svg" alt="" width="44" height="44">
+                <div>
+                    <strong>Türkiye Investor Relations</strong>
+                    <span>Türkiye</span>
+                </div>
+            </article>
+            <article class="ci-office-card">
+                <span class="ci-office-accent" style="--dot:#c084fc"></span>
+                <img class="ci-flag" src="~/images/flags/sa.svg" alt="" width="44" height="44">
+                <div>
+                    <strong>Gulf Investor Relations</strong>
+                    <span>Saudi Arabia</span>
+                </div>
+            </article>
+            <article class="ci-office-card">
+                <span class="ci-office-accent" style="--dot:#fb923c"></span>
+                <img class="ci-flag" src="~/images/flags/my.svg" alt="" width="44" height="44">
+                <div>
+                    <strong>Southeast Asia Investor Relations</strong>
+                    <span>Malaysia</span>
+                </div>
+            </article>
+            <article class="ci-office-card">
+                <span class="ci-office-accent" style="--dot:#60a5fa"></span>
+                <img class="ci-flag" src="~/images/flags/ca.svg" alt="" width="44" height="44">
+                <div>
+                    <strong>Canada Investor Relations</strong>
+                    <span>Canada</span>
+                </div>
+            </article>
+            <article class="ci-office-card">
+                <span class="ci-office-accent" style="--dot:#eab308"></span>
+                <img class="ci-flag" src="~/images/flags/bd.svg" alt="" width="44" height="44">
+                <div>
+                    <strong>Bangladesh Investor Relations</strong>
+                    <span>Bangladesh</span>
+                </div>
+            </article>
+            <article class="ci-office-card">
+                <span class="ci-office-accent" style="--dot:#4ade80"></span>
+                <img class="ci-flag" src="~/images/flags/qa.svg" alt="" width="44" height="44">
+                <div>
+                    <strong>Qatar Investor Relations</strong>
+                    <span>Qatar</span>
+                </div>
+            </article>
+            <article class="ci-office-card">
+                <span class="ci-office-accent" style="--dot:#f43f5e"></span>
+                <img class="ci-flag" src="~/images/flags/kw.svg" alt="" width="44" height="44">
+                <div>
+                    <strong>Kuwait Investor Relations</strong>
+                    <span>Kuwait</span>
+                </div>
+            </article>
+            <article class="ci-office-card">
+                <span class="ci-office-accent" style="--dot:#818cf8"></span>
+                <img class="ci-flag" src="~/images/flags/ph.svg" alt="" width="44" height="44">
+                <div>
+                    <strong>Philippines Investor Relations</strong>
+                    <span>Philippines</span>
+                </div>
+            </article>
+         
+            <article class="ci-office-card">
+                <span class="ci-office-accent" style="--dot:#F0B90B"></span>
+                <img class="ci-flag" src="~/images/flags/pk.svg" alt="" width="44" height="44">
+                <div>
+                    <strong>Asia Invester Relations</strong>
+                    <span>Pakistan · Investment Operations</span>
+                </div>
+            </article>
+        </div>
+    </section>
+    <!-- About -->
+    <section class="ci-about mt-5">
+        <div class="ci-about-copy">
+            <h1 class="ci-heading">About OLX Trade</h1>
+            <p>
+                OLX Trade is an investment company focused on creating opportunities through professionally
+                managed gold and silver trading. Investors provide capital, our team uses that capital in
+                planned precious-metals trading activities, and eligible profits are distributed according
+                to the agreed investment terms and actual performance. Investment returns are not guaranteed,
+                and all investments involve risk.
+            </p>
+        </div>
+        <div class="ci-about-logo" aria-hidden="true">
+            <div class="ci-logo-ring">
+                <div class="ci-logo-inner">
+                    <img src="~/images/brand/logo.png" alt="" class="ci-logo-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="ci-divider" />
+
+    <!-- Mission -->
+    <section class="ci-block">
+        <h2 class="ci-heading ci-heading-sm">Our Mission</h2>
+        <div class="ci-mission-row">
+            <span class="ci-icon-badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                    <circle cx="12" cy="12" r="8" />
+                    <circle cx="12" cy="12" r="4" />
+                    <circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none" />
+                    <path d="M16.5 7.5 21 3M18 3h3v3" />
+                </svg>
+            </span>
+            <p>
+                To provide investors with a clear and accessible way to participate in professionally managed
+                gold and silver trading through disciplined strategies, transparent reporting, responsible
+                risk management, and dependable investor support.
+            </p>
+        </div>
+    </section>
+
+    <hr class="ci-divider" />
+
+    <!-- Vision -->
+    <section class="ci-block">
+        <h2 class="ci-heading ci-heading-sm">Our Vision</h2>
+        <div class="ci-mission-row">
+            <span class="ci-icon-badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" />
+                    <circle cx="12" cy="12" r="3" />
+                </svg>
+            </span>
+            <p>
+                To become a trusted investment company recognized for responsible precious-metals trading,
+                transparent investor relationships, and sustainable long-term value creation.
+            </p>
+        </div>
+    </section>
+
+    <hr class="ci-divider" />
+
+    <!-- What We Offer -->
+    <section class="ci-block">
+        <h2 class="ci-heading ci-heading-sm">What We Offer</h2>
+        <div class="ci-offer-grid">
+            <div class="ci-offer-item">
+                <span class="ci-offer-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                        <path d="M12 3 4 6v5c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-3Z" />
+                        <path d="m9 12 2 2 4-5" />
+                    </svg>
+                </span>
+                <span>Structured Investment Process</span>
+            </div>
+            <div class="ci-offer-item">
+                <span class="ci-offer-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                        <path d="M4 19V9M10 19V5M16 19v-7M22 19H2" />
+                    </svg>
+                </span>
+                <span>Gold &amp; Silver Trading Focus</span>
+            </div>
+            <div class="ci-offer-item">
+                <span class="ci-offer-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
+                    </svg>
+                </span>
+                <span>Performance-Based Profit Distribution</span>
+            </div>
+            <div class="ci-offer-item">
+                <span class="ci-offer-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                        <path d="M4 14v-2a8 8 0 0 1 16 0v2" />
+                        <rect x="2" y="14" width="5" height="6" rx="1.5" />
+                        <rect x="17" y="14" width="5" height="6" rx="1.5" />
+                        <path d="M12 18v3M9 21h6" />
+                    </svg>
+                </span>
+                <span>Dedicated Investor Support</span>
+            </div>
+        </div>
+    </section>
+
+    <hr class="ci-divider" />
+
+    <!-- Why Choose -->
+    <section class="ci-block">
+        <h2 class="ci-heading ci-heading-sm">Why Choose OLX Trade?</h2>
+        <ul class="ci-why-list">
+            <li>
+                <span class="ci-check" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12 5 5L20 7" /></svg>
+                </span>
+                Simple and accessible investment onboarding
+            </li>
+            <li>
+                <span class="ci-check" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12 5 5L20 7" /></svg>
+                </span>
+                Clear investment plans and performance reporting
+            </li>
+            <li>
+                <span class="ci-check" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12 5 5L20 7" /></svg>
+                </span>
+                Primary focus on gold and silver market opportunities
+            </li>
+            <li>
+                <span class="ci-check" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12 5 5L20 7" /></svg>
+                </span>
+                Responsible risk management and dedicated investor support
+            </li>
+        </ul>
+    </section>
+
 
 </div>

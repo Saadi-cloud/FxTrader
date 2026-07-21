@@ -1,14 +1,70 @@
 @model IReadOnlyList<WithdrawalTransaction>
 @{ ViewData["Title"]="Withdrawal History"; ViewData["Subtitle"]="Review pending, processing, completed, and rejected requests"; string Badge(TransactionStatus s)=>s==TransactionStatus.Completed?"badge-success":s==TransactionStatus.Rejected?"badge-danger":"badge-pending"; string Source(string value)=>value=="Investment"?"Investment":value=="ProfitCommission"?"Profit + Commission":"Legacy mixed"; }
-<div class="mini-stat-row"><div class="mini-stat"><div class="mini-stat-label">Total Requests</div><div class="mini-stat-value">@Model.Count</div></div><div class="mini-stat"><div class="mini-stat-label">Completed</div><div class="mini-stat-value mono" style="color:var(--green);">$@Model.Where(x=>x.Status==TransactionStatus.Completed).Sum(x=>x.Amount).ToString("N2")</div></div><div class="mini-stat"><div class="mini-stat-label">Pending / Processing</div><div class="mini-stat-value">@Model.Count(x=>x.Status==TransactionStatus.Pending||x.Status==TransactionStatus.Processing)</div></div></div>
-<div class="card card-pad"><div class="card-head"><h3>Withdrawal Requests</h3><a asp-action="Create" class="btn btn-gold btn-sm">New Withdrawal</a></div>@if(Model.Count==0){
-<div class="empty-state">No withdrawal requests found.</div>
-}else
-{
+<div class="mini-stat-row withdrawal-summary-stats">
+    @* <div class="mini-stat">
+        <div class="mini-stat-label">Total Requests</div>
+        <div class="mini-stat-value">@Model.Count</div>
+    </div> *@
+    <div class="mini-stat">
+        <div class="mini-stat-label">Completed</div>
+        <div class="mini-stat-value mono" style="color:var(--green);">$@Model.Where(x => x.Status == TransactionStatus.Completed).Sum(x => x.Amount).ToString("N2")</div>
+    </div>
+    <div class="mini-stat">
+        <div class="mini-stat-label">Pending / Processing</div>
+        <div class="mini-stat-value">@Model.Count(x => x.Status == TransactionStatus.Pending || x.Status == TransactionStatus.Processing)</div>
+    </div>
+</div>
+<div class="card card-pad">
+    <div class="card-head">
+        <h3>Withdrawal Requests</h3>
+        <a asp-action="Create" class="btn btn-gold btn-sm">New Withdrawal</a>
+    </div>@if(Model.Count==0){
+    <div class="empty-state">No withdrawal requests found.</div>
+        }else
+    {
 
-    <div class="table-wrap"><table class="data-table withdrawal-table"><thead><tr><th>Date</th><th>Reference</th><th>Wallet</th><th>Method</th><th>Destination</th><th>Amount</th><th>Fee</th><th>Receive</th><th>Profit Used</th><th>Commission Used</th><th>Investment Used</th><th>Status</th></tr></thead><tbody>@foreach(var row in Model){
-    <tr><td>@row.CreatedAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</td><td class="mono">@row.ReferenceNo</td><td><span class="badge @(row.WalletSource == "Investment" ? "badge-pending" : "badge-success")">@Source(row.WalletSource)</span></td><td>@row.PaymentMethodName</td><td>@row.DestinationDisplay</td><td class="mono">$@row.Amount.ToString("N2")</td><td class="mono">$@row.FeeAmount.ToString("N2")</td><td class="mono">$@row.NetAmount.ToString("N2")</td><td class="mono" style="color:var(--green);">$@row.ProfitAmount.ToString("N2")</td><td class="mono" style="color:var(--gold);">$@row.CommissionAmount.ToString("N2")</td><td class="mono">$@row.InvestmentAmount.ToString("N2")</td><td><span class="badge @Badge(row.Status)">@row.Status</span></td></tr>
-}
-</tbody></table></div>
-}
+        <div class="table-wrap">
+            <table class="data-table withdrawal-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Reference</th>
+                        <th>Wallet</th>
+                        <th>Method</th>
+                        <th>Destination</th>
+                        <th>Amount</th>
+                        <th>Fee</th>
+                        <th>Receive</th>
+                        <th>Profit Used</th>
+                        <th>Commission Used</th>
+                        <th>Investment Used</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model)
+                    {
+                        <tr>
+                            <td>@row.CreatedAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</td>
+                            <td class="mono">@row.ReferenceNo</td>
+                            <td>
+                                <span class="badge @(row.WalletSource == " Investment" ? "badge-pending" : "badge-success")">@Source(row.WalletSource)</span>
+                            </td>
+                            <td>@row.PaymentMethodName</td>
+                            <td>@row.DestinationDisplay</td>
+                            <td class="mono">$@row.Amount.ToString("N2")</td>
+                            <td class="mono">$@row.FeeAmount.ToString("N2")</td>
+                            <td class="mono">$@row.NetAmount.ToString("N2")</td>
+                            <td class="mono" style="color:var(--green);">$@row.ProfitAmount.ToString("N2")</td>
+                            <td class="mono" style="color:var(--gold);">$@row.CommissionAmount.ToString("N2")</td>
+                            <td class="mono">$@row.InvestmentAmount.ToString("N2")</td>
+                            <td>
+                                <span class="badge @Badge(row.Status)">@row.Status</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 </div>

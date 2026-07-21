@@ -6,14 +6,13 @@
     var selectedSource = string.IsNullOrWhiteSpace(Model.Request.WalletSource) ? "ProfitCommission" : Model.Request.WalletSource;
 }
 
+
 <div class="mini-stat-row withdrawal-wallet-stats">
+    <div class="mini-stat"><div class="mini-stat-label">Profit + Commission</div><div class="mini-stat-value mono" style="color:var(--green);">$@Model.ProfitCommissionBalance.ToString("N2")</div><div class="mini-stat-hint">No withdrawal fee</div></div>
     <div class="mini-stat"><div class="mini-stat-label">Investment Wallet</div><div class="mini-stat-value mono">$@Model.InvestmentBalance.ToString("N2")</div><div class="mini-stat-hint">Fee applies</div></div>
     
-    @* <div class="mini-stat"><div class="mini-stat-label">Profit Wallet</div><div class="mini-stat-value mono" style="color:var(--green);">$@Model.ProfitBalance.ToString("N2")</div></div> *@
     
-    @* <div class="mini-stat"><div class="mini-stat-label">Commission Wallet</div><div class="mini-stat-value mono" style="color:var(--gold);">$@Model.CommissionBalance.ToString("N2")</div></div> *@
     
-    <div class="mini-stat"><div class="mini-stat-label">Profit + Commission</div><div class="mini-stat-value mono" style="color:var(--green);">$@Model.ProfitCommissionBalance.ToString("N2")</div><div class="mini-stat-hint">No withdrawal fee</div></div>
 </div>
 
 @if (Model.Methods.Count == 0)
@@ -24,7 +23,7 @@ else
 {
     <div class="withdraw-layout">
         <div class="card card-pad">
-            <div class="card-head"><h3>Withdrawal request</h3><a asp-action="History" class="btn btn-outline btn-sm">View History</a></div>
+            <div class="card-head"><h3>Withdrawal request</h3><a asp-action="History" class="btn btn-gold">History</a></div>
 
             <form method="post" id="withdrawForm" novalidate>
                 <div asp-validation-summary="ModelOnly"></div>
@@ -35,8 +34,8 @@ else
                 <div class="field-group wallet-source-group">
                     <label class="field-label" asp-for="Request.WalletSource">Withdraw from wallet</label>
                     <select class="field-input wallet-source-select" name="Request.WalletSource" id="walletSource">
-                        <option value="ProfitCommission" selected="@(selectedSource == "ProfitCommission" ? "selected" : null)">Profit + Commission — $@Model.ProfitCommissionBalance.ToString("N2")</option>
-                        <option value="Investment" selected="@(selectedSource == "Investment" ? "selected" : null)">Investment Wallet — $@Model.InvestmentBalance.ToString("N2")</option>
+                        <option value="ProfitCommission" selected="@(selectedSource == "ProfitCommission" ? "selected" : null)">Profit + Commission @* — $@Model.ProfitCommissionBalance.ToString("N2") *@</option>
+                        <option value="Investment" selected="@(selectedSource == "Investment" ? "selected" : null)">Investment Wallet  @* $—@Model.InvestmentBalance.ToString("N2") *@</option>
                     </select>
                     <span asp-validation-for="Request.WalletSource"></span>
                     <div class="wallet-source-preview">
@@ -90,7 +89,7 @@ else
                 }
 
                 <div class="field-group" style="margin-top:8px;">
-                    <label class="field-label" asp-for="Request.Amount">Amount to withdraw</label>
+                    <label class="field-label" asp-for="Request.Amount">Amount to withdraw(Min Withdrawal 10)</label>
                     <div class="amount-input-wrap"><span class="amount-currency">$</span><input class="field-input" asp-for="Request.Amount" placeholder="0.00"></div>
                     <span asp-validation-for="Request.Amount"></span>
                     <div class="quick-amount-row"><button type="button" class="quick-amount-btn" data-fixed-amount="100" data-amount="100">$100</button><button type="button" class="quick-amount-btn" data-fixed-amount="500" data-amount="500">$500</button><button type="button" class="quick-amount-btn" data-fixed-amount="1000" data-amount="1000">$1,000</button><button type="button" class="quick-amount-btn" id="maxWithdrawalButton" data-amount="@Model.InvestmentBalance.ToString(System.Globalization.CultureInfo.InvariantCulture)">Max</button></div>
@@ -99,11 +98,11 @@ else
 
                 <div class="field-group"><label class="remember-check"><input asp-for="Request.Confirmed"> I confirm these payment details are correct and belong to me</label><span asp-validation-for="Request.Confirmed"></span></div>
                 <div class="alert-box alert-info"><span>A 6-digit verification code will be sent to your registered email. The code expires in 2 minutes.</span></div>
-                <button type="submit" class="btn btn-gold btn-block">Continue to Email Verification</button>
+                <button type="submit" class="btn btn-gold btn-block">Email Verification code</button>
             </form>
         </div>
 
-        <div class="card card-pad">
+       @*  <div class="card card-pad">
             <div class="card-head"><h3>Summary</h3></div>
             <div class="summary-row"><span>Selected wallet</span><span id="wd-wallet">Investment Wallet</span></div>
             <div class="summary-row"><span>Wallet balance</span><span class="mono" id="wd-balance">$0.00</span></div>
@@ -112,7 +111,7 @@ else
             <div class="summary-row"><span>Fee amount</span><span class="mono" id="wd-fee">$0.00</span></div>
             <div class="summary-row"><span>You will receive</span><span class="mono" id="wd-receive">$0.00</span></div>
             <div class="alert-box alert-info" id="walletRuleMessage"><span>Investment withdrawals use only the Investment Wallet and the admin-controlled investment withdrawal fee applies.</span></div>
-        </div>
+        </div> *@
     </div>
 
 }
@@ -148,7 +147,7 @@ else
                     const isInvestment = source.value === 'Investment';
 
                     document.getElementById('sourceBalance').textContent = money(balance);
-                    document.getElementById('sourceFeeRule').textContent = isInvestment ? feePercent.toFixed(2).replace(/\.00$/, '') + '% investment fee' : '0% fee';
+                    document.getElementById('sourceFeeRule').textContent = isInvestment ? feePercent.toFixed(2).replace(/\.00$/, '') + '% ' : '0% fee';
                     document.getElementById('wd-wallet').textContent = isInvestment ? 'Investment Wallet' : 'Profit + Commission';
                     document.getElementById('wd-balance').textContent = money(balance);
                     document.getElementById('wd-fee-percent').textContent = feePercent.toFixed(2).replace(/\.00$/, '') + '%';
@@ -263,3 +262,13 @@ else
         </script>
     }
 }
+<script>
+    // put this as a separate script tag, after your existing section Scripts block
+    window.addEventListener('pageshow', function () {
+        var walletSource = document.getElementById('walletSource');
+        if (walletSource) {
+            walletSource.value = '@selectedSource';
+            walletSource.dispatchEvent(new Event('change'));
+        }
+    });
+</script>

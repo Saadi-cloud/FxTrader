@@ -8,7 +8,7 @@ public sealed class CompanyInfoController : Controller
 {
     public IActionResult Index()
     {
-        ViewData["Title"] = "Company Info";
+        ViewData["Title"] = "Company Profile";
         ViewData["Subtitle"] = "About OLX Trade and our global presence";
         return View();
     }

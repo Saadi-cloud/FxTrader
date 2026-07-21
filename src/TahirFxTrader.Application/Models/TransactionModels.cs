@@ -4,16 +4,20 @@ namespace TahirFxTrader.Application.Models;
 public sealed class CreateDepositRequest
 {
     [Range(1, int.MaxValue)] public int PaymentMethodId { get; set; }
-    [Range(typeof(decimal), "0.01", "999999999999")] public decimal Amount { get; set; }
+    [Required]
+    [Range(typeof(decimal), "0.01", "999999999999")]
+    public decimal? Amount { get; set; }
     [Required, StringLength(150)] public string TransactionReference { get; set; } = string.Empty;
-    [Required, StringLength(200)] public string SenderAccount { get; set; } = string.Empty;
+    [Required, StringLength(200)] public string? SenderAccount { get; set; } = string.Empty;
 }
 public sealed class CreateWithdrawalRequest
 {
     [Required, RegularExpression("^(Investment|ProfitCommission)$", ErrorMessage = "Select a valid withdrawal wallet.")]
     public string WalletSource { get; set; } = "Investment";
     [Range(1, int.MaxValue)] public int PaymentMethodId { get; set; }
-    [Range(typeof(decimal), "0.01", "999999999999")] public decimal Amount { get; set; }
+    [Required]
+    [Range(typeof(decimal), "0.01", "999999999999")]
+    public decimal? Amount { get; set; }
     [Required] public string DestinationJson { get; set; } = "{}";
     [Required, StringLength(300)] public string DestinationDisplay { get; set; } = string.Empty;
     [Range(typeof(bool), "true", "true", ErrorMessage = "You must confirm the withdrawal details.")] public bool Confirmed { get; set; }
