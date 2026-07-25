@@ -269,3 +269,27 @@ document.addEventListener('DOMContentLoaded', function () {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initTradeDashboard);
   else initTradeDashboard();
 })();
+// --- PWA Install Prompt ---
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+
+    const installBtn = document.getElementById('installBtn');
+    if (installBtn) installBtn.style.display = 'inline-flex';
+});
+
+document.addEventListener('click', async (e) => {
+    if (e.target.closest('#installBtn')) {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        document.getElementById('installBtn').style.display = 'none';
+    }
+});
+
+window.addEventListener('appinstalled', () => {
+    console.log('OLX Trade installed');
+});

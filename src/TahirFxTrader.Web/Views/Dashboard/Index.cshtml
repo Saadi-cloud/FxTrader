@@ -10,6 +10,8 @@
     var pnlAmount = Math.Abs(Model.TodayPnl);
     var rate = Model.ReferralCommissionPercent > 0 ? Model.ReferralCommissionPercent : 5m;
     var rateText = rate.ToString("0.##");
+    var TotalWithdrawals = Model.TotalWithdrawals;
+    var Profit_Earned = Model.TotalWithdrawals + Model.ProfitBalance;
     var investmentPercent = totalPortfolio > 0 ? Math.Clamp(Model.InvestmentBalance / totalPortfolio * 100m, 0m, 100m) : 0m;
     var profitPercent = totalPortfolio > 0 ? Math.Clamp(Model.ProfitBalance / totalPortfolio * 100m, 0m, 100m) : 0m;
     var commissionPercent = totalPortfolio > 0 ? Math.Clamp(Model.CommissionBalance / totalPortfolio * 100m, 0m, 100m) : 0m;
@@ -23,18 +25,20 @@
     var encodedShareUrl = Uri.EscapeDataString(Model.ReferralLink);
     var whatsappMessage = Uri.EscapeDataString($"Join OLX Trade — {rateText}% Referral Commission\nEarn rewards after your first approved deposit.\nReferral code: {Model.UserTraceId}\n\n{Model.ReferralLink}");
     var telegramMessage = Uri.EscapeDataString($"Join OLX Trade — {rateText}% Referral Commission. Referral code: {Model.UserTraceId}");
+
+
 }
 <style>
     .trade-uid {
-        font-size: 09px;
+        font-size: 07px;
     }
 
         .trade-uid span {
-            font-size: 09px;
+            font-size: 07px;
         }
 
         .trade-uid b {
-            font-size: 010px;
+            font-size: 8px;
         }
 
     .trade-portfolio-value {
@@ -168,7 +172,7 @@
         <div class="trade-hero-grid">
             <div class="trade-hero-main">
             <div class="trade-uid" title="@Model.UserTraceId">
-                    <span>UID</span><b class="mono">@compactUserId</b>
+                    <span>UID:@compactUserId</span>
                     <button type="button" data-copy-value="@Model.UserTraceId" aria-label="Copy full user ID">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg><em class="uid-copy-label"></em>
                     </button>
@@ -201,19 +205,19 @@
                         <svg viewBox="0 0 320 70" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="tradeSparkFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#18d990" stop-opacity=".35"/><stop offset="1" stop-color="#18d990" stop-opacity="0"/></linearGradient></defs><path class="trade-spark-area" d="M0 58 C30 58,36 47,62 50 S95 64,122 41 S159 51,184 30 S221 42,248 20 S281 27,320 8 L320 70 L0 70 Z"/><path class="trade-spark-line" d="M0 58 C30 58,36 47,62 50 S95 64,122 41 S159 51,184 30 S221 42,248 20 S281 27,320 8"/></svg>
                     </div>
                 </article>
-                <div class="trade-quick-row">
+              @*   <div class="trade-quick-row">
                     <div><span>Pending deposits</span><strong>@Model.PendingDeposits</strong></div>
                     <div><span>Pending withdrawals</span><strong>@Model.PendingWithdrawals</strong></div>
-                </div>
+                </div> *@
             </div>
         </div>
     </section>
 
     <section class="trade-metrics trade-metrics-compact">
         <article class="trade-metric-card"><div class="trade-metric-icon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18M16 15h2" /></svg></div><div><span>Investment Wallet</span><strong class="mono">$@Model.InvestmentBalance.ToString("N2")</strong></div></article>
-        <article class="trade-metric-card"><div class="trade-metric-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 17l5-5 4 4 7-9" /><path d="M15 7h5v5" /></svg></div><div><span>Profit Wallet</span><strong class="mono green-text">$@Model.ProfitBalance.ToString("N2")</strong></div></article>
+        <article class="trade-metric-card"><div class="trade-metric-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 17l5-5 4 4 7-9" /><path d="M15 7h5v5" /></svg></div><div><span>Total Earning</span><strong class="mono green-text">$@Profit_Earned.ToString("N2")</strong></div></article>
         <article class="trade-metric-card"><div class="trade-metric-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3" /><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M17 8h4M19 6v4" /></svg></div><div><span>Commission Wallet</span><strong class="mono">$@Model.CommissionBalance.ToString("N2")</strong></div></article>
-        <article class="trade-metric-card"><div class="trade-metric-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg></div><div><span>Next Profit Base</span><strong class="mono">$@Model.CompoundProfitBase.ToString("N2")</strong></div></article>
+        <article class="trade-metric-card"><div class="trade-metric-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg></div><div><span>Total Withdrawal</span><strong class="mono">$@Model.TotalWithdrawals.ToString("N2")</strong></div></article>
     </section>
 
     <section class="trade-content-grid">
@@ -261,7 +265,7 @@
                 <button type="button" class="trade-share native" data-native-share data-share-url="@Model.ReferralLink" data-share-title="OLX Trade — 5% Referral Commission" data-share-text="Join OLX Trade with my referral. Earn rewards after your first approved deposit.">Share</button>
 @*                 <a class="trade-share preview" href="@Model.ReferralLink" target="_blank" rel="noopener">Open preview</a>
  *@            </div>
-            <div class="trade-referral-stats"><div><span>Active referrals</span><strong>@Model.SuccessfulReferralCount</strong></div><div><span>Commission earned</span><strong class="mono">$@Model.ReferralCommissionEarned.ToString("N2")</strong></div></div>
+            <div class="trade-referral-stats"><div><span>Total referrals</span><strong>@Model.TotalReferralCount</strong></div><div><span>Active Referral</span><strong class="mono">@Model.SuccessfulReferralCount</strong></div></div>
         </article>
     </section>
 
@@ -621,7 +625,24 @@
                 Responsible risk management and dedicated investor support
             </li>
         </ul>
+    </section><br />
+    <!-- Contact Us -->
+    <section class="ci-block">
+        <h2 class="ci-heading ci-heading-sm">Contact Us</h2>
+        <ul class="ci-why-list">
+            <li>
+                <span class="ci-check" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m2 7 10 6 10-6" /></svg>
+                </span>
+                <a href="mailto:info@olxtrade.com">info@olxtrade.com</a>
+            </li>
+            <li>
+                <span class="ci-check" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>
+                </span>
+                Bahnhofstrasse 2,3550 Langnau im Emmental ,Switzerland
+            </li>
+        </ul>
     </section>
-
 
 </div>

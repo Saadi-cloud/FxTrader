@@ -63,6 +63,8 @@ public sealed class DashboardData
     public int PendingDeposits { get; set; }
     public int PendingWithdrawals { get; set; }
     public int SuccessfulReferralCount { get; set; }
+    public int TotalReferralCount { get; set; }
+    
     public decimal ReferralCommissionEarned { get; set; }
     public decimal ReferralCommissionPercent { get; set; } = 5;
     public string ReferralLink { get; set; } = string.Empty;

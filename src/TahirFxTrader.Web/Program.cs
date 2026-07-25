@@ -100,7 +100,8 @@ var app = builder.Build();
 app.UseForwardedHeaders();
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/home/error");
+    app.UseDeveloperExceptionPage(); // TEMP: shows raw exception instead of redirecting
+    // app.UseExceptionHandler("/home/error");  // TEMP: commented out so it doesn't redirect
     app.UseHsts();
     app.UseHttpsRedirection();
 }

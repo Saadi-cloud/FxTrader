@@ -2122,6 +2122,7 @@ html, body {
 @media(max-width:430px){.trade-metrics{grid-template-columns:1fr 1fr}.trade-metric-card{display:block}.trade-metric-icon{margin-bottom:11px}.trade-referral-preview{grid-template-columns:1fr}.trade-referral-qr{flex-direction:row;gap:9px;justify-content:flex-start}.trade-qr-code{width:65px;height:65px;order:-1}.trade-referral-qr small{display:block}.trade-share{flex:1}.trade-social-grid{grid-template-columns:repeat(3,1fr)}.trade-activity-list>div{grid-template-columns:34px 1fr auto}.ref-public-share{grid-template-columns:1fr}.ref-public-content h1{font-size:24px}}
 
 
+
 /* Withdrawal email OTP */
 .withdraw-otp-shell{min-height:calc(100vh - 220px);display:grid;place-items:center;padding:28px 0}
 .withdraw-otp-card{width:min(620px,100%);position:relative;overflow:hidden;border-color:rgba(240,185,11,.22)!important;background:radial-gradient(circle at 100% 0,rgba(240,185,11,.08),transparent 35%),var(--card-bg,#1e2329)}
@@ -3301,4 +3302,44 @@ html, body {
     .statement-summary-stats .mini-stat-label {
         font-size: 9px;
     }
+}
+@media (max-width: 600px) {
+    .table-wrap {
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    .data-table,
+    .data-table tbody,
+    .data-table tr,
+    .data-table td {
+        width: 100% !important;
+        box-sizing: border-box;
+        white-space: normal !important;
+        word-break: break-word;
+    }
+
+        /* If your card view uses data-label / flex rows per cell */
+        .data-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 8px 14px;
+            text-align: right;
+        }
+
+            .data-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: var(--muted, #848E9C);
+                text-align: left;
+                flex-shrink: 0;
+            }
+
+        .data-table .mono {
+            word-break: break-all;
+            text-align: right;
+            max-width: 60%;
+        }
 }

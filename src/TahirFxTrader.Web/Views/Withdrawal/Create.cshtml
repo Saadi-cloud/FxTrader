@@ -3,16 +3,21 @@
     ViewData["Title"] = "Withdraw Funds";
     ViewData["Subtitle"] = "Choose a wallet balance, then select your payout destination";
     var first = Model.Methods.FirstOrDefault();
-    var selectedSource = string.IsNullOrWhiteSpace(Model.Request.WalletSource) ? "ProfitCommission" : Model.Request.WalletSource;
+    // Always default to Profit + Commission on the initial GET request.
+    // Preserve the user's choice when the form is redisplayed after a POST.
+    var selectedSource = Context.Request.Method.Equals("POST", StringComparison.OrdinalIgnoreCase)
+        && !string.IsNullOrWhiteSpace(Model.Request.WalletSource)
+            ? Model.Request.WalletSource
+            : "ProfitCommission";
 }
 
 
 <div class="mini-stat-row withdrawal-wallet-stats">
     <div class="mini-stat"><div class="mini-stat-label">Profit + Commission</div><div class="mini-stat-value mono" style="color:var(--green);">$@Model.ProfitCommissionBalance.ToString("N2")</div><div class="mini-stat-hint">No withdrawal fee</div></div>
     <div class="mini-stat"><div class="mini-stat-label">Investment Wallet</div><div class="mini-stat-value mono">$@Model.InvestmentBalance.ToString("N2")</div><div class="mini-stat-hint">Fee applies</div></div>
-    
-    
-    
+
+
+
 </div>
 
 @if (Model.Methods.Count == 0)
@@ -39,7 +44,7 @@ else
                     </select>
                     <span asp-validation-for="Request.WalletSource"></span>
                     <div class="wallet-source-preview">
-                        <div><span>Selected balance</span><strong class="mono" id="sourceBalance">$0.00</strong></div>
+                        <div><span>Avalible Balance</span><strong class="mono" id="sourceBalance">$0.00</strong></div>
                         <div><span>Fee rule</span><strong id="sourceFeeRule">—</strong></div>
                     </div>
                 </div>
@@ -102,7 +107,7 @@ else
             </form>
         </div>
 
-       @*  <div class="card card-pad">
+        @*  <div class="card card-pad">
             <div class="card-head"><h3>Summary</h3></div>
             <div class="summary-row"><span>Selected wallet</span><span id="wd-wallet">Investment Wallet</span></div>
             <div class="summary-row"><span>Wallet balance</span><span class="mono" id="wd-balance">$0.00</span></div>
@@ -148,16 +153,26 @@ else
 
                     document.getElementById('sourceBalance').textContent = money(balance);
                     document.getElementById('sourceFeeRule').textContent = isInvestment ? feePercent.toFixed(2).replace(/\.00$/, '') + '% ' : '0% fee';
-                    document.getElementById('wd-wallet').textContent = isInvestment ? 'Investment Wallet' : 'Profit + Commission';
-                    document.getElementById('wd-balance').textContent = money(balance);
-                    document.getElementById('wd-fee-percent').textContent = feePercent.toFixed(2).replace(/\.00$/, '') + '%';
-                    document.getElementById('wd-fee').textContent = money(feeAmount);
-                    document.getElementById('wd-receive').textContent = money(Math.max(0, value - feeAmount));
+                    const walletSummary = document.getElementById('wd-wallet');
+                    const balanceSummary = document.getElementById('wd-balance');
+                    const feePercentSummary = document.getElementById('wd-fee-percent');
+                    const feeSummary = document.getElementById('wd-fee');
+                    const receiveSummary = document.getElementById('wd-receive');
+                    const ruleMessage = document.getElementById('walletRuleMessage');
+
+                    // These elements are optional because the Summary card may be commented out.
+                    if (walletSummary) walletSummary.textContent = isInvestment ? 'Investment Wallet' : 'Profit + Commission';
+                    if (balanceSummary) balanceSummary.textContent = money(balance);
+                    if (feePercentSummary) feePercentSummary.textContent = feePercent.toFixed(2).replace(/\.00$/, '') + '%';
+                    if (feeSummary) feeSummary.textContent = money(feeAmount);
+                    if (receiveSummary) receiveSummary.textContent = money(Math.max(0, value - feeAmount));
                     document.getElementById('walletLimitNote').textContent = 'Maximum available from this wallet: ' + money(balance);
                     maxButton.setAttribute('data-amount', balance.toFixed(4));
-                    document.getElementById('walletRuleMessage').innerHTML = isInvestment
-                        ? '<span>Investment withdrawals use only the Investment Wallet. The admin-controlled investment withdrawal fee applies.</span>'
-                        : '<span>Profit + Commission withdrawals have no fee. Profit is reserved first, then Commission. Investment is never used for this option.</span>';
+                    if (ruleMessage) {
+                        ruleMessage.innerHTML = isInvestment
+                            ? '<span>Investment withdrawals use only the Investment Wallet. The admin-controlled investment withdrawal fee applies.</span>'
+                            : '<span>Profit + Commission withdrawals have no fee. Profit is reserved first, then Commission. Investment is never used for this option.</span>';
+                    }
                 }
 
                 source.addEventListener('change', function () {
@@ -177,7 +192,8 @@ else
                 document.querySelectorAll('.withdraw-method-tabs .tab-btn').forEach(function (button) {
                     button.addEventListener('click', function () {
                         document.getElementById('Request_PaymentMethodId').value = button.dataset.target;
-                        document.getElementById('wd-method').textContent = button.dataset.name;
+                        const methodSummary = document.getElementById('wd-method');
+                        if (methodSummary) methodSummary.textContent = button.dataset.name;
                         clearAllFieldErrors();
                     });
                 });
