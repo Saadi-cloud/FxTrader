@@ -5,7 +5,7 @@
 
     var compactUserId = string.Concat((Model.UserTraceId ?? string.Empty).Where(char.IsDigit));
     // var totalPortfolio = Model.AvailableBalance + Model.HeldBalance;
-    var totalPortfolio = Model.AvailableBalance ;
+    var totalPortfolio = Model.AvailableBalance;
 
     var pnlClass = Model.TodayPnl > 0 ? "positive" : Model.TodayPnl < 0 ? "negative" : "neutral";
     var pnlPrefix = Model.TodayPnl > 0 ? "+" : Model.TodayPnl < 0 ? "-" : string.Empty;
