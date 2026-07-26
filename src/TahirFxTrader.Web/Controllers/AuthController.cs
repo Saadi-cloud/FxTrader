@@ -40,7 +40,43 @@ public sealed class AuthController : Controller
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterRequest model, CancellationToken ct)
     {
+        if (!string.IsNullOrWhiteSpace(model.ReferralCode))
+        {
+            model.ReferralCode = model.ReferralCode.Trim().ToUpper();
+
+            if (!model.ReferralCode.StartsWith("USR-"))
+            {
+                // Remove only digits
+                var digits = new string(model.ReferralCode.Where(char.IsDigit).ToArray());
+
+                if (digits.Length == 14)
+                {
+                    // Format: YYYYMMDD + 6 digit ID
+                    model.ReferralCode = $"USR-{digits.Substring(0, 8)}-{digits.Substring(8, 6)}";
+                }
+                else
+                {
+                    model.ReferralCode = "USR-" + model.ReferralCode;
+                }
+            }
+
+            model.ReferralCode = model.ReferralCode;
+        }
         if (!ModelState.IsValid) return View(model);
+        if (!string.IsNullOrWhiteSpace(model.ReferralCode))
+        {
+            model.ReferralCode = model.ReferralCode.Trim().ToUpper();
+
+            if (!model.ReferralCode.StartsWith("USR-"))
+            {
+                model.ReferralCode = "USR-" + model.ReferralCode;
+            }
+            else
+            {
+                model.ReferralCode = model.ReferralCode;
+            }
+        }
+        
         var result = await _auth.RegisterAsync(model, ct);
         if (!result.Succeeded || result.Data is null) { ModelState.AddModelError(string.Empty, result.Message); return View(model); }
         TempData["Success"] = result.Message;

@@ -94,7 +94,7 @@ public sealed class SmtpEmailService : IEmailService
                          height='42'
                          style='display:inline-block;
                                 vertical-align:middle;
-                                margin-right:10px;
+                                margin-right:0px;
                                 border:0;' />
 
                     <span style='font-size:22px;
@@ -267,7 +267,7 @@ public sealed class SmtpEmailService : IEmailService
                          height='42'
                          style='display:inline-block;
                                 vertical-align:middle;
-                                margin-right:10px;
+                                margin-right:0px;
                                 border:0;' />
 
                     <span style='font-size:22px;
@@ -489,7 +489,7 @@ public sealed class SmtpEmailService : IEmailService
                height='42'
                style='display:inline-block;
                       vertical-align:middle;
-                      margin-right:10px;
+                      margin-right:0px;
                       border:0;' />
 
           <span style='font-size:22px;

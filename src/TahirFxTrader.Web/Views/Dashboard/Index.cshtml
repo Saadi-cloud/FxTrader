@@ -195,13 +195,13 @@
     </script>
 }
 
-<div class="trade-dashboard" data-referral-url="@Model.ReferralLink" data-referral-code="@Model.UserTraceId" data-referral-rate="@rateText">
+<div class="trade-dashboard" data-referral-url="@Model.ReferralLink" data-referral-code="@compactUserId" data-referral-rate="@rateText">
     <section class="trade-hero" id="tradeHero">
         <div class="trade-hero-grid">
             <div class="trade-hero-main">
             <div class="trade-uid" title="@Model.UserTraceId">
                     <span>UID:@compactUserId</span>
-                    <button type="button" data-copy-value="@Model.UserTraceId" aria-label="Copy full user ID">
+                    <button type="button" data-copy-value="@compactUserId" aria-label="Copy full user ID">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg><em class="uid-copy-label"></em>
                     </button>
                 </div>
@@ -250,7 +250,7 @@
 
     <section class="trade-content-grid">
         <article class="trade-panel trade-portfolio-panel">
-            <div class="trade-panel-head"><div><h2>Portfolio Distribution</h2><p>Your available value separated by wallet type.</p></div><a asp-controller="Statement" asp-action="Index">View statement</a></div>
+            <div class="trade-panel-head"><div><h2>Portfolio Distribution</h2><p>Your available value separated by wallet type.</p></div><a asp-controller="Statement" asp-action="Index">View Transaction</a></div>
             <div class="trade-wallet-overview">
                 <div class="trade-ring"
                      style="--investment-end:@ringInvestmentCss%; --profit-end:@ringProfitCss%;">

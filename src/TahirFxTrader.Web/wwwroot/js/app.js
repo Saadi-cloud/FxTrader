@@ -1,4 +1,4 @@
-// OLX Trade shared behavior
+﻿// OLX Trade shared behavior
 document.addEventListener('DOMContentLoaded', function () {
   var toggle = document.querySelector('.menu-toggle');
   var sidebar = document.querySelector('.sidebar');
@@ -269,27 +269,53 @@ document.addEventListener('DOMContentLoaded', function () {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initTradeDashboard);
   else initTradeDashboard();
 })();
-// --- PWA Install Prompt ---
-let deferredPrompt;
 
-window.addEventListener('beforeinstallprompt', (e) => {
+
+    // --- Service Worker Registration ---
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('Service worker registered:', reg.scope))
+            .catch(err => console.error('SW registration failed:', err));
+    }
+
+    // --- PWA Install Prompt ---
+    let deferredPrompt;
+
+    function isAppInstalled() {
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+    || window.navigator.standalone === true; // iOS Safari
+    const wasInstalled = localStorage.getItem('olxTradeInstalled') === 'true';
+    return isStandalone || wasInstalled;
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        console.log('✅ beforeinstallprompt fired');
     e.preventDefault();
     deferredPrompt = e;
+    });
 
-    const installBtn = document.getElementById('installBtn');
-    if (installBtn) installBtn.style.display = 'inline-flex';
-});
+    document.addEventListener('click', async (e) => {
+        const btn = e.target.closest('#installBtn');
+    if (!btn) return;
+    e.preventDefault();
 
-document.addEventListener('click', async (e) => {
-    if (e.target.closest('#installBtn')) {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        document.getElementById('installBtn').style.display = 'none';
-    }
-});
+    if (isAppInstalled()) {
+        alert('App is already installed.');
+    return;
+        }
 
-window.addEventListener('appinstalled', () => {
-    console.log('OLX Trade installed');
-});
+    if (!deferredPrompt) {
+        alert('Install is not available right now. Try opening this site in Chrome.');
+    return;
+        }
+
+    deferredPrompt.prompt();
+    const {outcome} = await deferredPrompt.userChoice;
+    console.log('User choice:', outcome);
+    deferredPrompt = null;
+    });
+
+    window.addEventListener('appinstalled', () => {
+        console.log('OLX Trade installed');
+    localStorage.setItem('olxTradeInstalled', 'true');
+    });

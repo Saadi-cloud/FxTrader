@@ -225,14 +225,24 @@
         <input class="field-input olx-auth-input" asp-for="Email" autocomplete="email" placeholder="Enter your email address">
         <span asp-validation-for="Email"></span>
     </div>
-
     <div class="field-group">
-        <label class="field-label" asp-for="ReferralCode">Referral code <span class="olx-label-optional">(optional)</span></label>
-        <input class="field-input olx-auth-input mono" asp-for="ReferralCode" placeholder="USR-20260715-000001">
+        <label class="field-label" asp-for="ReferralCode">
+            Referral code
+            <span class="olx-label-optional">(optional)</span>
+        </label>
+        <input class="field-input olx-auth-input mono"
+               asp-for="ReferralCode"
+               id="ReferralCode"
+               value="@(Model.ReferralCode?.Replace("USR-", "", StringComparison.OrdinalIgnoreCase))"
+               placeholder="20260715-000001">
+
         <span asp-validation-for="ReferralCode"></span>
+
         @if (!string.IsNullOrWhiteSpace(Model.ReferralCode))
         {
-            <small class="olx-referral-applied">Referral link applied. It qualifies after your first approved deposit.</small>
+            <small class="olx-referral-applied">
+                Referral link applied. It qualifies after your first approved deposit.
+            </small>
         }
     </div>
 
@@ -341,6 +351,7 @@
 
             });
         }
+   
     </script>
 }
 <style>
@@ -418,3 +429,6 @@
     }
 }
 </style>
+<script>
+   
+</script>
