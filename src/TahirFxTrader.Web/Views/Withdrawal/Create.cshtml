@@ -97,7 +97,7 @@ else
                     <label class="field-label" asp-for="Request.Amount">Amount to withdraw(Min Withdrawal 10)</label>
                     <div class="amount-input-wrap"><span class="amount-currency">$</span><input class="field-input" asp-for="Request.Amount" placeholder="0.00"></div>
                     <span asp-validation-for="Request.Amount"></span>
-                    <div class="quick-amount-row"><button type="button" class="quick-amount-btn" data-fixed-amount="100" data-amount="100">$100</button><button type="button" class="quick-amount-btn" data-fixed-amount="500" data-amount="500">$500</button><button type="button" class="quick-amount-btn" data-fixed-amount="1000" data-amount="1000">$1,000</button><button type="button" class="quick-amount-btn" id="maxWithdrawalButton" data-amount="@Model.InvestmentBalance.ToString(System.Globalization.CultureInfo.InvariantCulture)">Max</button></div>
+                    <div class="quick-amount-row"><button type="button" class="quick-amount-btn" data-fixed-amount="10" data-amount="10">$10</button><button type="button" class="quick-amount-btn" data-fixed-amount="50" data-amount="50">$50</button><button type="button" class="quick-amount-btn" data-fixed-amount="100" data-amount="100">$100</button><button type="button" class="quick-amount-btn" id="maxWithdrawalButton" data-amount="@Model.InvestmentBalance.ToString(System.Globalization.CultureInfo.InvariantCulture)">Max</button></div>
                     <small class="wallet-limit-note" id="walletLimitNote"></small>
                 </div>
 

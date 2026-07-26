@@ -4,23 +4,136 @@
     ViewData["Title"] = "Create account";
     var countries = new[]
 {
-    new { Name = "Pakistan", Code = "pk", Dial = "+92" },
-    new { Name = "Saudi Arabia", Code = "sa", Dial = "+966" },
-    new { Name = "United Arab Emirates", Code = "ae", Dial = "+971" },
-    new { Name = "Qatar", Code = "qa", Dial = "+974" },
-    new { Name = "Oman", Code = "om", Dial = "+968" },
-    new { Name = "Bahrain", Code = "bh", Dial = "+973" },
-    new { Name = "Kuwait", Code = "kw", Dial = "+965" },
-    new { Name = "United Kingdom", Code = "gb", Dial = "+44" },
-    new { Name = "United States", Code = "us", Dial = "+1" },
-    new { Name = "Canada", Code = "ca", Dial = "+1" },
-    new { Name = "Australia", Code = "au", Dial = "+61" },
-    new { Name = "India", Code = "in", Dial = "+91" },
-    new { Name = "Bangladesh", Code = "bd", Dial = "+880" },
-    new { Name = "Malaysia", Code = "my", Dial = "+60" },
-    new { Name = "Singapore", Code = "sg", Dial = "+65" },
-    new { Name = "Turkey", Code = "tr", Dial = "+90" },
-    new { Name = "Other", Code = "other", Dial = "" }
+    new { Name="Afghanistan", Code="af", Dial="+93" },
+    new { Name="Albania", Code="al", Dial="+355" },
+    new { Name="Algeria", Code="dz", Dial="+213" },
+    new { Name="Andorra", Code="ad", Dial="+376" },
+    new { Name="Angola", Code="ao", Dial="+244" },
+    new { Name="Argentina", Code="ar", Dial="+54" },
+    new { Name="Armenia", Code="am", Dial="+374" },
+    new { Name="Australia", Code="au", Dial="+61" },
+    new { Name="Austria", Code="at", Dial="+43" },
+    new { Name="Azerbaijan", Code="az", Dial="+994" },
+
+    new { Name="Bahrain", Code="bh", Dial="+973" },
+    new { Name="Bangladesh", Code="bd", Dial="+880" },
+    new { Name="Belarus", Code="by", Dial="+375" },
+    new { Name="Belgium", Code="be", Dial="+32" },
+    new { Name="Belize", Code="bz", Dial="+501" },
+    new { Name="Benin", Code="bj", Dial="+229" },
+    new { Name="Bhutan", Code="bt", Dial="+975" },
+    new { Name="Bolivia", Code="bo", Dial="+591" },
+    new { Name="Brazil", Code="br", Dial="+55" },
+    new { Name="Brunei", Code="bn", Dial="+673" },
+    new { Name="Bulgaria", Code="bg", Dial="+359" },
+
+    new { Name="Cambodia", Code="kh", Dial="+855" },
+    new { Name="Cameroon", Code="cm", Dial="+237" },
+    new { Name="Canada", Code="ca", Dial="+1" },
+    new { Name="Chile", Code="cl", Dial="+56" },
+    new { Name="China", Code="cn", Dial="+86" },
+    new { Name="Colombia", Code="co", Dial="+57" },
+    new { Name="Costa Rica", Code="cr", Dial="+506" },
+    new { Name="Croatia", Code="hr", Dial="+385" },
+    new { Name="Cyprus", Code="cy", Dial="+357" },
+    new { Name="Czech Republic", Code="cz", Dial="+420" },
+
+    new { Name="Denmark", Code="dk", Dial="+45" },
+    new { Name="Dominican Republic", Code="do", Dial="+1" },
+
+    new { Name="Ecuador", Code="ec", Dial="+593" },
+    new { Name="Egypt", Code="eg", Dial="+20" },
+    new { Name="Estonia", Code="ee", Dial="+372" },
+    new { Name="Ethiopia", Code="et", Dial="+251" },
+
+    new { Name="Finland", Code="fi", Dial="+358" },
+    new { Name="France", Code="fr", Dial="+33" },
+
+    new { Name="Georgia", Code="ge", Dial="+995" },
+    new { Name="Germany", Code="de", Dial="+49" },
+    new { Name="Ghana", Code="gh", Dial="+233" },
+    new { Name="Greece", Code="gr", Dial="+30" },
+
+    new { Name="Hong Kong", Code="hk", Dial="+852" },
+    new { Name="Hungary", Code="hu", Dial="+36" },
+
+    new { Name="Iceland", Code="is", Dial="+354" },
+    new { Name="India", Code="in", Dial="+91" },
+    new { Name="Indonesia", Code="id", Dial="+62" },
+    new { Name="Iran", Code="ir", Dial="+98" },
+    new { Name="Iraq", Code="iq", Dial="+964" },
+    new { Name="Ireland", Code="ie", Dial="+353" },
+    new { Name="Israel", Code="il", Dial="+972" },
+    new { Name="Italy", Code="it", Dial="+39" },
+
+    new { Name="Japan", Code="jp", Dial="+81" },
+    new { Name="Jordan", Code="jo", Dial="+962" },
+
+    new { Name="Kazakhstan", Code="kz", Dial="+7" },
+    new { Name="Kenya", Code="ke", Dial="+254" },
+    new { Name="Kuwait", Code="kw", Dial="+965" },
+
+    new { Name="Laos", Code="la", Dial="+856" },
+    new { Name="Latvia", Code="lv", Dial="+371" },
+    new { Name="Lebanon", Code="lb", Dial="+961" },
+    new { Name="Lithuania", Code="lt", Dial="+370" },
+    new { Name="Luxembourg", Code="lu", Dial="+352" },
+
+    new { Name="Malaysia", Code="my", Dial="+60" },
+    new { Name="Maldives", Code="mv", Dial="+960" },
+    new { Name="Malta", Code="mt", Dial="+356" },
+    new { Name="Mexico", Code="mx", Dial="+52" },
+    new { Name="Monaco", Code="mc", Dial="+377" },
+    new { Name="Mongolia", Code="mn", Dial="+976" },
+    new { Name="Morocco", Code="ma", Dial="+212" },
+
+    new { Name="Nepal", Code="np", Dial="+977" },
+    new { Name="Netherlands", Code="nl", Dial="+31" },
+    new { Name="New Zealand", Code="nz", Dial="+64" },
+    new { Name="Nigeria", Code="ng", Dial="+234" },
+    new { Name="Norway", Code="no", Dial="+47" },
+
+    new { Name="Oman", Code="om", Dial="+968" },
+
+    new { Name="Pakistan", Code="pk", Dial="+92" },
+    new { Name="Philippines", Code="ph", Dial="+63" },
+    new { Name="Poland", Code="pl", Dial="+48" },
+    new { Name="Portugal", Code="pt", Dial="+351" },
+
+    new { Name="Qatar", Code="qa", Dial="+974" },
+
+    new { Name="Romania", Code="ro", Dial="+40" },
+    new { Name="Russia", Code="ru", Dial="+7" },
+
+    new { Name="Saudi Arabia", Code="sa", Dial="+966" },
+    new { Name="Serbia", Code="rs", Dial="+381" },
+    new { Name="Singapore", Code="sg", Dial="+65" },
+    new { Name="Slovakia", Code="sk", Dial="+421" },
+    new { Name="Slovenia", Code="si", Dial="+386" },
+    new { Name="South Africa", Code="za", Dial="+27" },
+    new { Name="South Korea", Code="kr", Dial="+82" },
+    new { Name="Spain", Code="es", Dial="+34" },
+    new { Name="Sri Lanka", Code="lk", Dial="+94" },
+    new { Name="Sweden", Code="se", Dial="+46" },
+    new { Name="Switzerland", Code="ch", Dial="+41" },
+
+    new { Name="Taiwan", Code="tw", Dial="+886" },
+    new { Name="Thailand", Code="th", Dial="+66" },
+    new { Name="Turkey", Code="tr", Dial="+90" },
+
+    new { Name="Ukraine", Code="ua", Dial="+380" },
+    new { Name="United Arab Emirates", Code="ae", Dial="+971" },
+    new { Name="United Kingdom", Code="gb", Dial="+44" },
+    new { Name="United States", Code="us", Dial="+1" },
+    new { Name="Uruguay", Code="uy", Dial="+598" },
+
+    new { Name="Vietnam", Code="vn", Dial="+84" },
+
+    new { Name="Yemen", Code="ye", Dial="+967" },
+
+    new { Name="Zambia", Code="zm", Dial="+260" },
+    new { Name="Zimbabwe", Code="zw", Dial="+263" }
+
 };
 }
 <div class="olx-auth-title-row olx-register-heading">
@@ -47,8 +160,13 @@
                     <option value="" data-flag="" data-dial="">Select country</option>
                     @foreach (var country in countries)
                     {
-                        var flagUrl = Url.Content($"~/images/flags/{country.Code}.svg");
-                        <option value="@country.Name" data-flag="@flagUrl" data-dial="@country.Dial">@country.Name</option>
+                        var flagUrl = $"https://flagcdn.com/{country.Code}.svg";
+
+                        <option value="@country.Name"
+                                data-flag="@flagUrl"
+                                data-dial="@country.Dial">
+                            @country.Name (@country.Dial)
+                        </option>
                     }
                 </select>
 
@@ -60,17 +178,38 @@
                     <svg class="country-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
                 </button>
 
-                <div class="country-select-menu" data-country-menu role="listbox" aria-label="Country">
+                <div class="country-select-menu"
+                     data-country-menu
+                     role="listbox">
+                    <div class="country-search-box">
+                        <input type="text"
+                               class="country-search-input"
+                               data-country-search
+                               placeholder="Search country...">
+                    </div>
                     @foreach (var country in countries)
                     {
-                        var flagUrl = Url.Content($"~/images/flags/{country.Code}.svg");
-                        <button type="button" class="country-select-option" data-country-option
-                                data-country-value="@country.Name" data-country-flag="@flagUrl"
-                                data-dial="@country.Dial" role="option" aria-selected="false">
-                            <img src="@flagUrl" alt="" class="country-option-flag">
-                            <span>@country.Name</span>
+                        var flagUrl = $"https://flagcdn.com/{country.Code}.svg";
+
+                        <button type="button"
+                                class="country-select-option"
+                                data-country-option
+                                data-country-value="@country.Name"
+                                data-country-flag="@flagUrl"
+                                data-country-dial="@country.Dial">
+
+                            <img src="@flagUrl"
+                                 class="country-option-flag"
+                                 loading="lazy"
+                                 alt="@country.Name">
+
+                            <span>
+                                @country.Name (@country.Dial)
+                            </span>
+
                         </button>
                     }
+
                 </div>
             </div>
             <span asp-validation-for="Country"></span>
@@ -172,9 +311,93 @@
                 });
             });
         })();
+        const countrySearch = document.querySelector("[data-country-search]");
+        const countryOptions = document.querySelectorAll("[data-country-option]");
+
+
+        if(countrySearch)
+        {
+            countrySearch.addEventListener("input", function(){
+
+                let value = this.value.toLowerCase().trim();
+
+
+                countryOptions.forEach(option => {
+
+                    let country =
+                        option.dataset.countryValue.toLowerCase();
+
+
+                    if(country.includes(value))
+                    {
+                        option.style.display = "flex";
+                    }
+                    else
+                    {
+                        option.style.display = "none";
+                    }
+
+                });
+
+            });
+        }
     </script>
 }
 <style>
+    .country-option-flag,
+    .country-selected-flag {
+        width: 24px;
+        height: 18px;
+        object-fit: cover;
+        border-radius: 3px;
+    }
+
+    .country-select-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .country-search-box {
+        padding: 10px;
+        position: sticky;
+        top: 0;
+        background: #111;
+        z-index: 5;
+    }
+
+
+    .country-search-input {
+        width: 100%;
+        height: 38px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: #1b1b1b;
+        color: white;
+        padding: 0 12px;
+    }
+
+
+    .country-select-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+
+        .country-select-option small {
+            margin-left: auto;
+            color: #999;
+        }
+
+
+    .country-option-flag {
+        width: 24px;
+        height: 18px;
+        object-fit: cover;
+        border-radius: 3px;
+    }
     
 
 @@media (max-width: 768px) {

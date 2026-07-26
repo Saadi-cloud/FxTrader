@@ -19,6 +19,8 @@ public sealed class DashboardRepository : RepositoryBase, IDashboardRepository
             data.HeldInvestmentBalance = r.Decimal("HeldInvestmentBalance"); data.HeldProfitBalance = r.Decimal("HeldProfitBalance"); data.HeldCommissionBalance = r.HasColumn("HeldCommissionBalance") ? r.Decimal("HeldCommissionBalance") : 0;
             data.TotalDeposits = r.Decimal("TotalDeposits");
             data.TotalWithdrawals = r.Decimal("TotalWithdrawals");
+            data.Profit_Withdrawals = r.Decimal("Profit_Withdrawals");
+
             data.PendingDeposits = r.Int("PendingDeposits"); data.PendingWithdrawals = r.Int("PendingWithdrawals");
             data.SuccessfulReferralCount = r.HasColumn("SuccessfulReferralCount") ? r.Int("SuccessfulReferralCount") : 0;
             data.TotalReferralCount = r.HasColumn("TotalReferralCount") ? r.Int("TotalReferralCount") : 0;

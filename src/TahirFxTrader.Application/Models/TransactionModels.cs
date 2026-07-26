@@ -60,6 +60,8 @@ public sealed class DashboardData
     public decimal InvestmentWithdrawalFeePercent { get; set; }
     public decimal TotalDeposits { get; set; }
     public decimal TotalWithdrawals { get; set; }
+    public decimal Profit_Withdrawals { get; set; }
+
     public int PendingDeposits { get; set; }
     public int PendingWithdrawals { get; set; }
     public int SuccessfulReferralCount { get; set; }

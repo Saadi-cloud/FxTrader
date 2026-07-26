@@ -9,7 +9,7 @@
     ViewData["ShareUrl"] = Model.ShareUrl;
     ViewData["CanonicalUrl"] = Model.CanonicalUrl;
 
-    var whatsappMessage = Uri.EscapeDataString($"Join OLX Trade — {rate}% Referral Commission\nEarn rewards after your first approved deposit.\nReferral code: {Model.ReferralCode}\n\n{Model.ShareUrl}");
+    var whatsappMessage = Uri.EscapeDataString($"Join OLX Trade — /* {rate}% Referral Commission\nEarn rewards after your first approved deposit.\nReferral code: {Model.ReferralCode}\n\n */{Model.ShareUrl}");
     var telegramText = Uri.EscapeDataString($"Join OLX Trade — {rate}% Referral Commission. Referral code: {Model.ReferralCode}");
     var telegramUrl = Uri.EscapeDataString(Model.ShareUrl);
     var facebookUrl = Uri.EscapeDataString(Model.ShareUrl);

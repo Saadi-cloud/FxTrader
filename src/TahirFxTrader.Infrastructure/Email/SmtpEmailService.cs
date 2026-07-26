@@ -60,174 +60,391 @@ public sealed class SmtpEmailService : IEmailService
             ct);
 
     public Task SendTransactionStatusAsync(
-     string email,
-     string fullName,
-     string referenceNo,
-     string status,
-     CancellationToken ct = default)
-     => SendAsync(
-         email,
-         $"Transaction {referenceNo}: {status}",
-         $@"
-        <div style='font-family:Segoe UI,Arial,sans-serif;background:#F4F6F8;padding:40px 0;'>
-          <table role='presentation' width='100%' cellpadding='0' cellspacing='0'>
-            <tr>
-              <td align='center'>
-                <table role='presentation' width='480' cellpadding='0' cellspacing='0'
-                       style='background:#FFFFFF;border-radius:12px;overflow:hidden;
-                              box-shadow:0 2px 10px rgba(0,0,0,0.06);'>
+      string email,
+      string fullName,
+      string referenceNo,
+      string status,
+      CancellationToken ct = default)
+      => SendAsync(
+          email,
+          $"Transaction {referenceNo}: {status}",
+          $@"
+<div style='font-family:Segoe UI,Arial,sans-serif;background:#F4F6F8;padding:40px 0;'>
 
-                  <!-- Header -->
-                  <tr>
-                    <td style='background:#0B0E11;padding:24px 32px;text-align:center;'>
-                      <span style='font-size:22px;font-weight:700;color:#F0B90B;letter-spacing:1px;'>
+  <table role='presentation' width='100%' cellpadding='0' cellspacing='0'>
+    <tr>
+      <td align='center'>
+
+        <table role='presentation' width='480' cellpadding='0' cellspacing='0'
+               style='background:#FFFFFF;border-radius:12px;overflow:hidden;
+                      box-shadow:0 2px 10px rgba(0,0,0,0.06);'>
+
+
+          <!-- Header -->
+          <tr>
+            <td style='background:#0B0E11;padding:20px 32px;'>
+
+              <table role='presentation' width='100%' cellpadding='0' cellspacing='0'>
+                <tr>
+                  <td align='left' valign='middle'>
+
+                    <img src='https://olxtrade.com/images/brand/logoicon.png'
+                         alt='OLX Trade Logo'
+                         width='42'
+                         height='42'
+                         style='display:inline-block;
+                                vertical-align:middle;
+                                margin-right:10px;
+                                border:0;' />
+
+                    <span style='font-size:22px;
+                                 font-weight:700;
+                                 color:#F0B90B;
+                                 letter-spacing:1px;
+                                 vertical-align:middle;'>
                         OLX Trade
-                      </span>
-                    </td>
-                  </tr>
+                    </span>
 
-                  <!-- Body -->
-                  <tr>
-                    <td style='padding:36px 32px 24px 32px;'>
-                      <h2 style='margin:0 0 12px 0;color:#1E2329;font-size:20px;font-weight:600;'>
-                        Transaction Update
-                      </h2>
-                      <p style='margin:0 0 20px 0;color:#4B5563;font-size:15px;line-height:1.6;'>
-                        Hello {WebUtility.HtmlEncode(fullName)}, here's the latest status on your transaction.
-                      </p>
+                  </td>
+                </tr>
+              </table>
 
-                      <!-- Details -->
-                      <table role='presentation' width='100%' cellpadding='0' cellspacing='0'
-                             style='background:#F8F9FA;border-radius:8px;margin:8px 0 24px 0;'>
-                        <tr>
-                          <td style='padding:14px 18px;font-size:14px;color:#4B5563;border-bottom:1px solid #EDEFF2;'>
-                            Reference No.
-                          </td>
-                          <td style='padding:14px 18px;font-size:14px;color:#1E2329;font-weight:600;text-align:right;border-bottom:1px solid #EDEFF2;'>
-                            {WebUtility.HtmlEncode(referenceNo)}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style='padding:14px 18px;font-size:14px;color:#4B5563;'>
-                            Status
-                          </td>
-                          <td style='padding:14px 18px;font-size:14px;color:#F0B90B;font-weight:700;text-align:right;'>
-                            {WebUtility.HtmlEncode(status)}
-                          </td>
-                        </tr>
-                      </table>
+            </td>
+          </tr>
 
-                      <p style='margin:0;color:#9CA3AF;font-size:12px;line-height:1.6;'>
-                        If you have any questions about this transaction, contact our support team anytime.
-                      </p>
-                    </td>
-                  </tr>
 
-                  <!-- Footer -->
-                  <tr>
-                    <td style='padding:20px 32px;background:#FAFAFA;border-top:1px solid #F0F0F0;text-align:center;'>
-                      <p style='margin:0;color:#9CA3AF;font-size:12px;'>
-                        © {DateTime.Now.Year} OLX Trade. All rights reserved.
-                      </p>
-                      <p style='margin:4px 0 0 0;color:#9CA3AF;font-size:12px;'>
-                        This is an automated message, please do not reply.
-                      </p>
-                    </td>
-                  </tr>
 
-                </table>
-              </td>
-            </tr>
-          </table>
-        </div>",
-         ct);
+          <!-- Body -->
+          <tr>
+            <td style='padding:36px 32px 24px 32px;'>
+
+              <h2 style='margin:0 0 12px 0;
+                         color:#1E2329;
+                         font-size:20px;
+                         font-weight:600;'>
+                Transaction Update
+              </h2>
+
+
+              <p style='margin:0 0 20px 0;
+                        color:#4B5563;
+                        font-size:15px;
+                        line-height:1.6;'>
+                Hello {WebUtility.HtmlEncode(fullName)}, here's the latest status on your transaction.
+              </p>
+
+
+
+              <!-- Details -->
+              <table role='presentation'
+                     width='100%'
+                     cellpadding='0'
+                     cellspacing='0'
+                     style='background:#F8F9FA;
+                            border-radius:8px;
+                            margin:8px 0 24px 0;'>
+
+
+                <tr>
+
+                  <td style='padding:14px 18px;
+                             font-size:14px;
+                             color:#4B5563;
+                             border-bottom:1px solid #EDEFF2;'>
+                    Reference No.
+                  </td>
+
+
+                  <td style='padding:14px 18px;
+                             font-size:14px;
+                             color:#1E2329;
+                             font-weight:600;
+                             text-align:right;
+                             border-bottom:1px solid #EDEFF2;'>
+                    {WebUtility.HtmlEncode(referenceNo)}
+                  </td>
+
+                </tr>
+
+
+
+                <tr>
+
+                  <td style='padding:14px 18px;
+                             font-size:14px;
+                             color:#4B5563;'>
+                    Status
+                  </td>
+
+
+                  <td style='padding:14px 18px;
+                             font-size:14px;
+                             color:#F0B90B;
+                             font-weight:700;
+                             text-align:right;'>
+                    {WebUtility.HtmlEncode(status)}
+                  </td>
+
+                </tr>
+
+
+              </table>
+
+
+
+              <p style='margin:0;
+                        color:#9CA3AF;
+                        font-size:12px;
+                        line-height:1.6;'>
+                If you have any questions about this transaction, contact our support team anytime.
+              </p>
+
+
+            </td>
+          </tr>
+
+
+
+
+          <!-- Footer -->
+          <tr>
+            <td style='padding:20px 32px;
+                       background:#FAFAFA;
+                       border-top:1px solid #F0F0F0;
+                       text-align:center;'>
+
+
+              <p style='margin:0;
+                        color:#9CA3AF;
+                        font-size:12px;'>
+                © {DateTime.Now.Year} OLX Trade. All rights reserved.
+              </p>
+
+
+              <p style='margin:4px 0 0 0;
+                        color:#9CA3AF;
+                        font-size:12px;'>
+                This is an automated message, please do not reply.
+              </p>
+
+
+            </td>
+          </tr>
+
+
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</div>",
+          ct);
     private static string WithdrawalTemplate(string name, string code, decimal amount, string walletSource)
-    => $@"
-    <div style='font-family:Segoe UI,Arial,sans-serif;background:#F4F6F8;padding:40px 0;'>
-      <table role='presentation' width='100%' cellpadding='0' cellspacing='0'>
-        <tr>
-          <td align='center'>
-            <table role='presentation' width='480' cellpadding='0' cellspacing='0'
-                   style='background:#FFFFFF;border-radius:12px;overflow:hidden;
-                          box-shadow:0 2px 10px rgba(0,0,0,0.06);'>
+=> $@"
+<div style='font-family:Segoe UI,Arial,sans-serif;background:#F4F6F8;padding:40px 0;'>
+  <table role='presentation' width='100%' cellpadding='0' cellspacing='0'>
+    <tr>
+      <td align='center'>
 
-              <!-- Header -->
-              <tr>
-                <td style='background:#0B0E11;padding:24px 32px;text-align:center;'>
-                  <span style='font-size:22px;font-weight:700;color:#F0B90B;letter-spacing:1px;'>
-                    OLX Trade
+        <table role='presentation' width='480' cellpadding='0' cellspacing='0'
+               style='background:#FFFFFF;border-radius:12px;overflow:hidden;
+                      box-shadow:0 2px 10px rgba(0,0,0,0.06);'>
+
+
+          <!-- Header -->
+          <tr>
+            <td style='background:#0B0E11;padding:20px 32px;'>
+
+              <table role='presentation' width='100%' cellpadding='0' cellspacing='0'>
+                <tr>
+                  <td align='left' valign='middle'>
+
+                    <img src='https://olxtrade.com/images/brand/logoicon.png'
+                         alt='OLX Trade Logo'
+                         width='42'
+                         height='42'
+                         style='display:inline-block;
+                                vertical-align:middle;
+                                margin-right:10px;
+                                border:0;' />
+
+                    <span style='font-size:22px;
+                                 font-weight:700;
+                                 color:#F0B90B;
+                                 letter-spacing:1px;
+                                 vertical-align:middle;'>
+                        OLX Trade
+                    </span>
+
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+
+          <!-- Body -->
+          <tr>
+            <td style='padding:36px 32px 24px 32px;'>
+
+              <h2 style='margin:0 0 12px 0;
+                         color:#1E2329;
+                         font-size:20px;
+                         font-weight:600;'>
+                Withdrawal Verification
+              </h2>
+
+
+              <p style='margin:0 0 20px 0;
+                        color:#4B5563;
+                        font-size:15px;
+                        line-height:1.6;'>
+                Hello {WebUtility.HtmlEncode(name)}, use the code below to verify your withdrawal request.
+              </p>
+
+
+              <!-- Code Box -->
+              <div style='text-align:center;margin:28px 0;'>
+
+                <div style='display:inline-block;
+                            background:#F8F9FA;
+                            border:1px solid #F0B90B;
+                            border-radius:10px;
+                            padding:16px 28px;'>
+
+                  <span style='font-size:28px;
+                               font-weight:700;
+                               letter-spacing:6px;
+                               color:#1E2329;'>
+                    {WebUtility.HtmlEncode(code)}
                   </span>
-                </td>
-              </tr>
 
-              <!-- Body -->
-              <tr>
-                <td style='padding:36px 32px 24px 32px;'>
-                  <h2 style='margin:0 0 12px 0;color:#1E2329;font-size:20px;font-weight:600;'>
-                    Withdrawal Verification
-                  </h2>
-                  <p style='margin:0 0 20px 0;color:#4B5563;font-size:15px;line-height:1.6;'>
-                    Hello {WebUtility.HtmlEncode(name)}, use the code below to verify your withdrawal request.
-                  </p>
+                </div>
 
-                  <!-- Code box -->
-                  <div style='text-align:center;margin:28px 0;'>
-                    <div style='display:inline-block;background:#F8F9FA;border:1px solid #F0B90B;
-                                border-radius:10px;padding:16px 28px;'>
-                      <span style='font-size:28px;font-weight:700;letter-spacing:6px;color:#1E2329;'>
-                        {WebUtility.HtmlEncode(code)}
-                      </span>
-                    </div>
-                  </div>
+              </div>
 
-                  <!-- Details -->
-                  <table role='presentation' width='100%' cellpadding='0' cellspacing='0'
-                         style='background:#F8F9FA;border-radius:8px;margin:8px 0 20px 0;'>
-                    <tr>
-                      <td style='padding:14px 18px;font-size:14px;color:#4B5563;border-bottom:1px solid #EDEFF2;'>
-                        Amount
-                      </td>
-                      <td style='padding:14px 18px;font-size:14px;color:#1E2329;font-weight:600;text-align:right;border-bottom:1px solid #EDEFF2;'>
-                        ${amount:N2}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style='padding:14px 18px;font-size:14px;color:#4B5563;'>
-                        Wallet
-                      </td>
-                      <td style='padding:14px 18px;font-size:14px;color:#1E2329;font-weight:600;text-align:right;'>
-                        {WebUtility.HtmlEncode(walletSource)}
-                      </td>
-                    </tr>
-                  </table>
 
-                  <p style='margin:0 0 16px 0;color:#F6465D;font-weight:600;font-size:14px;'>
-                    ⓘ This code expires in 2 minutes.
-                  </p>
+              <!-- Details -->
+              <table role='presentation'
+                     width='100%'
+                     cellpadding='0'
+                     cellspacing='0'
+                     style='background:#F8F9FA;
+                            border-radius:8px;
+                            margin:8px 0 20px 0;'>
 
-                  <p style='margin:0;color:#9CA3AF;font-size:12px;line-height:1.6;'>
-                    Never share this code with anyone. OLX Trade support will never ask for your withdrawal OTP.
-                  </p>
-                </td>
-              </tr>
+                <tr>
 
-              <!-- Footer -->
-              <tr>
-                <td style='padding:20px 32px;background:#FAFAFA;border-top:1px solid #F0F0F0;text-align:center;'>
-                  <p style='margin:0;color:#9CA3AF;font-size:12px;'>
-                    © {DateTime.Now.Year} OLX Trade. All rights reserved.
-                  </p>
-                  <p style='margin:4px 0 0 0;color:#9CA3AF;font-size:12px;'>
-                    This is an automated message, please do not reply.
-                  </p>
-                </td>
-              </tr>
+                  <td style='padding:14px 18px;
+                             font-size:14px;
+                             color:#4B5563;
+                             border-bottom:1px solid #EDEFF2;'>
+                    Amount
+                  </td>
 
-            </table>
-          </td>
-        </tr>
-      </table>
-    </div>";
+
+                  <td style='padding:14px 18px;
+                             font-size:14px;
+                             color:#1E2329;
+                             font-weight:600;
+                             text-align:right;
+                             border-bottom:1px solid #EDEFF2;'>
+                    ${amount:N2}
+                  </td>
+
+                </tr>
+
+
+                <tr>
+
+                  <td style='padding:14px 18px;
+                             font-size:14px;
+                             color:#4B5563;'>
+                    Wallet
+                  </td>
+
+
+                  <td style='padding:14px 18px;
+                             font-size:14px;
+                             color:#1E2329;
+                             font-weight:600;
+                             text-align:right;'>
+                    {WebUtility.HtmlEncode(walletSource)}
+                  </td>
+
+                </tr>
+
+              </table>
+
+
+
+              <p style='margin:0 0 16px 0;
+                        color:#F6465D;
+                        font-weight:600;
+                        font-size:14px;'>
+
+                ⓘ This code expires in 2 minutes.
+
+              </p>
+
+
+
+              <p style='margin:0;
+                        color:#9CA3AF;
+                        font-size:12px;
+                        line-height:1.6;'>
+
+                Never share this code with anyone. OLX Trade support will never ask for your withdrawal OTP.
+
+              </p>
+
+
+            </td>
+          </tr>
+
+
+
+          <!-- Footer -->
+          <tr>
+
+            <td style='padding:20px 32px;
+                       background:#FAFAFA;
+                       border-top:1px solid #F0F0F0;
+                       text-align:center;'>
+
+
+              <p style='margin:0;
+                        color:#9CA3AF;
+                        font-size:12px;'>
+
+                © {DateTime.Now.Year} OLX Trade. All rights reserved.
+
+              </p>
+
+
+              <p style='margin:4px 0 0 0;
+                        color:#9CA3AF;
+                        font-size:12px;'>
+
+                This is an automated message, please do not reply.
+
+              </p>
+
+
+            </td>
+
+          </tr>
+
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</div>";
     //private static string WithdrawalTemplate(string name, string code, decimal amount, string walletSource)
     //    => $"<div style='font-family:Arial;background:#0B0E11;color:#EAECEF;padding:28px'>" +
     //       $"<div style='max-width:520px;margin:auto;background:#181A20;border:1px solid #2B3139;border-radius:16px;padding:28px'>" +
@@ -259,13 +476,35 @@ public sealed class SmtpEmailService : IEmailService
                           box-shadow:0 2px 10px rgba(0,0,0,0.06);'>
 
               <!-- Header -->
-              <tr>
-                <td style='background:#0B0E11;padding:24px 32px;text-align:center;'>
-                  <span style='font-size:22px;font-weight:700;color:#F0B90B;letter-spacing:1px;'>
-                    OLX Trade
-                  </span>
-                </td>
-              </tr>
+             <!-- Header -->
+<tr>
+  <td style='background:#0B0E11;padding:20px 32px;'>
+    <table role='presentation' width='100%' cellpadding='0' cellspacing='0'>
+      <tr>
+        <td align='left' valign='middle'>
+
+          <img src='https://olxtrade.com/images/brand/logoicon.png'
+               alt='OLX Trade'
+               width='42'
+               height='42'
+               style='display:inline-block;
+                      vertical-align:middle;
+                      margin-right:10px;
+                      border:0;' />
+
+          <span style='font-size:22px;
+                       font-weight:700;
+                       color:#F0B90B;
+                       letter-spacing:1px;
+                       vertical-align:middle;'>
+              OLX Trade
+          </span>
+
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>
 
               <!-- Body -->
               <tr>
