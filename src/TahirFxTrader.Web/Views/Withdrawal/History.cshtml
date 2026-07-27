@@ -30,7 +30,7 @@
                         <th>Date</th>
                         <th>Reference</th>
                         <th>Wallet</th>
-                        <th>Method</th>
+                        <th>Transaction ID</th>
                         <th>Destination</th>
                         <th>Amount</th>
                         <th>Fee</th>
@@ -50,7 +50,7 @@
                             <td>
                                 <span class="badge @(row.WalletSource == " Investment" ? "badge-pending" : "badge-success")">@Source(row.WalletSource)</span>
                             </td>
-                            <td>@row.PaymentMethodName</td>
+                            <td>@row.AdminPaymentReference</td>
                             <td>@row.DestinationDisplay</td>
                             <td class="mono">$@row.Amount.ToString("N2")</td>
                             <td class="mono">$@row.FeeAmount.ToString("N2")</td>
