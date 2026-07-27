@@ -154,8 +154,8 @@ public sealed class WithdrawalService : IWithdrawalService
 
     private async Task<OperationResult> ValidateRequestAsync(CreateWithdrawalRequest request, CancellationToken ct)
     {
-        if (request.WalletSource != "Investment" && request.WalletSource != "ProfitCommission")
-            return OperationResult.Failure("Select Investment or Profit + Commission wallet.");
+       if (request.WalletSource != "Investment" && request.WalletSource != "Profit" && request.WalletSource != "Commission")
+            return OperationResult.Failure("Select Investment or Profit or Commission wallet.");
         if (request.Amount <= 0)
             return OperationResult.Failure("Enter a valid withdrawal amount.");
         if (string.IsNullOrWhiteSpace(request.DestinationDisplay) || string.IsNullOrWhiteSpace(request.DestinationJson))

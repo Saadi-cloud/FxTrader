@@ -14,9 +14,16 @@ public sealed class DashboardRepository : RepositoryBase, IDashboardRepository
         var data = new DashboardData();
         if (await r.ReadAsync(ct))
         {
-            data.FullName = r.String("FullName"); data.UserTraceId = r.String("UserTraceId"); data.AvailableBalance = r.Decimal("AvailableBalance"); data.HeldBalance = r.Decimal("HeldBalance");
-            data.InvestmentBalance = r.Decimal("InvestmentBalance"); data.ProfitBalance = r.Decimal("ProfitBalance"); data.CommissionBalance = r.HasColumn("CommissionBalance") ? r.Decimal("CommissionBalance") : 0;
-            data.HeldInvestmentBalance = r.Decimal("HeldInvestmentBalance"); data.HeldProfitBalance = r.Decimal("HeldProfitBalance"); data.HeldCommissionBalance = r.HasColumn("HeldCommissionBalance") ? r.Decimal("HeldCommissionBalance") : 0;
+            data.FullName = r.String("FullName");
+            data.UserTraceId = r.String("UserTraceId");
+            data.AvailableBalance = r.Decimal("AvailableBalance");
+            data.HeldBalance = r.Decimal("HeldBalance");
+            data.InvestmentBalance = r.Decimal("InvestmentBalance");
+            data.ProfitBalance = r.Decimal("ProfitBalance"); 
+            data.CommissionBalance = r.HasColumn("CommissionBalance") ? r.Decimal("CommissionBalance") : 0;
+            data.HeldInvestmentBalance = r.Decimal("HeldInvestmentBalance");
+            data.HeldProfitBalance = r.Decimal("HeldProfitBalance");
+            data.HeldCommissionBalance = r.HasColumn("HeldCommissionBalance") ? r.Decimal("HeldCommissionBalance") : 0;
             data.TotalDeposits = r.Decimal("TotalDeposits");
             data.TotalWithdrawals = r.Decimal("TotalWithdrawals");
             data.Profit_Withdrawals = r.Decimal("Profit_Withdrawals");

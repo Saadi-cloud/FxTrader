@@ -8,13 +8,13 @@
     var selectedSource = Context.Request.Method.Equals("POST", StringComparison.OrdinalIgnoreCase)
         && !string.IsNullOrWhiteSpace(Model.Request.WalletSource)
             ? Model.Request.WalletSource
-            : "ProfitCommission";
+            : "Profit";
 }
 
 
 <div class="mini-stat-row withdrawal-wallet-stats">
-    <div class="mini-stat"><div class="mini-stat-label">Profit + Commission</div><div class="mini-stat-value mono" style="color:var(--green);">$@Model.ProfitCommissionBalance.ToString("N2")</div><div class="mini-stat-hint">No withdrawal fee</div></div>
-   
+    <div class="mini-stat"><div class="mini-stat-label">Profit</div><div class="mini-stat-value mono" style="color:var(--green);">$@Model.ProfitBalance.ToString("N2")</div><div class="mini-stat-hint">No withdrawal fee</div></div>
+    <div class="mini-stat"><div class="mini-stat-label">Commission</div><div class="mini-stat-value mono" style="color:var(--green);">$@Model.CommissionBalance.ToString("N2")</div><div class="mini-stat-hint">No withdrawal fee</div></div>
  <div class="mini-stat"><div class="mini-stat-label">Investment Wallet</div><div class="mini-stat-value mono">$@Model.InvestmentBalance.ToString("N2")</div><div class="mini-stat-hint">Fee applies</div></div>
 
 
@@ -40,8 +40,10 @@ else
                 <div class="field-group wallet-source-group">
                     <label class="field-label" asp-for="Request.WalletSource">Withdraw from wallet</label>
                     <select class="field-input wallet-source-select" name="Request.WalletSource" id="walletSource">
-                        <option value="ProfitCommission" selected="@(selectedSource == "ProfitCommission" ? "selected" : null)">Profit + Commission @* — $@Model.ProfitCommissionBalance.ToString("N2") *@</option>
-                        <option value="Investment" selected="@(selectedSource == "Investment" ? "selected" : null)">Investment Wallet  @* $—@Model.InvestmentBalance.ToString("N2") *@</option>
+                        <option value="Profit" selected="@(selectedSource == "Profit" ? "selected" : null)">Profit@* — $@Model.ProfitCommissionBalance.ToString("N2") *@</option>
+                        <option value="Commission" selected="@(selectedSource == "Commission" ? "selected" : null)">Commission @* — $@Model.ProfitCommissionBalance.ToString("N2") *@</option>
+
+                        <option value="Investment" selected="@(selectedSource == "Investment" ? "selected" : null)">Investment@* $—@Model.InvestmentBalance.ToString("N2") *@</option>
                     </select>
                     <span asp-validation-for="Request.WalletSource"></span>
                     <div class="wallet-source-preview">
