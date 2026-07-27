@@ -2532,7 +2532,7 @@ html, body {
 .data-table tbody td span,
 .data-table tbody td:not(::before){
 
-    text-align:left;
+    text-align:right;
 
 }
 
@@ -2580,10 +2580,27 @@ html, body {
             font-size: 12px;
             color: #fff;
             min-width: 0;
-            max-width: 100%;
+            max-width: 100% !important;
+            width: 100% !important;
             overflow-wrap: anywhere;
             word-break: break-word;
             white-space: normal;
+            text-align: right;
+            box-sizing: border-box;
+        }
+
+        .data-table tbody td.mono {
+            max-width: 100% !important;
+            width: 100% !important;
+            text-align: right !important;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        .data-table tbody td > * {
+            margin-left: auto;
+            text-align: right;
+            min-width: 0;
         }
 
 
@@ -2591,13 +2608,15 @@ html, body {
             /* Label */
 
             .data-table tbody td::before {
-                width: 85px;
+                width: 96px;
+                flex: 0 0 96px;
                 flex-shrink: 0;
                 color: #8b95a5;
                 font-size: 11px;
                 font-weight: 600;
                 text-transform: uppercase;
-                text-align: left;
+                text-align: left !important;
+                margin-left: 0;
             }
 
 
@@ -2625,7 +2644,7 @@ html, body {
             }
 
             .data-table tbody td:nth-child(6)::before {
-                content: "Net Credit";
+                content: "Deposit";
             }
 
             .data-table tbody td:nth-child(7)::before {
@@ -2679,52 +2698,59 @@ html, body {
   }
 
   .withdrawal-table tbody td {
-    display: grid !important;
-    grid-template-columns: 96px minmax(0, 1fr);
-    align-items: start;
-    gap: 10px;
+    display: flex !important;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
     padding: 6px 0 !important;
     border: none !important;
     font-size: 12px;
     color: #fff;
     min-width: 0;
-    max-width: 100%;
+    max-width: 100% !important;
+    width: 100% !important;
     overflow-wrap: anywhere;
     word-break: break-word;
     white-space: normal;
+    text-align: right;
+    box-sizing: border-box;
   }
 
   .withdrawal-table tbody td > * {
     min-width: 0;
-    max-width: 100%;
+    margin-left: auto;
+    text-align: right;
     overflow-wrap: anywhere;
     word-break: break-word;
-    justify-self: end;
-    text-align: right;
   }
 
-  .withdrawal-table tbody td.mono {
+  .withdrawal-table tbody td.mono,
+  .withdrawal-table.data-table tbody td.mono {
+    max-width: 100% !important;
+    width: 100% !important;
     overflow-wrap: anywhere;
     word-break: break-word;
     white-space: normal;
+    text-align: right !important;
   }
 
   /* Higher specificity so deposit .data-table labels do not win */
   .withdrawal-table.data-table tbody td::before {
-    width: auto;
+    width: 110px;
+    flex: 0 0 110px;
     flex-shrink: 0;
     color: #8b95a5;
     font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
-    text-align: left;
-    justify-self: start;
+    text-align: left !important;
+    margin-left: 0;
   }
 
   .withdrawal-table.data-table tbody td:nth-child(1)::before { content: "Date"; }
   .withdrawal-table.data-table tbody td:nth-child(2)::before { content: "Reference"; }
   .withdrawal-table.data-table tbody td:nth-child(3)::before { content: "Wallet"; }
-  .withdrawal-table.data-table tbody td:nth-child(4)::before { content: "Method"; }
+  .withdrawal-table.data-table tbody td:nth-child(4)::before { content: "Transaction ID"; }
   .withdrawal-table.data-table tbody td:nth-child(5)::before { content: "Destination"; }
   .withdrawal-table.data-table tbody td:nth-child(6)::before { content: "Amount"; }
   .withdrawal-table.data-table tbody td:nth-child(7)::before { content: "Fee"; }
@@ -3349,20 +3375,12 @@ html, body {
                 flex-shrink: 0;
             }
 
-        .data-table:not(.statement-table) .mono {
-            word-break: break-all;
-            text-align: right;
-            max-width: 60%;
-        }
-
-        .statement-table.data-table td.mono,
-        .statement-table.data-table tbody td.mono {
-            max-width: none !important;
-            width: auto !important;
-            flex: 1 1 auto;
-            text-align: right !important;
+        .data-table .mono,
+        .data-table tbody td.mono {
             word-break: break-word;
             overflow-wrap: anywhere;
+            text-align: right !important;
+            max-width: 100% !important;
         }
 }
 /* Account statement table only */
