@@ -329,7 +329,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, .nav-link:focus-visi
   gap: 8px;
   font-weight: 600;
   font-size: 14px;
-  padding: 11px 20px;
+  padding: 5px 10px;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
   transition: filter 0.15s, transform 0.1s, background 0.15s, border-color 0.15s;
@@ -339,6 +339,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, .nav-link:focus-visi
 .btn-gold {
   background: var(--gold);
   color: #1a1500;
+  font-size:75%
 }
     .btn-gold:hover {
         filter: brightness(1.08);

@@ -13,7 +13,8 @@
 
 
 <div class="mini-stat-row withdrawal-wallet-stats">
-    <div class="mini-stat"><div class="mini-stat-label">Profit + Commission</div><div class="mini-stat-value mono" style="color:var(--green);">$@Model.ProfitCommissionBalance.ToString("N2")</div><div class="mini-stat-hint">No withdrawal fee</div></div>
+    <div class="mini-stat"><div class="mini-stat-label">Profit</div><div class="mini-stat-value mono" style="color:var(--green);">$@Model.ProfitCommissionBalance.ToString("N2")</div><div class="mini-stat-hint">No withdrawal fee</div></div>
+    <div class="mini-stat"><div class="mini-stat-label">Commission</div><div class="mini-stat-value mono" style="color:var(--green);">$@Model.ProfitCommissionBalance.ToString("N2")</div><div class="mini-stat-hint">No withdrawal fee</div></div>
     <div class="mini-stat"><div class="mini-stat-label">Investment Wallet</div><div class="mini-stat-value mono">$@Model.InvestmentBalance.ToString("N2")</div><div class="mini-stat-hint">Fee applies</div></div>
 
 
@@ -167,7 +168,7 @@ else
                     if (feeSummary) feeSummary.textContent = money(feeAmount);
                     if (receiveSummary) receiveSummary.textContent = money(Math.max(0, value - feeAmount));
                     document.getElementById('walletLimitNote').textContent = 'Maximum available from this wallet: ' + money(balance);
-                    maxButton.setAttribute('data-amount', balance.toFixed(4));
+                    maxButton.setAttribute('data-amount', balance.toFixed(2));
                     if (ruleMessage) {
                         ruleMessage.innerHTML = isInvestment
                             ? '<span>Investment withdrawals use only the Investment Wallet. The admin-controlled investment withdrawal fee applies.</span>'
