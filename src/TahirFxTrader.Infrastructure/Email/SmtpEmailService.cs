@@ -10,6 +10,95 @@ public sealed class SmtpEmailService : IEmailService
 {
     private readonly SmtpOptions _options;
 
+
+    public Task SendAdminDepositRequestAsync(
+    string userName,
+    string userEmail,
+    decimal amount,
+    string referenceNo,
+    CancellationToken ct = default)
+=> SendAsync(
+    "admin@olxtrade.com",
+    $"New Deposit Request - {referenceNo}",
+    $@"
+<div style='font-family:Segoe UI,Arial;background:#F4F6F8;padding:40px 0;'>
+
+<table width='100%'>
+<tr>
+<td align='center'>
+
+<table width='480'
+style='background:white;border-radius:12px;padding:30px;'>
+
+<tr>
+<td style='text-align:center;background:#0B0E11;padding:20px;'>
+
+<img src='https://olxtrade.com/images/brand/logoicon.png'
+width='42'
+style='vertical-align:middle;margin-right:0px;'>
+
+<span style='color:#F0B90B;font-size:20px;font-weight:600;'>
+OLX Trade
+</span>
+
+</td>
+</tr>
+
+
+<tr>
+<td style='padding:30px;'>
+
+<h2>
+New Deposit Request
+</h2>
+
+<p>
+A user has submitted a new deposit request.
+</p>
+
+
+<table width='100%'
+style='background:#F8F9FA;padding:15px;border-radius:8px;'>
+
+<tr>
+<td>User</td>
+<td align='right'>{userName}</td>
+</tr>
+
+<tr>
+<td>Email</td>
+<td align='right'>{userEmail}</td>
+</tr>
+
+<tr>
+<td>Amount</td>
+<td align='right'>
+${amount:N2}
+</td>
+</tr>
+
+
+
+</table>
+
+
+<p style='color:#F0B90B;font-weight:600;'>
+Please review from admin panel.
+</p>
+
+
+</td>
+</tr>
+
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</div>",
+ct);
     public SmtpEmailService(IOptions<SmtpOptions> options)
     {
         _options = options.Value;
@@ -575,6 +664,114 @@ public sealed class SmtpEmailService : IEmailService
     </tr>
   </table>
 </div>";
+   
+    public Task SendAdminWithdrawalRequestAsync(
+    string userName,
+    string userEmail,
+    decimal amount,
+    string walletSource,
+    string referenceNo,
+    CancellationToken ct = default)
+=> SendAsync(
+    "admin@olxtrade.com",
+    $"New Withdrawal Request - {referenceNo}",
+    $@"
+<div style='font-family:Segoe UI,Arial;background:#F4F6F8;padding:40px 0;'>
+
+<table width='100%'>
+<tr>
+<td align='center'>
+
+<table width='480'
+style='background:white;border-radius:12px;'>
+
+<tr>
+<td style='background:#0B0E11;padding:20px;text-align:center;'>
+
+<img src='https://olxtrade.com/images/brand/logoicon.png'
+width='42'
+style='vertical-align:middle;margin-right:0px;'>
+
+<span style='color:#F0B90B;font-size:22px;font-weight:700;'>
+OLX Trade
+</span>
+
+</td>
+</tr>
+
+
+<tr>
+<td style='padding:30px;'>
+
+
+<h2>
+New Withdrawal Request
+</h2>
+
+
+<p>
+A user requested withdrawal.
+</p>
+
+
+<table width='100%'
+style='background:#F8F9FA;padding:15px;'>
+
+
+<tr>
+<td>User</td>
+<td align='right'>
+{userName}
+</td>
+</tr>
+
+
+<tr>
+<td>Email</td>
+<td align='right'>
+{userEmail}
+</td>
+</tr>
+
+
+<tr>
+<td>Amount</td>
+<td align='right'>
+${amount:N2}
+</td>
+</tr>
+
+
+<tr>
+<td>Wallet</td>
+<td align='right'>
+{walletSource}
+</td>
+</tr>
+
+
+
+
+</table>
+
+
+<p style='color:#F6465D;font-weight:600;'>
+Please verify and process this withdrawal.
+</p>
+
+
+</td>
+</tr>
+
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</div>",
+ct);
     private async Task SendAsync(
 
         string to,

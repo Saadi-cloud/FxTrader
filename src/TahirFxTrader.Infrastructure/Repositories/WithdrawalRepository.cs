@@ -18,13 +18,29 @@ public sealed class WithdrawalRepository : RepositoryBase, IWithdrawalRepository
         return await ReadResultAsync(cmd, ct);
     }
 
-    public async Task<DbOperationResult> CreateOtpChallengeAsync(long userId, CreateWithdrawalRequest request, string codeHash, DateTime expiresAtUtc, CancellationToken ct = default)
+    public async Task<DbOperationResult> CreateOtpChallengeAsync(
+     long userId,
+     CreateWithdrawalRequest request,
+     string codeHash,
+     DateTime expiresAtUtc,
+     CancellationToken ct = default)
     {
-        await using var c = Connections.CreateConnection(); await c.OpenAsync(ct);
+        await using var c = Connections.CreateConnection();
+        await c.OpenAsync(ct);
+
         await using var cmd = StoredProcedure(c, "sp_WithdrawalOtp_Create");
-        Add(cmd, "@UserId", userId); Add(cmd, "@PaymentMethodId", request.PaymentMethodId); Add(cmd, "@WalletSource", request.WalletSource); Add(cmd, "@Amount", request.Amount);
-        Add(cmd, "@DestinationJson", request.DestinationJson); Add(cmd, "@DestinationDisplay", request.DestinationDisplay);
-        Add(cmd, "@CodeHash", codeHash); Add(cmd, "@ExpiresAtUtc", expiresAtUtc);
+
+        Add(cmd, "@UserId", userId);
+        Add(cmd, "@PaymentMethodId", request.PaymentMethodId);
+        Add(cmd, "@WalletSource", request.WalletSource);
+        Add(cmd, "@Amount", request.Amount);
+
+        Add(cmd, "@DestinationJson", request.DestinationJson);
+        Add(cmd, "@DestinationDisplay", request.DestinationDisplay);
+
+        Add(cmd, "@CodeHash", codeHash);
+        Add(cmd, "@ExpiresAtUtc", expiresAtUtc);
+
         return await ReadResultAsync(cmd, ct);
     }
 
