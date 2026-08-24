@@ -12,8 +12,9 @@ public sealed class CreateDepositRequest
 }
 public sealed class CreateWithdrawalRequest
 {
-    [Required, RegularExpression("^(Investment|ProfitCommission)$", ErrorMessage = "Select a valid withdrawal wallet.")]
-    public string WalletSource { get; set; } = "Investment";
+    [Required, RegularExpression("^(Investment|Profit|Commission)$",
+       ErrorMessage = "Select a valid withdrawal wallet.")]
+    public string WalletSource { get; set; } = "Profit";
     [Range(1, int.MaxValue)] public int PaymentMethodId { get; set; }
     [Required]
     [Range(typeof(decimal), "0.01", "999999999999")]

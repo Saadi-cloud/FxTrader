@@ -1,7 +1,7 @@
 <style>
     /* ===========================================================
-       Deposit screenshot preview — append to your existing site.css
-       =========================================================== */
+               Deposit screenshot preview — append to your existing site.css
+               =========================================================== */
 
     .upload-preview-wrap {
         margin-top: 2px;
@@ -74,112 +74,376 @@
         }
 
     @@media(max-width:420px) {
-        .upload-preview-card img
+        .upload-preview-card img {
+            width: 52px;
+            height: 52px;
+        }
 
-    {
-        width: 52px;
-        height: 52px;
+        .upload-preview-name {
+            font-size: 12px;
+        }
     }
 
-    .upload-preview-name {
-        font-size: 12px;
+    /* ===========================================================
+               QR trigger button + popup modal (frontend-only —
+               uses the same qrcodejs/cdnjs setup already working on
+               the withdrawal details page, generated client-side from
+               the address text, no dependency on an uploaded QR image)
+               =========================================================== */
+
+    .copy-field-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
     }
 
+    .qr-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface-2);
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: border-color .15s, color .15s, background .15s;
+    }
+
+        .qr-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .qr-btn:hover {
+            border-color: var(--gold, #c9a961);
+            color: var(--text);
+            background: var(--bg-soft);
+        }
+
+    .qr-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(0, 0, 0, .65);
+        z-index: 1000;
+    }
+
+        .qr-modal-overlay.open {
+            display: flex;
+        }
+
+    .qr-modal-box {
+        position: relative;
+        width: 100%;
+        max-width: 300px;
+        padding: 28px 22px 22px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        background: var(--bg-soft);
+        text-align: center;
+    }
+
+    .qr-modal-canvas {
+        display: inline-block;
+        padding: 12px;
+        background: #fff;
+        border-radius: 10px;
+        line-height: 0;
+    }
+
+        .qr-modal-canvas img,
+        .qr-modal-canvas canvas {
+            display: block;
+            width: 220px;
+            height: 220px;
+            max-width: 100%;
+        }
+
+    .qr-modal-title {
+        margin-bottom: 14px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .qr-modal-address {
+        margin-top: 14px;
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface-2);
+        color: var(--text-muted);
+        font-size: 11.5px;
+        font-family: monospace;
+        word-break: break-all;
+    }
+
+    .qr-modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--surface-2);
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: border-color .15s, color .15s, background .15s;
+    }
+
+        .qr-modal-close svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .qr-modal-close:hover {
+            border-color: var(--red);
+            color: var(--red);
+            background: var(--red-soft);
+        }
+
+    @@media(max-width:420px) {
+        .qr-modal-box {
+            max-width: 240px;
+            padding: 22px 16px 18px;
+        }
     }
 </style>
 @model DepositPageViewModel
-@{ ViewData["Title"] = "Deposit Funds"; ViewData["Subtitle"] = "Choose a payment method and submit your payment proof"; var first = Model.Methods.FirstOrDefault(); }
-@if (Model.Methods.Count == 0) { <div class="card card-pad empty-state">No deposit methods are currently available. Please contact support.</div> }
-else {
-<div class="card card-pad"><div class="card-head"><h3>1. Choose deposit method</h3><a asp-action="History" class="btn btn-gold">History</a></div>
-<div class="method-grid">@for(var i=0;i<Model.Methods.Count;i++){var m=Model.Methods[i];<label class="method-card @(i==0?"active":"")" data-method="@m.Id" data-name="@m.Name" data-min="@m.MinDeposit" data-max="@(m.MaxDeposit?.ToString() ?? "")" data-fee="@m.DepositFeePercent"><input type="radio" name="methodPicker" value="@m.Id" @(i==0?"checked":"")><div class="method-icon">@(m.MethodType == PaymentMethodType.Crypto ? "₮" : m.Name[..Math.Min(2,m.Name.Length)].ToUpperInvariant())</div><div><div class="method-name">@m.Name</div><div class="method-meta">Min $@m.MinDeposit.ToString("N2") · Fee @m.DepositFeePercent.ToString("0.##")%</div></div></label>}</div>
-@for(var i=0;i<Model.Methods.Count;i++){var m=Model.Methods[i];<div class="pay-detail-panel @(i==0?"show":"")" data-method-panel="@m.Id"><div class="payment-instructions"><div><div class="copy-field"><div><div class="copy-field-label">Account title</div><div class="copy-field-value">@(m.AccountTitle ?? "Not applicable")</div></div><button type="button" class="copy-btn"><span class="copy-btn-label">Copy</span></button></div><div class="copy-field"><div><div class="copy-field-label">@(m.MethodType == PaymentMethodType.Crypto ? "Wallet address" : "Account number")</div><div class="copy-field-value mono">@(m.MethodType == PaymentMethodType.Crypto ? m.WalletAddress : m.AccountNumber)</div></div><button type="button" class="copy-btn"><span class="copy-btn-label">Copy</span></button></div>@if(!string.IsNullOrWhiteSpace(m.Network)){<div class="copy-field"><div><div class="copy-field-label">Network</div><div class="copy-field-value">@m.Network</div></div></div>}@if(!string.IsNullOrWhiteSpace(m.Instructions)){<div class="alert-box alert-info"><span>@m.Instructions</span></div>}</div>@if(!string.IsNullOrWhiteSpace(m.QrImagePath)){<div><img src="@m.QrImagePath" alt="@m.Name QR" style="width:170px;max-width:100%;border-radius:10px;"></div>}</div></div>}</div>
-<div class="deposit-layout"><div class="card card-pad"><div class="card-head"><h3>2. Submit deposit details</h3></div><form method="post" enctype="multipart/form-data" id="depositForm"><div asp-validation-summary="ModelOnly"></div><input asp-for="Request.PaymentMethodId" type="hidden" value="@first?.Id">
-<div class="form-grid-2"><div class="field-group"><label class="field-label" asp-for="Request.Amount">Amount sent (Min Deposit 100)</label><div class="amount-input-wrap"><span class="amount-currency">$</span><input class="field-input" asp-for="Request.Amount" placeholder="0.00"></div><span asp-validation-for="Request.Amount"></span><div class="quick-amount-row"><button type="button" class="quick-amount-btn" data-amount="100">$100</button><button type="button" class="quick-amount-btn" data-amount="500">$500</button><button type="button" class="quick-amount-btn" data-amount="1000">$1,000</button><button type="button" class="quick-amount-btn" data-amount="5000">$5,000</button></div></div><div class="field-group"><label class="field-label" asp-for="Request.TransactionReference">Transaction No.</label><input class="field-input" asp-for="Request.TransactionReference" placeholder="e.g. Tx ID or Order Id"><span asp-validation-for="Request.TransactionReference"></span></div></div>
-
-<div class="field-group">
-    @* <label class="field-label" asp-for="Request.SenderAccount">Sender account number / wallet used</label><input class="field-input" asp-for="Request.SenderAccount" placeholder="The account or wallet you sent from"><span asp-validation-for="Request.SenderAccount"></span></div><div class="field-group"> *@
- 
-    <label class="field-label" asp-for="Screenshot">Upload payment screenshot</label>
-    <div class="upload-box" id="uploadBox">
-        <input asp-for="Screenshot" accept="image/png,image/jpeg,image/webp" id="screenshotInput">
-        <div id="uploadPlaceholder">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
-            <div class="upload-box-title">Click to upload payment proof</div>
-            <div class="upload-box-sub">PNG, JPG or WEBP, up to 5MB</div>
+@{
+    ViewData["Title"] = "Deposit Funds"; ViewData["Subtitle"] = "Choose a payment method and submit your payment proof"; var first = Model.Methods.FirstOrDefault();
+}
+@if (Model.Methods.Count == 0)
+{
+    <div class="card card-pad empty-state">No deposit methods are currently available. Please contact support.</div>
+}
+else
+{
+    <div class="card card-pad">
+        <div class="card-head">
+            <h3>1. Choose deposit method</h3><a asp-action="History" class="btn btn-gold">History</a>
         </div>
-    </div>
-    <div class="upload-preview-wrap" id="uploadPreviewWrap" style="display:none;">
-        <div class="upload-preview-card">
-            <img id="uploadPreviewImg" alt="Payment proof preview">
-            <div class="upload-preview-meta">
-                <div class="upload-preview-name" id="uploadPreviewName"></div>
-                <div class="upload-preview-size" id="uploadPreviewSize"></div>
+        <div class="method-grid">
+            @for (var i = 0; i < Model.Methods.Count; i++)
+            {
+                var m = Model.Methods[i];
+                <label class="method-card
+                @(i == 0 ? "active" : "")" data-method="@m.Id" data-name="@m.Name" data-min="@m.MinDeposit" data-max="@(m.MaxDeposit?.ToString() ?? "")" data-fee="@m.DepositFeePercent">
+                    <input type="radio" name="methodPicker" value="@m.Id" @(i == 0 ? "checked" : "")><div class="method-icon">@(m.MethodType == PaymentMethodType.Crypto ? "₮" : m.Name[..Math.Min(2, m.Name.Length)].ToUpperInvariant())</div><div>
+                        <div class="method-name">
+                            @m.Name
+                        </div>
+                        <div class="method-meta">
+                            Min $@m.MinDeposit.ToString("N2") · Fee @m.DepositFeePercent.ToString("0.##")%
+                        </div>
+                    </div>
+                </label>
+            }
+        </div>
+        @for (var i = 0; i < Model.Methods.Count; i++)
+        {
+            var m = Model.Methods[i];
+            <div class="pay-detail-panel
+                @(i == 0 ? "show" : "")" data-method-panel="@m.Id">
+                <div class="payment-instructions">
+                    <div>
+                        <div class="copy-field">
+                            <div>
+                                <div class="copy-field-label">Account title</div>
+                                <div class="copy-field-value">@(m.AccountTitle ?? "Not applicable")</div>
+                            </div>
+                            <button type="button" class="copy-btn"><span class="copy-btn-label">Copy</span></button>
+                        </div>
+                        <div class="copy-field">
+                            <div>
+                                <div class="copy-field-label">@(m.MethodType == PaymentMethodType.Crypto ? "Wallet address" : "Account number")</div>
+                                <div class="copy-field-value mono">@(m.MethodType == PaymentMethodType.Crypto ? m.WalletAddress : m.AccountNumber)</div>
+                            </div><div class="copy-field-actions">
+                                <button type="button" class="copy-btn"><span class="copy-btn-label">Copy</span></button>@if(!string.IsNullOrWhiteSpace(m.MethodType == PaymentMethodType.Crypto ? m.WalletAddress : m.AccountNumber)){
+                                <button type="button" class="qr-btn" data-address="@(m.MethodType == PaymentMethodType.Crypto ? m.WalletAddress : m.AccountNumber)" data-title="@m.Name" title="Show QR code" aria-label="Show @m.Name QR code"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><path d="M14 14h3v3h-3z"></path><path d="M20 14v3"></path><path d="M14 20h3"></path><path d="M20 20h.01"></path></svg></button>
+                            }
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(m.Network))
+                    {
+                        <div class="copy-field">
+                            <div>
+                                <div class="copy-field-label">Network</div>
+                                <div class="copy-field-value">@m.Network</div>
+                            </div>
+                        </div>
+
+                    }
+                    @if (!string.IsNullOrWhiteSpace(m.Instructions))
+                    {
+                        <div class="alert-box alert-info"><span>@m.Instructions</span></div>
+                    }
+                </div>
             </div>
-            <button type="button" class="upload-preview-remove" id="uploadPreviewRemove" aria-label="Remove uploaded image">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-            </button>
         </div>
+    }
+</div>
+<div class="deposit-layout">
+    <div class="card card-pad">
+        <div class="card-head"><h3>2. Submit deposit details</h3></div><form method="post" enctype="multipart/form-data" id="depositForm">
+            <div asp-validation-summary="ModelOnly"></div><input asp-for="Request.PaymentMethodId" type="hidden" value="@first?.Id">
+            <div class="form-grid-2"><div class="field-group"><label class="field-label" asp-for="Request.Amount">Amount sent (Min Deposit 100)</label><div class="amount-input-wrap"><span class="amount-currency">$</span><input class="field-input" asp-for="Request.Amount" placeholder="0.00"></div><span asp-validation-for="Request.Amount"></span><div class="quick-amount-row"><button type="button" class="quick-amount-btn" data-amount="100">$100</button><button type="button" class="quick-amount-btn" data-amount="500">$500</button><button type="button" class="quick-amount-btn" data-amount="1000">$1,000</button><button type="button" class="quick-amount-btn" data-amount="5000">$5,000</button></div></div><div class="field-group"><label class="field-label" asp-for="Request.TransactionReference">Transaction No.</label><input class="field-input" asp-for="Request.TransactionReference" placeholder="e.g. Tx ID or Order Id"><span asp-validation-for="Request.TransactionReference"></span></div></div>
+
+            <div class="field-group">
+                @* <label class="field-label" asp-for="Request.SenderAccount">Sender account number / wallet used</label><input class="field-input" asp-for="Request.SenderAccount" placeholder="The account or wallet you sent from"><span asp-validation-for="Request.SenderAccount"></span></div><div class="field-group"> *@
+
+                <label class="field-label" asp-for="Screenshot">Upload payment screenshot</label>
+                <div class="upload-box" id="uploadBox">
+                    <input asp-for="Screenshot" accept="image/png,image/jpeg,image/webp" id="screenshotInput">
+                    <div id="uploadPlaceholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="M17 8l-5-5-5 5" /><path d="M12 3v12" /></svg>
+                        <div class="upload-box-title">Click to upload payment proof</div>
+                        <div class="upload-box-sub">PNG, JPG or WEBP, up to 5MB</div>
+                    </div>
+                </div>
+                <div class="upload-preview-wrap" id="uploadPreviewWrap" style="display:none;">
+                    <div class="upload-preview-card">
+                        <img id="uploadPreviewImg" alt="Payment proof preview">
+                        <div class="upload-preview-meta">
+                            <div class="upload-preview-name" id="uploadPreviewName"></div>
+                            <div class="upload-preview-size" id="uploadPreviewSize"></div>
+                        </div>
+                        <button type="button" class="upload-preview-remove" id="uploadPreviewRemove" aria-label="Remove uploaded image">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                </div>
+                <span asp-validation-for="Screenshot"></span>
+            </div>
+            <button class="btn btn-gold btn-block" type="submit">Submit Deposit Request</button>
+        </form>
     </div>
-    <span asp-validation-for="Screenshot"></span>
+
 </div>
-<button class="btn btn-gold btn-block" type="submit">Submit Deposit Request</button></form></div>
- 
+<div class="qr-modal-overlay" id="qrModalOverlay">
+    <div class="qr-modal-box">
+        <button type="button" class="qr-modal-close" id="qrModalClose" aria-label="Close QR code">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12" /></svg>
+        </button>
+        <div class="qr-modal-title" id="qrModalTitle">QR Code</div>
+        <div class="qr-modal-canvas" id="qrModalCanvas"></div>
+        <div class="qr-modal-address" id="qrModalAddress"></div>
+    </div>
 </div>
+
 @section Scripts {
-<script>
-document.querySelectorAll('.method-card').forEach(function(card){card.addEventListener('click',function(){document.getElementById('Request_PaymentMethodId').value=card.dataset.method;document.getElementById('summary-method').textContent=card.dataset.name;document.getElementById('summary-min').textContent='$'+Number(card.dataset.min).toLocaleString(undefined,{minimumFractionDigits:2});document.getElementById('summary-max').textContent=card.dataset.max?'$'+Number(card.dataset.max).toLocaleString(undefined,{minimumFractionDigits:2}):'No fixed maximum';document.getElementById('summary-fee').textContent=card.dataset.fee+'%';});});
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        document.querySelectorAll('.method-card').forEach(function(card){card.addEventListener('click',function(){document.getElementById('Request_PaymentMethodId').value=card.dataset.method;document.getElementById('summary-method').textContent=card.dataset.name;document.getElementById('summary-min').textContent='$'+Number(card.dataset.min).toLocaleString(undefined,{minimumFractionDigits:2});document.getElementById('summary-max').textContent=card.dataset.max?'$'+Number(card.dataset.max).toLocaleString(undefined,{minimumFractionDigits:2}):'No fixed maximum';document.getElementById('summary-fee').textContent=card.dataset.fee+'%';});});
 
-(function () {
-    var input = document.getElementById('screenshotInput');
-    var uploadBox = document.getElementById('uploadBox');
-    var placeholder = document.getElementById('uploadPlaceholder');
-    var previewWrap = document.getElementById('uploadPreviewWrap');
-    var previewImg = document.getElementById('uploadPreviewImg');
-    var previewName = document.getElementById('uploadPreviewName');
-    var previewSize = document.getElementById('uploadPreviewSize');
-    var removeBtn = document.getElementById('uploadPreviewRemove');
-    var currentUrl = null;
+        (function () {
+            var input = document.getElementById('screenshotInput');
+            var uploadBox = document.getElementById('uploadBox');
+            var placeholder = document.getElementById('uploadPlaceholder');
+            var previewWrap = document.getElementById('uploadPreviewWrap');
+            var previewImg = document.getElementById('uploadPreviewImg');
+            var previewName = document.getElementById('uploadPreviewName');
+            var previewSize = document.getElementById('uploadPreviewSize');
+            var removeBtn = document.getElementById('uploadPreviewRemove');
+            var currentUrl = null;
 
-    function formatSize(bytes) {
-        if (bytes < 1024) return bytes + ' B';
-        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-        return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-    }
+            function formatSize(bytes) {
+                if (bytes < 1024) return bytes + ' B';
+                if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+            }
 
-    function clearPreview() {
-        if (currentUrl) { URL.revokeObjectURL(currentUrl); currentUrl = null; }
-        previewImg.src = '';
-        previewWrap.style.display = 'none';
-        uploadBox.style.display = '';
-    }
+            function clearPreview() {
+                if (currentUrl) { URL.revokeObjectURL(currentUrl); currentUrl = null; }
+                previewImg.src = '';
+                previewWrap.style.display = 'none';
+                uploadBox.style.display = '';
+            }
 
-    input.addEventListener('change', function () {
-        var file = input.files && input.files[0];
-        if (!file) { clearPreview(); return; }
+            input.addEventListener('change', function () {
+                var file = input.files && input.files[0];
+                if (!file) { clearPreview(); return; }
 
-        if (!/^image\/(png|jpeg|webp)$/.test(file.type)) {
-            clearPreview();
-            input.value = '';
-            return;
-        }
+                if (!/^image\/(png|jpeg|webp)$/.test(file.type)) {
+                    clearPreview();
+                    input.value = '';
+                    return;
+                }
 
-        if (currentUrl) URL.revokeObjectURL(currentUrl);
-        currentUrl = URL.createObjectURL(file);
+                if (currentUrl) URL.revokeObjectURL(currentUrl);
+                currentUrl = URL.createObjectURL(file);
 
-        previewImg.src = currentUrl;
-        previewName.textContent = file.name;
-        previewSize.textContent = formatSize(file.size);
+                previewImg.src = currentUrl;
+                previewName.textContent = file.name;
+                previewSize.textContent = formatSize(file.size);
 
-        uploadBox.style.display = 'none';
-        previewWrap.style.display = 'block';
-    });
+                uploadBox.style.display = 'none';
+                previewWrap.style.display = 'block';
+            });
 
-    removeBtn.addEventListener('click', function () {
-        input.value = '';
-        clearPreview();
-    });
-})();
-</script>
+            removeBtn.addEventListener('click', function () {
+                input.value = '';
+                clearPreview();
+            });
+        })();
+
+        (function () {
+            var overlay = document.getElementById('qrModalOverlay');
+            var canvasWrap = document.getElementById('qrModalCanvas');
+            var title = document.getElementById('qrModalTitle');
+            var addressEl = document.getElementById('qrModalAddress');
+            var closeBtn = document.getElementById('qrModalClose');
+
+            if (!overlay) return;
+
+            function openQr(text, name) {
+                title.textContent = (name || 'Payment') + ' QR Code';
+                addressEl.textContent = text || '';
+                canvasWrap.innerHTML = '';
+
+                if (window.QRCode && text) {
+                    new QRCode(canvasWrap, {
+                        text: text,
+                        width: 220,
+                        height: 220
+                    });
+                }
+
+                overlay.classList.add('open');
+            }
+
+            function closeQr() {
+                overlay.classList.remove('open');
+                canvasWrap.innerHTML = '';
+                addressEl.textContent = '';
+            }
+
+            document.querySelectorAll('.qr-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    openQr(btn.dataset.address, btn.dataset.title);
+                });
+            });
+
+            closeBtn.addEventListener('click', closeQr);
+
+            overlay.addEventListener('click', function (e) {
+                if (e.target === overlay) closeQr();
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && overlay.classList.contains('open')) closeQr();
+            });
+        })();
+    </script>
 }
 }
