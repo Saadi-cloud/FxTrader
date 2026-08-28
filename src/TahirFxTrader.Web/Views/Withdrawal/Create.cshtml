@@ -82,7 +82,17 @@ else
                         {
                             <div class="form-grid-2">
                                 <div class="field-group"><label class="field-label">Wallet address</label><input class="field-input mono" type="text" data-destination="WalletAddress" data-required="true" data-field-label="Wallet address" placeholder="Paste wallet address"><span class="field-validation-error" data-error-for="WalletAddress"></span></div>
-                                <div class="field-group"><label class="field-label">Network</label><input class="field-input" type="text" data-destination="Network" data-required="true" data-field-label="Network" value="@m.Network" placeholder="TRC20 / BEP20"><span class="field-validation-error" data-error-for="Network"></span></div>
+                                <div class="field-group" style="display:none;">
+                                        <label class="field-label">Network</label>
+                                        <input class="field-input" 
+                                               type="text" 
+                                               data-destination="Network" 
+                                               data-required="true" 
+                                               data-field-label="Network" 
+                                               value="@m.Network" 
+                                               placeholder="TRC20 / BEP20">
+                                        <span class="field-validation-error" data-error-for="Network"></span>
+                                    </div>
                             </div>
                             <div class="alert-box alert-warning"><span>Double-check the wallet address and network. Crypto transfers cannot be reversed.</span></div>
                         }

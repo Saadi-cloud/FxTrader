@@ -31,8 +31,9 @@ public sealed class DashboardRepository : RepositoryBase, IDashboardRepository
             data.PendingDeposits = r.Int("PendingDeposits"); data.PendingWithdrawals = r.Int("PendingWithdrawals");
             data.SuccessfulReferralCount = r.HasColumn("SuccessfulReferralCount") ? r.Int("SuccessfulReferralCount") : 0;
             data.TotalReferralCount = r.HasColumn("TotalReferralCount") ? r.Int("TotalReferralCount") : 0;
+            data.TotalCommissionEarned = r.HasColumn("TotalCommissionEarned") ? r.Int("TotalCommissionEarned") : 0;
 
-            
+
             data.ReferralCommissionEarned = r.HasColumn("ReferralCommissionEarned") ? r.Decimal("ReferralCommissionEarned") : 0;
             data.ReferralCommissionPercent = r.HasColumn("ReferralCommissionPercent") ? r.Decimal("ReferralCommissionPercent") : 5;
             data.TodayPnl = r.HasColumn("TodayPnl") ? r.Decimal("TodayPnl") : 0;

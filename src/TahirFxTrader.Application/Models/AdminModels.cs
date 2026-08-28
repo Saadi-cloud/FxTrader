@@ -26,8 +26,10 @@ public sealed class AdminUserListItem
     public bool CanWithdraw { get; set; }
     public decimal AvailableBalance { get; set; }
     public decimal InvestmentBalance { get; set; }
+
     public decimal ProfitBalance { get; set; }
     public decimal CommissionBalance { get; set; }
+    public decimal TotalWithdraw { get; set; }
     public DateTime CreatedAtUtc { get; set; }
 }
 public sealed class AdminUserEditModel

@@ -57,7 +57,14 @@ public sealed class WithdrawalService : IWithdrawalService
 
         try
         {
-            var walletLabel = request.WalletSource == "Investment" ? "Investment Wallet" : "Profit + Commission Wallet";
+            ///var walletLabel = request.WalletSource == "Investment" ? "Investment Wallet" : "Profit + Commission Wallet";
+            var walletLabel = request.WalletSource switch
+            {
+                "Investment" => "Investment Wallet",
+                "Profit" => "Profit Wallet",
+                "Commission" => "Commission Wallet",
+                _ => "Unknown Wallet"
+            };
             await _email.SendWithdrawalVerificationCodeAsync(user.Email, user.FullName, code, request.Amount.Value, walletLabel, ct);
         }
         catch
@@ -80,7 +87,14 @@ public sealed class WithdrawalService : IWithdrawalService
         {
             ChallengeId = challenge.Id,
             MaskedEmail = MaskEmail(user.Email),
-            WalletSource = challenge.WalletSource == "Investment" ? "Investment Wallet" : "Profit + Commission Wallet",
+          
+            WalletSource = challenge.WalletSource switch
+            {
+                "Investment" => "Investment Wallet",
+                "Profit" => "Profit Wallet",
+                "Commission" => "Commission Wallet",
+                _ => challenge.WalletSource
+            },
             PaymentMethodName = challenge.PaymentMethodName,
             Amount = challenge.Amount,
             DestinationDisplay = challenge.DestinationDisplay,
@@ -154,7 +168,9 @@ public sealed class WithdrawalService : IWithdrawalService
 
     private async Task<OperationResult> ValidateRequestAsync(CreateWithdrawalRequest request, CancellationToken ct)
     {
-        if (request.WalletSource != "Investment" && request.WalletSource != "Profit" && request.WalletSource != "Commission")
+        if (!new[] { "Investment", "Profit", "Commission" }
+    .Contains(request.WalletSource))
+            //if (request.WalletSource != "Investment" && request.WalletSource != "Profit" && request.WalletSource != "Commission")
         {
             return OperationResult.Failure(
                 "Select Investment, Profit, or Commission wallet.");

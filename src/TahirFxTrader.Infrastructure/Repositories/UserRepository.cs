@@ -79,9 +79,23 @@ public sealed class UserRepository : RepositoryBase, IUserRepository
         {
             rows.Add(new AdminUserListItem
             {
-                Id = reader.Long("Id"), UserTraceId = reader.String("UserTraceId"), FullName = reader.String("FullName"), Email = reader.String("Email"), Country = reader.String("Country"), PhoneNumber = reader.String("PhoneNumber"), RoleName = reader.String("RoleName"),
-                Status = (AccountStatus)reader.Int("Status"), IsEmailVerified = reader.Bool("IsEmailVerified"), CanDeposit = reader.Bool("CanDeposit"), CanWithdraw = reader.Bool("CanWithdraw"),
-                AvailableBalance = reader.Decimal("AvailableBalance"), InvestmentBalance = reader.Decimal("InvestmentBalance"), ProfitBalance = reader.Decimal("ProfitBalance"), CommissionBalance = reader.HasColumn("CommissionBalance") ? reader.Decimal("CommissionBalance") : 0, CreatedAtUtc = reader.DateTime("CreatedAtUtc")
+                Id = reader.Long("Id"),
+                UserTraceId = reader.String("UserTraceId"),
+                FullName = reader.String("FullName"),
+                Email = reader.String("Email"),
+                Country = reader.String("Country"),
+                PhoneNumber = reader.String("PhoneNumber"),
+                RoleName = reader.String("RoleName"),
+                Status = (AccountStatus)reader.Int("Status"),
+                IsEmailVerified = reader.Bool("IsEmailVerified"),
+                CanDeposit = reader.Bool("CanDeposit"),
+                CanWithdraw = reader.Bool("CanWithdraw"),
+                AvailableBalance = reader.Decimal("AvailableBalance"),
+                InvestmentBalance = reader.Decimal("InvestmentBalance"),
+                ProfitBalance = reader.Decimal("ProfitBalance"),
+                CommissionBalance = reader.HasColumn("CommissionBalance") ? reader.Decimal("CommissionBalance") : 0,
+                CreatedAtUtc = reader.DateTime("CreatedAtUtc"),
+                TotalWithdraw = reader.HasColumn("TotalWithdraw") ? reader.Decimal("TotalWithdraw") : 0,
             });
         }
         return rows;

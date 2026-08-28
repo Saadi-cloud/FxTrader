@@ -62,8 +62,17 @@ string Badge(TransactionStatus s)=>s==TransactionStatus.Completed?"badge-success
                                 <small style="color:var(--text-muted)">@row.UserEmail</small>
                             </td>
                             <td class="mono">@row.ReferenceNo</td>
-                            <td>@(row.WalletSource == "Investment" ? "Investment" : "Profit + Commission")</td>
-                            <td>@row.PaymentMethodName</td>
+                         @*    <td>@(row.WalletSource == "Investment" ? "Investment" : "Profit + Commission")</td> *@
+                             <td>
+                                @(row.WalletSource switch
+                                {
+                                    "Investment" => "Investment",
+                                    "Profit" => "Profit",
+                                    "Commission" => "Commission",
+                                    _ => "Unknown"
+                                })
+                            </td>
+                             <td>@row.PaymentMethodName</td>
                             <td>@row.DestinationDisplay</td>
                             <td class="mono">$@row.Amount.ToString("N2")</td>
                             <td class="mono">$@row.NetAmount.ToString("N2")</td>

@@ -62,6 +62,8 @@ public sealed class DashboardData
     public decimal TotalDeposits { get; set; }
     public decimal TotalWithdrawals { get; set; }
     public decimal Profit_Withdrawals { get; set; }
+    public decimal TotalCommissionEarned { get; set; }
+    
 
     public int PendingDeposits { get; set; }
     public int PendingWithdrawals { get; set; }
