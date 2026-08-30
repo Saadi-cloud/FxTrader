@@ -250,14 +250,14 @@
 
     <section class="trade-content-grid">
         <article class="trade-panel trade-portfolio-panel">
-            <div class="trade-panel-head"><div><h2>Portfolio Distribution</h2><p>Your available value separated by wallet type.</p></div><a asp-controller="Statement" asp-action="Index">View Transaction</a></div>
+            <div class="trade-panel-head"><div><h2>Total Available Balance</h2><p>Your available value separated by wallet type.</p></div><a asp-controller="Statement" asp-action="Index">View Transaction</a></div>
             <div class="trade-wallet-overview">
                 <div class="trade-ring"
                      style="--investment-end:@ringInvestmentCss%; --profit-end:@ringProfitCss%;">
 
                     <div>
-                        <span style="text-transform: none;">Total Available Balance</span>
-                        <strong class="mono">$@totalPortfolio.ToString("N2")</strong>
+@*                         <span style="text-transform: none;">Total Available Balance</span>
+ *@                        <strong class="mono">$@totalPortfolio.ToString("N2")</strong>
                     </div>
                 </div>                <div class="trade-wallet-list">
                     <div class="trade-wallet-item"><div class="trade-wallet-row"><i class="invest"></i><span>Investment Wallet<small>@investmentPercent.ToString("0.0")% of portfolio</small></span><strong class="mono">$@Model.InvestmentBalance.ToString("N2")</strong></div><div class="trade-wallet-bar"><b style="width:@investmentCss%"></b></div></div>
