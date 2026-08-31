@@ -35,17 +35,60 @@ public sealed class AuthService : IAuthService
         }
     }
 
-    public async Task<OperationResult<AuthenticatedUser>> LoginAsync(LoginRequest request, CancellationToken ct = default)
+    public async Task<OperationResult<AuthenticatedUser>> LoginAsync(
+     LoginRequest request,
+     CancellationToken ct = default)
     {
-        var user = await _users.GetByEmailAsync(request.Email.Trim().ToLowerInvariant(), ct);
-        if (user is null || !_passwords.Verify(request.Password, user.PasswordHash))
-            return OperationResult<AuthenticatedUser>.Failure("Invalid email address or password.");
+        var email = request.Email.Trim().ToLowerInvariant();
+
+        var user = await _users.GetByEmailAsync(email, ct);
+
+        if (user is null)
+        {
+            return OperationResult<AuthenticatedUser>.Failure(
+                "Invalid email address or password.");
+        }
+
+
+        var passwordValid = _passwords.Verify(
+            request.Password,
+            user.PasswordHash);
+
+
+        if (!passwordValid)
+        {
+            return OperationResult<AuthenticatedUser>.Failure(
+                "Invalid email address or password.");
+        }
+
+
         if (!user.IsEmailVerified)
-            return OperationResult<AuthenticatedUser>.Failure("Verify your email address before logging in.");
+        {
+            return OperationResult<AuthenticatedUser>.Failure(
+                "Verify your email address before logging in.");
+        }
+
+
         if (user.Status != AccountStatus.Active)
-            return OperationResult<AuthenticatedUser>.Failure($"Your account is {user.Status.ToString().ToLowerInvariant()}. Contact support.");
-        var permissions = await _users.GetEffectivePermissionsAsync(user.Id, ct);
-        return OperationResult<AuthenticatedUser>.Success(new AuthenticatedUser(user.Id, user.UserTraceId, user.FullName, user.Email, user.RoleName, permissions));
+        {
+            return OperationResult<AuthenticatedUser>.Failure(
+                $"Your account is {user.Status.ToString().ToLowerInvariant()}. Contact support.");
+        }
+
+
+        var permissions = await _users.GetEffectivePermissionsAsync(
+            user.Id,
+            ct);
+
+
+        return OperationResult<AuthenticatedUser>.Success(
+            new AuthenticatedUser(
+                user.Id,
+                user.UserTraceId,
+                user.FullName,
+                user.Email,
+                user.RoleName,
+                permissions));
     }
 
     public async Task<OperationResult> VerifyEmailAsync(VerifyEmailRequest request, CancellationToken ct = default)

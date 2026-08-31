@@ -1,7 +1,8 @@
 @model IReadOnlyList<DepositTransaction>
-@{ ViewData["Title"]="Deposit Review"; 
-ViewData["Subtitle"]="Verify payment proof before crediting a user wallet"; 
-string Badge(TransactionStatus s)=>s==TransactionStatus.Approved?"badge-success":s==TransactionStatus.Rejected?"badge-danger":"badge-pending"; 
+@{
+    ViewData["Title"] = "Deposit Review";
+    ViewData["Subtitle"] = "Verify payment proof before crediting a user wallet";
+    string Badge(TransactionStatus s) => s == TransactionStatus.Approved ? "badge-success" : s == TransactionStatus.Rejected ? "badge-danger" : "badge-pending";
 }
 <div class="mini-stat-row">
     <div class="mini-stat">
@@ -27,9 +28,11 @@ string Badge(TransactionStatus s)=>s==TransactionStatus.Approved?"badge-success"
                class="field-input"
                placeholder="Search by user, email, reference, transaction ID...">
     </div>
-    @if(Model.Count==0){
-    <div class="empty-state">No deposit requests.</div>
-        }else
+    @if (Model.Count == 0)
+    {
+        <div class="empty-state">No deposit requests.</div>
+    }
+    else
     {
 
         <div class="table-wrap">
@@ -93,3 +96,4 @@ string Badge(TransactionStatus s)=>s==TransactionStatus.Approved?"badge-success"
         });
     </script>
 }
+

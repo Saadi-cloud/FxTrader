@@ -1,3 +1,4 @@
+using System.Reflection;
 using TahirFxTrader.Application.Common;
 using TahirFxTrader.Application.Interfaces.Repositories;
 using TahirFxTrader.Application.Interfaces.Services;
@@ -52,6 +53,7 @@ public sealed class WithdrawalService : IWithdrawalService
             expiresAtUtc,
             ct);
 
+
         if (!saved.Succeeded || !saved.Id.HasValue)
             return OperationResult<long>.Failure(saved.Message);
 
@@ -66,6 +68,7 @@ public sealed class WithdrawalService : IWithdrawalService
                 _ => "Unknown Wallet"
             };
             await _email.SendWithdrawalVerificationCodeAsync(user.Email, user.FullName, code, request.Amount.Value, walletLabel, ct);
+      
         }
         catch
         {
@@ -155,15 +158,57 @@ public sealed class WithdrawalService : IWithdrawalService
         return await BeginVerificationAsync(userId, request, ct);
     }
 
-    private async Task<OperationResult<long>> CreateVerifiedWithdrawalAsync(long userId, CreateWithdrawalRequest request, CancellationToken ct)
+    private async Task<OperationResult<long>> CreateVerifiedWithdrawalAsync(
+     long userId,
+     CreateWithdrawalRequest request,
+     CancellationToken ct)
     {
         var validation = await ValidateRequestAsync(request, ct);
-        if (!validation.Succeeded) return OperationResult<long>.Failure(validation.Message);
+
+        if (!validation.Succeeded)
+            return OperationResult<long>.Failure(validation.Message);
+
 
         var result = await _withdrawals.CreateAsync(userId, request, ct);
-        return result.Succeeded && result.Id.HasValue
-            ? OperationResult<long>.Success(result.Id.Value, result.Message)
-            : OperationResult<long>.Failure(result.Message);
+
+
+        if (!result.Succeeded || !result.Id.HasValue)
+            return OperationResult<long>.Failure(result.Message);
+
+
+
+        // Send admin notification after withdrawal is created
+        try
+        {
+            var user = await _users.GetByIdAsync(userId, ct);
+
+            if (user != null)
+            {
+                var walletLabel = request.WalletSource == "Investment"
+                    ? "Investment Wallet"
+                    : "Profit + Commission Wallet";
+
+
+                await _email.SendAdminWithdrawalRequestAsync(
+                    user.FullName,
+                    user.Email,
+                    request.Amount.Value,
+                    walletLabel,
+                    result.Id.Value.ToString(),
+                    ct);
+            }
+        }
+        catch
+        {
+            // Do not fail withdrawal because email failed
+            // Add logging here if available
+        }
+
+
+
+        return OperationResult<long>.Success(
+            result.Id.Value,
+            result.Message);
     }
 
     private async Task<OperationResult> ValidateRequestAsync(CreateWithdrawalRequest request, CancellationToken ct)

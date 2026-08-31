@@ -1,8 +1,9 @@
 @model AdminUserEditModel
-@{ ViewData["Title"]="Manage User";
- ViewData["Subtitle"]="Update account status, eligibility, limits, and page permissions"; 
- var all=(string[])ViewBag.AllPermissions;
- var countries = new[]{"Pakistan","Saudi Arabia","United Arab Emirates","Qatar","Oman","Bahrain","Kuwait","United Kingdom","United States","Canada","Australia","India","Bangladesh","Malaysia","Singapore","Turkey","Other"}; 
+@{
+    ViewData["Title"] = "Manage User";
+    ViewData["Subtitle"] = "Update account status, eligibility, limits, and page permissions";
+    var all = (string[])ViewBag.AllPermissions;
+    var countries = new[] { "Pakistan", "Saudi Arabia", "United Arab Emirates", "Qatar", "Oman", "Bahrain", "Kuwait", "United Kingdom", "United States", "Canada", "Australia", "India", "Bangladesh", "Malaysia", "Singapore", "Turkey", "Other" };
 }
 <form method="post">
     <input asp-for="Id" type="hidden">
@@ -24,10 +25,12 @@
             <div class="form-grid-2">
                 <div class="field-group">
                     <label class="field-label" asp-for="Country"></label>
-                    <select class="field-input" asp-for="Country">@foreach(var country in countries){
-                    <option value="@country">@country</option>
-                                        }
- </select>
+                    <select class="field-input" asp-for="Country">
+                        @foreach (var country in countries)
+                        {
+                            <option value="@country">@country</option>
+                        }
+                    </select>
                     <span asp-validation-for="Country"></span>
                 </div>
                 <div class="field-group">

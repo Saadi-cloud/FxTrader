@@ -1,12 +1,13 @@
 @model IReadOnlyList<AdminUserBalanceItem>
-@{ ViewData["Title"]="User Balances";
-ViewData["Subtitle"]="Manage investment, compound profit, and referral commission wallets separately";
+@{
+    ViewData["Title"] = "User Balances";
+    ViewData["Subtitle"] = "Manage investment, compound profit, and referral commission wallets separately";
 }
 <div class="card card-pad">
     <div class="card-head">
         <div>
             <h3>User Wallets</h3>
-            <p style="color:var(--text-muted);margin:6px 0 0;font-size:13px;">Profit is calculated on Investment + existing Profit. Commission is excluded from compounding. Withdrawals consume Profit, then Commission, then Investment.</p>
+          
         </div>
         <a asp-action="ApplyProfitToAll" class="btn btn-gold">Apply Profit % to All Users</a>
 
@@ -21,9 +22,11 @@ ViewData["Subtitle"]="Manage investment, compound profit, and referral commissio
                class="field-input"
                placeholder="Search by user ID, name, email...">
     </div>
-    @if(Model.Count==0){
-    <div class="empty-state">No user balances found.</div>
-        }else
+    @if (Model.Count == 0)
+    {
+        <div class="empty-state">No user balances found.</div>
+    }
+    else
     {
 
         <div class="table-wrap">
@@ -46,9 +49,9 @@ ViewData["Subtitle"]="Manage investment, compound profit, and referral commissio
                     @foreach (var row in Model)
                     {
                         <tr data-search="
-                                    @row.UserTraceId
-                                    @row.FullName
-                                    @row.Email">
+                                            @row.UserTraceId
+                                            @row.FullName
+                                            @row.Email">
                             <td class="mono">
                                 <strong>@row.UserTraceId</strong>
                             </td>

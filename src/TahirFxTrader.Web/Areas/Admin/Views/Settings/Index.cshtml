@@ -1,6 +1,6 @@
 @model SystemSettingsModel
 @{ ViewData["Title"]="System Settings"; 
-ViewData["Subtitle"]="Configure withdrawal limits, investment-wallet fee, and support links"; 
+ViewData["Subtitle"]="Configure withdrawal limits, investment-wallet fee, and support links";
 }
 <form method="post">
     <div asp-validation-summary="ModelOnly"></div>
@@ -28,7 +28,7 @@ ViewData["Subtitle"]="Configure withdrawal limits, investment-wallet fee, and su
                 <span>This fee applies only when a user selects the Investment Wallet. Profit + Commission withdrawals have 0% fee. User-specific fee overrides take priority. Payment-method minimum and maximum limits are still checked.</span>
             </div>
         </div>
-        @* <div class="card card-pad">
+      @*   <div class="card card-pad">
             <div class="card-head">
                 <h3>Support Information</h3>
             </div>

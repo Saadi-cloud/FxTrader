@@ -1,7 +1,7 @@
 <style>
     /* ===========================================================
-               Deposit screenshot preview — append to your existing site.css
-               =========================================================== */
+                   Deposit screenshot preview — append to your existing site.css
+                   =========================================================== */
 
     .upload-preview-wrap {
         margin-top: 2px;
@@ -85,11 +85,11 @@
     }
 
     /* ===========================================================
-               QR trigger button + popup modal (frontend-only —
-               uses the same qrcodejs/cdnjs setup already working on
-               the withdrawal details page, generated client-side from
-               the address text, no dependency on an uploaded QR image)
-               =========================================================== */
+                   QR trigger button + popup modal (frontend-only —
+                   uses the same qrcodejs/cdnjs setup already working on
+                   the withdrawal details page, generated client-side from
+                   the address text, no dependency on an uploaded QR image)
+                   =========================================================== */
 
     .copy-field-actions {
         display: flex;
@@ -238,7 +238,7 @@ else
             {
                 var m = Model.Methods[i];
                 <label class="method-card
-                @(i == 0 ? "active" : "")" data-method="@m.Id" data-name="@m.Name" data-min="@m.MinDeposit" data-max="@(m.MaxDeposit?.ToString() ?? "")" data-fee="@m.DepositFeePercent">
+                        @(i == 0 ? "active" : "")" data-method="@m.Id" data-name="@m.Name" data-min="@m.MinDeposit" data-max="@(m.MaxDeposit?.ToString() ?? "")" data-fee="@m.DepositFeePercent">
                     <input type="radio" name="methodPicker" value="@m.Id" @(i == 0 ? "checked" : "")><div class="method-icon">@(m.MethodType == PaymentMethodType.Crypto ? "₮" : m.Name[..Math.Min(2, m.Name.Length)].ToUpperInvariant())</div><div>
                         <div class="method-name">
                             @m.Name
@@ -254,7 +254,7 @@ else
         {
             var m = Model.Methods[i];
             <div class="pay-detail-panel
-                @(i == 0 ? "show" : "")" data-method-panel="@m.Id">
+                        @(i == 0 ? "show" : "")" data-method-panel="@m.Id">
                 <div class="payment-instructions">
                     <div>
                         <div class="copy-field">

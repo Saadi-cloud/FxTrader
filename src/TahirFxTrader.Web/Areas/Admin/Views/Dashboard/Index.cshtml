@@ -1,5 +1,5 @@
 @model AdminDashboardData
-@{ ViewData["Title"]="Admin Dashboard"; 
+@{ ViewData["Title"]="Admin Dashboard";
 ViewData["Subtitle"]="System-wide users, balances, deposits, and withdrawals";
 }
 <div class="balance-hero">
@@ -9,7 +9,7 @@ ViewData["Subtitle"]="System-wide users, balances, deposits, and withdrawals";
             <div class="balance-amount mono">
                 $@Model.TotalWalletBalance.ToString("N2") <sup>USD</sup>
             </div>
-           @*  <div class="balance-change">Available plus held user balances</div> *@
+          @*   <div class="balance-change">Available plus held user balances</div> *@
         </div>
         <div class="balance-actions">
             <a asp-controller="Deposits" asp-action="Index" class="btn btn-gold">Review Deposits</a>
@@ -32,7 +32,7 @@ ViewData["Subtitle"]="System-wide users, balances, deposits, and withdrawals";
     </div>
 </div>
 <div class="stat-grid">
- @*    <div class="stat-card">
+@*     <div class="stat-card">
         <div class="stat-label">Total Users</div>
         <div class="stat-value">@Model.TotalUsers</div>
         <div class="stat-delta">@Model.ActiveUsers active</div>

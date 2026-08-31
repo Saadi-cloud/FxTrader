@@ -8,6 +8,21 @@ public interface IEmailService
     Task SendPasswordResetCodeAsync(string email, string fullName, string code, CancellationToken ct = default);
     Task SendWithdrawalVerificationCodeAsync(string email, string fullName, string code, decimal amount, string walletSource, CancellationToken ct = default);
     Task SendTransactionStatusAsync(string email, string fullName, string referenceNo, string status, CancellationToken ct = default);
+    Task SendAdminDepositRequestAsync(
+    string userName,
+    string userEmail,
+    decimal amount,
+    string referenceNo,
+    CancellationToken ct = default);
+
+
+    Task SendAdminWithdrawalRequestAsync(
+        string userName,
+        string userEmail,
+        decimal amount,
+        string walletSource,
+        string referenceNo,
+        CancellationToken ct = default);
 }
 public interface IFileStorageService
 {

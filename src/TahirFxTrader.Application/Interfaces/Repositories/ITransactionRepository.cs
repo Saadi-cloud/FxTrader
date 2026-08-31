@@ -13,15 +13,61 @@ public interface IDepositRepository
 }
 public interface IWithdrawalRepository
 {
-    Task<DbOperationResult> CreateAsync(long userId, CreateWithdrawalRequest request, CancellationToken ct = default);
-    Task<DbOperationResult> CreateOtpChallengeAsync(long userId, CreateWithdrawalRequest request, string codeHash, DateTime expiresAtUtc, CancellationToken ct = default);
-    Task<WithdrawalOtpChallenge?> GetOtpChallengeAsync(long challengeId, long userId, CancellationToken ct = default);
-    Task<DbOperationResult> ClaimOtpChallengeAsync(long challengeId, long userId, string codeHash, CancellationToken ct = default);
-    Task CancelOtpChallengeAsync(long challengeId, long userId, CancellationToken ct = default);
-    Task<IReadOnlyList<WithdrawalTransaction>> GetByUserAsync(long userId, CancellationToken ct = default);
-    Task<IReadOnlyList<WithdrawalTransaction>> GetAllAsync(CancellationToken ct = default);
-    Task<WithdrawalTransaction?> GetByIdAsync(long id, CancellationToken ct = default);
-    Task<DbOperationResult> MarkProcessingAsync(long id, long adminId, string? note, CancellationToken ct = default);
-    Task<DbOperationResult> CompleteAsync(long id, long adminId, string? paymentReference, string? note, CancellationToken ct = default);
-    Task<DbOperationResult> RejectAsync(long id, long adminId, string? note, CancellationToken ct = default);
+    Task<DbOperationResult> CreateAsync(
+        long userId,
+        CreateWithdrawalRequest request,
+        CancellationToken ct = default);
+
+    Task<DbOperationResult> CreateOtpChallengeAsync(
+        long userId,
+        CreateWithdrawalRequest request,
+        string codeHash,
+        DateTime expiresAtUtc,
+        CancellationToken ct = default);
+
+    Task<WithdrawalOtpChallenge?> GetOtpChallengeAsync(
+        long challengeId,
+        long userId,
+        CancellationToken ct = default);
+
+    Task<DbOperationResult> ClaimOtpChallengeAsync(
+        long challengeId,
+        long userId,
+        string codeHash,
+        CancellationToken ct = default);
+
+    Task CancelOtpChallengeAsync(
+        long challengeId,
+        long userId,
+        CancellationToken ct = default);
+
+    Task<IReadOnlyList<WithdrawalTransaction>> GetByUserAsync(
+        long userId,
+        CancellationToken ct = default);
+
+    Task<IReadOnlyList<WithdrawalTransaction>> GetAllAsync(
+        CancellationToken ct = default);
+
+    Task<WithdrawalTransaction?> GetByIdAsync(
+        long id,
+        CancellationToken ct = default);
+
+    Task<DbOperationResult> MarkProcessingAsync(
+        long id,
+        long adminId,
+        string? note,
+        CancellationToken ct = default);
+
+    Task<DbOperationResult> CompleteAsync(
+        long id,
+        long adminId,
+        string? paymentReference,
+        string? note,
+        CancellationToken ct = default);
+
+    Task<DbOperationResult> RejectAsync(
+        long id,
+        long adminId,
+        string? note,
+        CancellationToken ct = default);
 }
