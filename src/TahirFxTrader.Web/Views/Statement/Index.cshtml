@@ -1,6 +1,15 @@
 @model IReadOnlyList<LedgerEntry>
 @{ ViewData["Title"]="Account Statement"; ViewData["Subtitle"]="Approved deposits, compound profit, referral commission, and completed withdrawals"; var credits=Model.Sum(x=>x.Credit); var debits=Model.Sum(x=>x.Debit); }
-<div class="mini-stat-row statement-summary-stats"><div class="mini-stat"><div class="mini-stat-label">Total Deposit</div><div class="mini-stat-value mono" style="color:var(--green);">$@credits.ToString("N2")</div></div><div class="mini-stat"><div class="mini-stat-label">Total Withdrawal</div><div class="mini-stat-value mono">$@debits.ToString("N2")</div></div><div class="mini-stat"><div class="mini-stat-label">Current Balance</div><div class="mini-stat-value mono">$@(Model.FirstOrDefault()?.BalanceAfter.ToString("N2") ?? "0.00")</div></div></div>
+<div class="mini-stat-row statement-summary-stats">
+    <div class="mini-stat">
+        <div class="mini-stat-label">Total Deposit</div>
+        <div class="mini-stat-value mono" style="color:var(--green);">$@credits.ToString("N2")</div></div><div class="mini-stat">
+           <div class="mini-stat-label">Total Withdrawal</div>
+           <div class="mini-stat-value mono">$@debits.ToString("N2")</div></div>
+           <div class="mini-stat"><div class="mini-stat-label">Current Balance</div>
+           <div class="mini-stat-value mono">$@(Model.FirstOrDefault()?.BalanceAfter.ToString("N2") ?? "0.00")</div></div></div>
+
+
 <div class="card card-pad">
     <h3>Transaction History</h3>
     <div class="card-head">

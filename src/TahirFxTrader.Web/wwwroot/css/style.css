@@ -3341,6 +3341,24 @@ html, body {
         font-size: 9px;
     }
 }
+@media (max-width: 430px) {
+    .mini-stat-row.withdrawal-wallet-stats {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 6px !important;
+    }
+
+    .withdrawal-wallet-stats .mini-stat {
+        padding: 8px 6px;
+    }
+
+    .withdrawal-wallet-stats .mini-stat-value {
+        font-size: 11.5px;
+    }
+
+    .withdrawal-wallet-stats .mini-stat-label {
+        font-size: 9px;
+    }
+}
 @media (max-width: 600px) {
     .table-wrap {
         overflow-x: hidden;
