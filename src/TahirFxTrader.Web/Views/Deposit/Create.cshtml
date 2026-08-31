@@ -257,7 +257,7 @@ else
                         @(i == 0 ? "show" : "")" data-method-panel="@m.Id">
                 <div class="payment-instructions">
                     <div>
-                        <div class="copy-field">
+                        <div class="copy-field" style="display:none;">
                             <div>
                                 <div class="copy-field-label">Account title</div>
                                 <div class="copy-field-value">@(m.AccountTitle ?? "Not applicable")</div>
@@ -276,7 +276,7 @@ else
                     </div>
                     @if (!string.IsNullOrWhiteSpace(m.Network))
                     {
-                        <div class="copy-field">
+                        <div class="copy-field" style="display:none;">
                             <div>
                                 <div class="copy-field-label">Network</div>
                                 <div class="copy-field-value">@m.Network</div>
