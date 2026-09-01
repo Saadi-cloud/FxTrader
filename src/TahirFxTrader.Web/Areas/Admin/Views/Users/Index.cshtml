@@ -63,8 +63,8 @@
                             <td class="mono">$@row.InvestmentBalance.ToString("N2")</td>
                             <td class="mono" style="color:var(--green);">$@row.ProfitBalance.ToString("N2")</td>
                             <td class="mono">$@row.AvailableBalance.ToString("N2")</td>
-                            <td>2</td>
-                            <td>2</td>
+                            <td>$@row.TotalWithdraw.ToString("N2")</td>
+                            <td>$@row.CommissionBalance.ToString("N2")</td>
                             <td>
                                 <a asp-action="Edit" asp-route-id="@row.Id" class="btn btn-sm btn-outline">Manage</a>
                             </td>

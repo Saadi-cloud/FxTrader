@@ -184,9 +184,13 @@ public sealed class WithdrawalService : IWithdrawalService
 
             if (user != null)
             {
-                var walletLabel = request.WalletSource == "Investment"
-                    ? "Investment Wallet"
-                    : "Profit + Commission Wallet";
+                var walletLabel = request.WalletSource switch
+                {
+                    "Investment" => "Investment Wallet",
+                    "Commission" => "Commission Wallet",
+                    "Profit" => "Profit Wallet",
+                    _ => "Wallet"
+                };
 
 
                 await _email.SendAdminWithdrawalRequestAsync(
