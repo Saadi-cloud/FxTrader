@@ -7,12 +7,20 @@ ViewData["Subtitle"]="Credit the same compound profit percentage to every eligib
         <div class="card-head"><h3>Eligible Wallets</h3>
             </div><div class="detail-row"><span>Eligible users</span>
                 <strong class="mono">@Model.EligibleUserCount</strong>
-                </div><div class="detail-row"><span>Total compounding base</span>
+            </div>
+            <div class="detail-row">
+                <span>Total client available balance</span>
                     <strong class="mono">$@Model.TotalCompoundingBase.ToString("N2")</strong>
-                    </div><div class="detail-row"><span>Estimated total profit</span>
+                    </div>
+            <div class="detail-row">
+                <span>Total client Investment</span>
+                @* <strong class="mono">$@Model.ToString("N2")</strong> *@
+            </div>
+                    <div class="detail-row"><span>Estimated total profit</span>
                         <strong class="mono" id="totalProfitPreview" style="color:var(--green);">$@Model.EstimatedTotalProfit.ToString("N2")</strong>
-                        </div><div class="alert-box alert-info"><span>Each user's base is Investment Wallet + Profit Wallet. Commission Wallet is excluded. This means profit compounds each time it is applied.</span></div>
-                        <div class="alert-box alert-warning"><span>This action creates one batch reference and a separate PFT reference and wallet-ledger entry for every credited user. The entire batch is committed together.</span>
+@*                         </div><div class="alert-box alert-info"><span>Each user's base is Investment Wallet + Profit Wallet. Commission Wallet is excluded. This means profit compounds each time it is applied.</span></div>
+ *@                       
+ @* <div class="alert-box alert-warning"><span>This action creates one batch reference and a separate PFT reference and wallet-ledger entry for every credited user. The entire batch is committed together.</span> *@
                         </div></div>
                         <div class="card card-pad"><div class="card-head">
                             <h3>Bulk Profit Percentage</h3></div>

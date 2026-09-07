@@ -17,7 +17,9 @@ public sealed class DashboardController : Controller
 
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        var model = await _service.GetAsync(User.UserId(), ct);
+        var userId = User.UserId();
+        var model = await _service.GetAsync(userId, ct);
+        model.Referrals = await _service.GetUserReferralsAsync(userId, ct);
 
         var registerPath = Url.Action("Register", "Auth", new { referral = model.UserTraceId })
             ?? $"/account/register?referral={Uri.EscapeDataString(model.UserTraceId)}";

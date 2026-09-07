@@ -16,6 +16,7 @@ public interface IDashboardService
 {
     Task<DashboardData> GetAsync(long userId, CancellationToken ct = default);
     Task<IReadOnlyList<LedgerEntry>> GetStatementAsync(long userId, CancellationToken ct = default);
+    Task<IReadOnlyList<UserReferralItem>> GetUserReferralsAsync(long userId, CancellationToken ct = default);
     Task<decimal> GetReferralCommissionPercentAsync(CancellationToken ct = default);
 }
 public interface IDepositService

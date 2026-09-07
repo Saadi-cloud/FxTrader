@@ -1,6 +1,7 @@
 @model AdminDashboardData
-@{ ViewData["Title"]="Admin Dashboard";
-ViewData["Subtitle"]="System-wide users, balances, deposits, and withdrawals";
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    ViewData["Subtitle"] = "System-wide users, balances, deposits, and withdrawals";
 }
 <div class="balance-hero">
     <div class="balance-hero-top">
@@ -9,7 +10,7 @@ ViewData["Subtitle"]="System-wide users, balances, deposits, and withdrawals";
             <div class="balance-amount mono">
                 $@Model.TotalWalletBalance.ToString("N2") <sup>USD</sup>
             </div>
-          @*   <div class="balance-change">Available plus held user balances</div> *@
+            @*   <div class="balance-change">Available plus held user balances</div> *@
         </div>
         <div class="balance-actions">
             <a asp-controller="Deposits" asp-action="Index" class="btn btn-gold">Review Deposits</a>
@@ -23,16 +24,43 @@ ViewData["Subtitle"]="System-wide users, balances, deposits, and withdrawals";
         <div class="balance-sub-item">
             Active users <strong>@Model.ActiveUsers</strong>
         </div>
-        <div class="balance-sub-item">
+        @* <div class="balance-sub-item">
             Deposits approved today <strong class="mono" style="color:var(--green);">$@Model.ApprovedDepositsToday.ToString("N2")</strong>
         </div>
         <div class="balance-sub-item">
-            Withdrawals completed today <strong class="mono">$@Model.CompletedWithdrawalsToday.ToString("N2")</strong>
-        </div>
+            Withdrawals completed today <strong class="mono"></strong>
+        </div> *@
+    </div>
+</div>
+<div class="stat-grid insight-grid">
+    <div class="stat-card">
+        <div class="stat-label">Eligible Users</div>
+        <div class="stat-value">@Model.EligibleUsers</div>
+        <div class="stat-delta">Active, verified, deposit enabled</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total Investment</div>
+        <div class="stat-value mono">$@Model.TotalInvestment.ToString("N2")</div>
+        <div class="stat-delta">Across all investment wallets</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total Profit Earned</div>
+        <div class="stat-value mono" style="color:var(--green);">$@Model.TotalProfitEarned.ToString("N2")</div>
+        <div class="stat-delta">Lifetime profit credited to users</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total Commission Earned</div>
+        <div class="stat-value mono" style="color:var(--green);">$@Model.TotalCommissionEarned.ToString("N2")</div>
+        <div class="stat-delta">Referral commission credited</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total Welcome Bonus</div>
+        <div class="stat-value mono" style="color:var(--green);">$@Model.TotalWelcomeBonusEarned.ToString("N2")</div>
+        <div class="stat-delta">First-deposit bonuses credited</div>
     </div>
 </div>
 <div class="stat-grid">
-@*     <div class="stat-card">
+    @*     <div class="stat-card">
         <div class="stat-label">Total Users</div>
         <div class="stat-value">@Model.TotalUsers</div>
         <div class="stat-delta">@Model.ActiveUsers active</div>
@@ -48,12 +76,17 @@ ViewData["Subtitle"]="System-wide users, balances, deposits, and withdrawals";
         <div class="stat-delta" style="color:var(--gold);">Requires manual payment</div>
     </div>
     <div class="stat-card">
-        <div class="stat-label">System Status</div>
-        <div class="stat-value" style="color:var(--green);font-size:22px;">Operational</div>
-        <div class="stat-delta">Database controls active</div>
+        <div class="stat-label">Withdrawals completed today</div>  
+        <div class="stat-value" style="color:var(--green);font-size:22px;">$@Model.CompletedWithdrawalsToday.ToString("N2")</div>
+        <div class="stat-delta">@* Database controls active *@</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Deposits approved today</div>
+        <div class="stat-value">$@Model.ApprovedDepositsToday.ToString("N2")</div>
+        <div class="stat-delta" style="color:var(--gold);">@* Requires manual payment *@</div>
     </div>
 </div>
-<div class="dash-grid">
+@* <div class="dash-grid">
     <div class="card card-pad">
         <div class="card-head">
             <h3>Transaction Operations</h3>
@@ -92,4 +125,60 @@ ViewData["Subtitle"]="System-wide users, balances, deposits, and withdrawals";
             <a asp-controller="Settings" asp-action="Index" class="btn btn-outline btn-sm">Manage</a>
         </div>
     </div>
+</div> *@
+<div class="card card-pad" style="margin-top:18px;">
+    <div class="card-head">
+        <h3>Referrers</h3>
+        <a asp-controller="Referrals" asp-action="Index" class="btn btn-outline btn-sm">Referral Program</a>
+    </div>
+    @if (Model.Referrers.Count == 0)
+    {
+        <div class="empty-state">No user has referred anyone yet.</div>
+    }
+    else
+    {
+        <div class="field-group" style="max-width:520px;">
+            <label class="field-label" for="referrerSearch">Find user</label>
+            <input id="referrerSearch" class="field-input" placeholder="Search by name, email, trace ID...">
+        </div>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Total Referrals</th>
+                        <th>Active Referrals</th>
+                        <th>Commission Earned</th>
+                    </tr>
+                </thead>
+                <tbody id="referrerRows">
+                    @foreach (var row in Model.Referrers)
+                    {
+                        <tr data-search="@row.FullName @row.Email @row.UserTraceId">
+                            <td>
+                                <strong>@row.FullName</strong>
+                                <br>
+                                <span class="mono">@row.UserTraceId</span>
+                            </td>
+                            <td>@row.TotalReferrals</td>
+                            <td>
+                                <span class="badge @(row.ActiveReferrals > 0 ? "badge-success" : "badge-pending")">@row.ActiveReferrals</span>
+                            </td>
+                            <td class="mono" style="color:var(--green);">$@row.CommissionEarned.ToString("N2")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 </div>
+@section Scripts {
+    <script>
+        document.getElementById('referrerSearch')?.addEventListener('input', function () {
+            const q = this.value.trim().toLowerCase();
+            document.querySelectorAll('#referrerRows tr').forEach(row => {
+                row.style.display = !q || row.dataset.search.toLowerCase().includes(q) ? '' : 'none';
+            });
+        });
+    </script>
+}

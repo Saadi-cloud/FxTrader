@@ -1,5 +1,7 @@
 @model IReadOnlyList<DepositTransaction>
-@{ ViewData["Title"] = "Deposit History"; ViewData["Subtitle"] = "Track every submitted and approved deposit"; string Badge(TransactionStatus s)=>s==TransactionStatus.Approved?"badge-success":s==TransactionStatus.Rejected?"badge-danger":"badge-pending"; }
+@{ ViewData["Title"] = "Deposit History"; 
+ViewData["Subtitle"] = "Track every submitted and approved deposit";
+string Badge(TransactionStatus s)=>s==TransactionStatus.Approved?"badge-success":s==TransactionStatus.Rejected?"badge-danger":"badge-pending"; }
 <div class="mini-stat-row deposit-summary-stats">
    @*  <div class="mini-stat">
         <div class="mini-stat-label">Total Requests</div>

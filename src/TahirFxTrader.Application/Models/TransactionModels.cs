@@ -63,18 +63,31 @@ public sealed class DashboardData
     public decimal TotalWithdrawals { get; set; }
     public decimal Profit_Withdrawals { get; set; }
     public decimal TotalCommissionEarned { get; set; }
-    
+
 
     public int PendingDeposits { get; set; }
     public int PendingWithdrawals { get; set; }
     public int SuccessfulReferralCount { get; set; }
     public int TotalReferralCount { get; set; }
-    
+
     public decimal ReferralCommissionEarned { get; set; }
     public decimal ReferralCommissionPercent { get; set; } = 5;
     public string ReferralLink { get; set; } = string.Empty;
     public string ReferralRegisterUrl { get; set; } = string.Empty;
     public IReadOnlyList<LedgerEntry> RecentEntries { get; set; } = Array.Empty<LedgerEntry>();
+    public IReadOnlyList<UserReferralItem> Referrals { get; set; } = Array.Empty<UserReferralItem>();
+}
+public sealed class UserReferralItem
+{
+    public long Id { get; set; }
+    public string ReferredTraceId { get; set; } = string.Empty;
+    public string ReferredName { get; set; } = string.Empty;
+    public string ReferredCountry { get; set; } = string.Empty;
+    public bool IsQualified { get; set; }
+    public decimal FirstDepositAmount { get; set; }
+    public decimal ReferralCommissionAmount { get; set; }
+    public DateTime RegisteredAtUtc { get; set; }
+    public DateTime? QualifiedAtUtc { get; set; }
 }
 public sealed class SystemSettingsModel
 {

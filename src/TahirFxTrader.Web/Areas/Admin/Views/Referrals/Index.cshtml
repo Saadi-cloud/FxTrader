@@ -1,6 +1,7 @@
 @model ReferralAdminPageModel
-@{ ViewData["Title"]="Referral Program"; 
-ViewData["Subtitle"]="Configure first-deposit bonuses and referral commissions";
+@{
+    ViewData["Title"] = "Referral Program";
+    ViewData["Subtitle"] = "Configure first-deposit bonuses and referral commissions";
 }
 <div class="mini-stat-row">
     <div class="mini-stat">
@@ -29,7 +30,7 @@ ViewData["Subtitle"]="Configure first-deposit bonuses and referral commissions";
             <p class="referral-note">Applied once to the new user’s profit balance when their first deposit is approved. The calculation uses the first deposit amount.</p>
             <div class="field-group">
                 <label class="field-label">Welcome bonus %</label>
-                <input class="field-input" name="WelcomeBonusPercent" type="number" min="0" max="100" step="0.0001" value="@Model.WelcomeBonusPercent.ToString(" 0.####", System.Globalization.CultureInfo.InvariantCulture)">
+                <input class="field-input" name="WelcomeBonusPercent" type="number" min="0" max="100" step="0.0001" value="@Model.WelcomeBonusPercent.ToString("0.####", System.Globalization.CultureInfo.InvariantCulture)">
                 <small>Example: first deposit $100 × 5% = $5 welcome bonus.</small>
             </div>
             <button class="btn btn-gold" type="submit">Save Welcome Bonus</button>
@@ -43,7 +44,7 @@ ViewData["Subtitle"]="Configure first-deposit bonuses and referral commissions";
             <p class="referral-note">Credited once to the referrer’s separate Commission Wallet after the referred user’s first deposit is approved.</p>
             <div class="field-group">
                 <label class="field-label">Referral commission %</label>
-                <input class="field-input" name="ReferralCommissionPercent" type="number" min="0" max="100" step="0.0001" value="@Model.ReferralCommissionPercent.ToString(" 0.####", System.Globalization.CultureInfo.InvariantCulture)">
+                <input class="field-input" name="ReferralCommissionPercent" type="number" min="0" max="100" step="0.0001" value="@Model.ReferralCommissionPercent.ToString("0.####", System.Globalization.CultureInfo.InvariantCulture)">
                 <small>Example: referred user deposits $100 × 2% = $2 referral commission.</small>
             </div>
             <button class="btn btn-gold" type="submit">Save Referral Commission</button>
@@ -53,9 +54,39 @@ ViewData["Subtitle"]="Configure first-deposit bonuses and referral commissions";
 <div class="card card-pad" style="margin-top:18px;">
     <div class="card-head">
         <h3>Referral Trail</h3>
-    </div>@if(Model.Referrals.Count==0){
-    <div class="empty-state">No referral registrations yet.</div>
-        }else
+    </div>
+    <div class="referral-filter-bar">
+        <div class="field-group">
+            <label class="field-label" for="referralSearch">Find referral</label>
+            <input id="referralSearch" class="field-input" placeholder="Search by referrer, referred user, trace ID...">
+        </div>
+        <div class="field-group">
+            <label class="field-label" for="referralFrom">Registered from</label>
+            <input id="referralFrom" class="field-input" type="date">
+        </div>
+        <div class="field-group">
+            <label class="field-label" for="referralTo">Registered to</label>
+            <input id="referralTo" class="field-input" type="date">
+        </div>
+        <div class="field-group">
+            <label class="field-label" for="referralStatus">Status</label>
+            <select id="referralStatus" class="field-input">
+                <option value="">All</option>
+                <option value="1">Qualified</option>
+                <option value="0">Waiting for first deposit</option>
+            </select>
+        </div>
+        <div class="field-group referral-filter-actions">
+            <button type="button" class="btn" id="referralReset">Clear</button>
+            <button type="button" class="btn btn-gold" id="referralExport">Excel</button>
+        </div>
+    </div>
+    <p class="referral-filter-count" id="referralCount"></p>
+    @if (Model.Referrals.Count == 0)
+    {
+        <div class="empty-state">No referral registrations yet.</div>
+    }
+    else
     {
 
         <div class="table-wrap">
@@ -72,10 +103,12 @@ ViewData["Subtitle"]="Configure first-deposit bonuses and referral commissions";
                         <th>Qualified</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="referralRows">
                     @foreach (var row in Model.Referrals)
                     {
-                        <tr>
+                        <tr data-search="@row.ReferrerName @row.ReferrerTraceId @row.ReferredName @row.ReferredTraceId"
+                            data-date="@row.RegisteredAtUtc.ToLocalTime().ToString("yyyy-MM-dd")"
+                            data-qualified="@(row.IsQualified ? "1" : "0")">
                             <td>@row.RegisteredAtUtc.ToLocalTime().ToString("dd MMM yyyy")</td>
                             <td>
                                 <strong>@row.ReferrerName</strong>
@@ -101,3 +134,109 @@ ViewData["Subtitle"]="Configure first-deposit bonuses and referral commissions";
         </div>
     }
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const search = document.getElementById('referralSearch');
+            const from = document.getElementById('referralFrom');
+            const to = document.getElementById('referralTo');
+            const status = document.getElementById('referralStatus');
+            const reset = document.getElementById('referralReset');
+            const counter = document.getElementById('referralCount');
+            const rows = Array.from(document.querySelectorAll('#referralRows tr'));
+            if (!rows.length) return;
+
+            function apply() {
+                const q = (search.value || '').trim().toLowerCase();
+                const start = from.value;
+                const end = to.value;
+                const wanted = status.value;
+                let shown = 0;
+
+                rows.forEach(function (row) {
+                    const date = row.dataset.date;
+                    const ok =
+                        (!q || row.dataset.search.toLowerCase().includes(q)) &&
+                        (!start || date >= start) &&
+                        (!end || date <= end) &&
+                        (wanted === '' || row.dataset.qualified === wanted);
+
+                    row.style.display = ok ? '' : 'none';
+                    if (ok) shown++;
+                });
+
+                counter.textContent = 'Showing ' + shown + ' of ' + rows.length + ' referrals';
+            }
+
+            [search, from, to, status].forEach(function (el) {
+                el.addEventListener('input', apply);
+                el.addEventListener('change', apply);
+            });
+
+            const exportBtn = document.getElementById('referralExport');
+            const headers = ['Registered', 'Referrer', 'Referrer ID', 'Referred User', 'Referred ID',
+                             'Status', 'First Deposit', 'Welcome Bonus', 'Commission', 'Qualified'];
+
+            function cellText(row, index) {
+                const cells = row.querySelectorAll('td');
+                return cells[index] ? cells[index].innerText.replace(/\s+/g, ' ').trim() : '';
+            }
+
+            function escapeCsv(value) {
+                const text = (value === null || value === undefined) ? '' : String(value);
+                return '"' + text.replace(/"/g, '""') + '"';
+            }
+
+            exportBtn.addEventListener('click', function () {
+                const visible = rows.filter(function (row) { return row.style.display !== 'none'; });
+                if (!visible.length) {
+                    alert('There is nothing to export with the current filters.');
+                    return;
+                }
+
+                const lines = [headers.map(escapeCsv).join(',')];
+
+                visible.forEach(function (row) {
+                    const referrer = cellText(row, 1).split(' ');
+                    const referrerId = referrer.pop();
+                    const referred = cellText(row, 2).split(' ');
+                    const referredId = referred.pop();
+
+                    lines.push([
+                        cellText(row, 0),
+                        referrer.join(' '),
+                        referrerId,
+                        referred.join(' '),
+                        referredId,
+                        cellText(row, 3),
+                        cellText(row, 4),
+                        cellText(row, 5),
+                        cellText(row, 6),
+                        cellText(row, 7)
+                    ].map(escapeCsv).join(','));
+                });
+
+                const stamp = new Date().toISOString().slice(0, 10);
+                const blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'referral-trail-' + stamp + '.csv';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+            });
+
+            reset.addEventListener('click', function () {
+                search.value = '';
+                from.value = '';
+                to.value = '';
+                status.value = '';
+                apply();
+            });
+
+            apply();
+        })();
+    </script>
+}

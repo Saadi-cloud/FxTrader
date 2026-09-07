@@ -319,3 +319,21 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('OLX Trade installed');
     localStorage.setItem('olxTradeInstalled', 'true');
     });
+
+/* Referral detail tabs (dashboard Invite & Earn panel) */
+document.querySelectorAll('[data-referral-detail]').forEach(function (root) {
+    var tabs = root.querySelectorAll('[data-referral-tab]');
+    tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+            var target = tab.getAttribute('data-referral-tab');
+            tabs.forEach(function (other) {
+                var on = other === tab;
+                other.classList.toggle('is-active', on);
+                other.setAttribute('aria-selected', on ? 'true' : 'false');
+            });
+            root.querySelectorAll('[data-referral-pane]').forEach(function (pane) {
+                pane.hidden = pane.getAttribute('data-referral-pane') !== target;
+            });
+        });
+    });
+});

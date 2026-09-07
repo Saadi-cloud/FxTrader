@@ -19,7 +19,7 @@ public sealed class DashboardRepository : RepositoryBase, IDashboardRepository
             data.AvailableBalance = r.Decimal("AvailableBalance");
             data.HeldBalance = r.Decimal("HeldBalance");
             data.InvestmentBalance = r.Decimal("InvestmentBalance");
-            data.ProfitBalance = r.Decimal("ProfitBalance"); 
+            data.ProfitBalance = r.Decimal("ProfitBalance");
             data.CommissionBalance = r.HasColumn("CommissionBalance") ? r.Decimal("CommissionBalance") : 0;
             data.HeldInvestmentBalance = r.Decimal("HeldInvestmentBalance");
             data.HeldProfitBalance = r.Decimal("HeldProfitBalance");
@@ -49,13 +49,52 @@ public sealed class DashboardRepository : RepositoryBase, IDashboardRepository
     {
         await using var c = Connections.CreateConnection(); await c.OpenAsync(ct);
         await using var cmd = StoredProcedure(c, "sp_Admin_Dashboard_Get");
-        await using var r = await cmd.ExecuteReaderAsync(ct);
-        if (!await r.ReadAsync(ct)) return new();
-        return new AdminDashboardData
+        AdminDashboardData data;
+        await using (var r = await cmd.ExecuteReaderAsync(ct))
         {
-            TotalUsers = r.Int("TotalUsers"), ActiveUsers = r.Int("ActiveUsers"), PendingDeposits = r.Int("PendingDeposits"), PendingWithdrawals = r.Int("PendingWithdrawals"),
-            TotalWalletBalance = r.Decimal("TotalWalletBalance"), ApprovedDepositsToday = r.Decimal("ApprovedDepositsToday"), CompletedWithdrawalsToday = r.Decimal("CompletedWithdrawalsToday")
-        };
+            if (!await r.ReadAsync(ct)) return new();
+            data = new AdminDashboardData
+            {
+                TotalUsers = r.Int("TotalUsers"),
+                ActiveUsers = r.Int("ActiveUsers"),
+                PendingDeposits = r.Int("PendingDeposits"),
+                PendingWithdrawals = r.Int("PendingWithdrawals"),
+                TotalWalletBalance = r.Decimal("TotalWalletBalance"),
+                ApprovedDepositsToday = r.Decimal("ApprovedDepositsToday"),
+                CompletedWithdrawalsToday = r.Decimal("CompletedWithdrawalsToday")
+            };
+        }
+
+        await using var insightCmd = StoredProcedure(c, "dbo.sp_Admin_DashboardInsights_Get");
+        await using var ir = await insightCmd.ExecuteReaderAsync(ct);
+        if (await ir.ReadAsync(ct))
+        {
+            data.EligibleUsers = ir.Int("EligibleUsers");
+            data.TotalInvestment = ir.Decimal("TotalInvestment");
+            data.TotalProfitEarned = ir.Decimal("TotalProfitEarned");
+            data.TotalCommissionEarned = ir.Decimal("TotalCommissionEarned");
+            data.TotalWelcomeBonusEarned = ir.Decimal("TotalWelcomeBonusEarned");
+        }
+
+        var referrers = new List<AdminReferrerListItem>();
+        if (await ir.NextResultAsync(ct))
+        {
+            while (await ir.ReadAsync(ct))
+            {
+                referrers.Add(new AdminReferrerListItem
+                {
+                    Id = ir.Long("Id"),
+                    UserTraceId = ir.String("UserTraceId"),
+                    FullName = ir.String("FullName"),
+                    Email = ir.String("Email"),
+                    TotalReferrals = ir.Int("TotalReferrals"),
+                    ActiveReferrals = ir.Int("ActiveReferrals"),
+                    CommissionEarned = ir.Decimal("CommissionEarned")
+                });
+            }
+        }
+        data.Referrers = referrers;
+        return data;
     }
     public async Task<IReadOnlyList<LedgerEntry>> GetStatementAsync(long userId, CancellationToken ct = default)
     {
@@ -65,6 +104,29 @@ public sealed class DashboardRepository : RepositoryBase, IDashboardRepository
         await using var r = await cmd.ExecuteReaderAsync(ct); while (await r.ReadAsync(ct)) rows.Add(MapLedger(r));
         return rows;
     }
+    public async Task<IReadOnlyList<UserReferralItem>> GetUserReferralsAsync(long userId, CancellationToken ct = default)
+    {
+        var rows = new List<UserReferralItem>();
+        await using var c = Connections.CreateConnection(); await c.OpenAsync(ct);
+        await using var cmd = StoredProcedure(c, "dbo.sp_Dashboard_ReferralDetails_Get"); Add(cmd, "@UserId", userId);
+        await using var r = await cmd.ExecuteReaderAsync(ct);
+        while (await r.ReadAsync(ct))
+        {
+            rows.Add(new UserReferralItem
+            {
+                Id = r.Long("Id"),
+                ReferredTraceId = r.String("ReferredTraceId"),
+                ReferredName = r.String("ReferredName"),
+                ReferredCountry = r.HasColumn("ReferredCountry") ? r.String("ReferredCountry") : string.Empty,
+                IsQualified = r.Bool("IsQualified"),
+                FirstDepositAmount = r.Decimal("FirstDepositAmount"),
+                ReferralCommissionAmount = r.Decimal("ReferralCommissionAmount"),
+                RegisteredAtUtc = r.DateTime("RegisteredAtUtc"),
+                QualifiedAtUtc = r.NullableDateTime("QualifiedAtUtc")
+            });
+        }
+        return rows;
+    }
     public async Task<SystemSettingsModel> GetSettingsAsync(CancellationToken ct = default)
     {
         await using var c = Connections.CreateConnection(); await c.OpenAsync(ct);
@@ -72,8 +134,11 @@ public sealed class DashboardRepository : RepositoryBase, IDashboardRepository
         if (!await r.ReadAsync(ct)) return new();
         return new SystemSettingsModel
         {
-            DefaultWithdrawalMin = r.Decimal("DefaultWithdrawalMin"), DefaultWithdrawalMax = r.Decimal("DefaultWithdrawalMax"),
-            DefaultWithdrawalFeePercent = r.Decimal("DefaultWithdrawalFeePercent"), SupportEmail = r.String("SupportEmail"), TelegramUrl = r.String("TelegramUrl")
+            DefaultWithdrawalMin = r.Decimal("DefaultWithdrawalMin"),
+            DefaultWithdrawalMax = r.Decimal("DefaultWithdrawalMax"),
+            DefaultWithdrawalFeePercent = r.Decimal("DefaultWithdrawalFeePercent"),
+            SupportEmail = r.String("SupportEmail"),
+            TelegramUrl = r.String("TelegramUrl")
         };
     }
     public async Task SaveSettingsAsync(SystemSettingsModel model, long adminId, CancellationToken ct = default)
@@ -98,8 +163,14 @@ public sealed class DashboardRepository : RepositoryBase, IDashboardRepository
             {
                 entries.Add(new CompanyLedgerEntry
                 {
-                    Id = r.Long("Id"), EntryType = r.String("EntryType"), ReferenceNo = r.String("ReferenceNo"), Description = r.String("Description"),
-                    Credit = r.Decimal("Credit"), Debit = r.Decimal("Debit"), BalanceAfter = r.Decimal("BalanceAfter"), CreatedAtUtc = r.DateTime("CreatedAtUtc")
+                    Id = r.Long("Id"),
+                    EntryType = r.String("EntryType"),
+                    ReferenceNo = r.String("ReferenceNo"),
+                    Description = r.String("Description"),
+                    Credit = r.Decimal("Credit"),
+                    Debit = r.Decimal("Debit"),
+                    BalanceAfter = r.Decimal("BalanceAfter"),
+                    CreatedAtUtc = r.DateTime("CreatedAtUtc")
                 });
             }
         }
@@ -129,10 +200,16 @@ public sealed class DashboardRepository : RepositoryBase, IDashboardRepository
             {
                 rows.Add(new AdminReferralItem
                 {
-                    Id = r.Long("Id"), ReferrerTraceId = r.String("ReferrerTraceId"), ReferrerName = r.String("ReferrerName"),
-                    ReferredTraceId = r.String("ReferredTraceId"), ReferredName = r.String("ReferredName"), IsQualified = r.Bool("IsQualified"),
-                    FirstDepositAmount = r.Decimal("FirstDepositAmount"), WelcomeBonusAmount = r.Decimal("WelcomeBonusAmount"),
-                    ReferralCommissionAmount = r.Decimal("ReferralCommissionAmount"), RegisteredAtUtc = r.DateTime("RegisteredAtUtc"),
+                    Id = r.Long("Id"),
+                    ReferrerTraceId = r.String("ReferrerTraceId"),
+                    ReferrerName = r.String("ReferrerName"),
+                    ReferredTraceId = r.String("ReferredTraceId"),
+                    ReferredName = r.String("ReferredName"),
+                    IsQualified = r.Bool("IsQualified"),
+                    FirstDepositAmount = r.Decimal("FirstDepositAmount"),
+                    WelcomeBonusAmount = r.Decimal("WelcomeBonusAmount"),
+                    ReferralCommissionAmount = r.Decimal("ReferralCommissionAmount"),
+                    RegisteredAtUtc = r.DateTime("RegisteredAtUtc"),
                     QualifiedAtUtc = r.NullableDateTime("QualifiedAtUtc")
                 });
             }
@@ -165,8 +242,17 @@ public sealed class DashboardRepository : RepositoryBase, IDashboardRepository
 
     private static LedgerEntry MapLedger(Microsoft.Data.SqlClient.SqlDataReader r) => new()
     {
-        Id = r.Long("Id"), UserId = r.Long("UserId"), EntryType = r.String("EntryType"), ReferenceNo = r.String("ReferenceNo"), Description = r.String("Description"),
-        Credit = r.Decimal("Credit"), Debit = r.Decimal("Debit"), BalanceAfter = r.Decimal("BalanceAfter"),
-        InvestmentBalanceAfter = r.Decimal("InvestmentBalanceAfter"), ProfitBalanceAfter = r.Decimal("ProfitBalanceAfter"), CommissionBalanceAfter = r.HasColumn("CommissionBalanceAfter") ? r.Decimal("CommissionBalanceAfter") : 0, CreatedAtUtc = r.DateTime("CreatedAtUtc")
+        Id = r.Long("Id"),
+        UserId = r.Long("UserId"),
+        EntryType = r.String("EntryType"),
+        ReferenceNo = r.String("ReferenceNo"),
+        Description = r.String("Description"),
+        Credit = r.Decimal("Credit"),
+        Debit = r.Decimal("Debit"),
+        BalanceAfter = r.Decimal("BalanceAfter"),
+        InvestmentBalanceAfter = r.Decimal("InvestmentBalanceAfter"),
+        ProfitBalanceAfter = r.Decimal("ProfitBalanceAfter"),
+        CommissionBalanceAfter = r.HasColumn("CommissionBalanceAfter") ? r.Decimal("CommissionBalanceAfter") : 0,
+        CreatedAtUtc = r.DateTime("CreatedAtUtc")
     };
 }

@@ -10,6 +10,22 @@ public sealed class AdminDashboardData
     public decimal TotalWalletBalance { get; set; }
     public decimal ApprovedDepositsToday { get; set; }
     public decimal CompletedWithdrawalsToday { get; set; }
+    public int EligibleUsers { get; set; }
+    public decimal TotalInvestment { get; set; }
+    public decimal TotalProfitEarned { get; set; }
+    public decimal TotalCommissionEarned { get; set; }
+    public decimal TotalWelcomeBonusEarned { get; set; }
+    public IReadOnlyList<AdminReferrerListItem> Referrers { get; set; } = Array.Empty<AdminReferrerListItem>();
+}
+public sealed class AdminReferrerListItem
+{
+    public long Id { get; set; }
+    public string UserTraceId { get; set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public int TotalReferrals { get; set; }
+    public int ActiveReferrals { get; set; }
+    public decimal CommissionEarned { get; set; }
 }
 public sealed class AdminUserListItem
 {

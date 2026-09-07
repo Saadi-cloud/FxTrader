@@ -9,5 +9,6 @@ public sealed class DashboardService : IDashboardService
     public DashboardService(IDashboardRepository repository) => _repository = repository;
     public Task<DashboardData> GetAsync(long userId, CancellationToken ct = default) => _repository.GetUserDashboardAsync(userId, ct);
     public Task<IReadOnlyList<LedgerEntry>> GetStatementAsync(long userId, CancellationToken ct = default) => _repository.GetStatementAsync(userId, ct);
+    public Task<IReadOnlyList<UserReferralItem>> GetUserReferralsAsync(long userId, CancellationToken ct = default) => _repository.GetUserReferralsAsync(userId, ct);
     public Task<decimal> GetReferralCommissionPercentAsync(CancellationToken ct = default) => _repository.GetReferralCommissionPercentAsync(ct);
 }

@@ -189,42 +189,158 @@
 </style>
 
 <script>
-    document.querySelectorAll(".tab-btn").forEach(button => {
-        button.addEventListener("click", function () {
-            let target = this.dataset.target;
 
-            document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
-            this.classList.add("active");
+function showAllDefault(){
 
-            // columns
-            document.querySelectorAll(".col-deposit, .col-withdrawal, .col-profit, .col-commission")
-                .forEach(col => col.classList.add("hidden"));
+    // Show all columns
 
-            let visibleColumns = {
-                all: ["col-deposit", "col-withdrawal", "col-profit", "col-commission"],
-                deposit: ["col-deposit"],
-                withdrawal: ["col-withdrawal", "col-profit", "col-commission"],
-                profit: ["col-profit"],
-                commission: ["col-commission"]
-            };
-
-            visibleColumns[target].forEach(column => {
-                document.querySelectorAll("." + column).forEach(el => el.classList.remove("hidden"));
-            });
-
-            // rows filter
-            document.querySelectorAll("tbody tr").forEach(row => {
-                let type = row.dataset.rowType;
-
-                if (target == "all") {
-                    row.style.display = (type == "deposit" || type == "withdrawal") ? "" : "none";
-                } else {
-                    row.style.display = type == target ? "" : "none";
-                }
-            });
-        });
+    document.querySelectorAll(
+        ".col-deposit,"+
+        ".col-withdrawal,"+
+        ".col-profit,"+
+        ".col-commission"
+    )
+    .forEach(col=>{
+        col.classList.remove("hidden");
     });
 
-    // default load
-    document.querySelector('[data-target="all"]').click();
+
+
+    // Show deposit + withdrawal rows only
+
+    document.querySelectorAll("tbody tr")
+    .forEach(row=>{
+
+        let type=row.dataset.rowType;
+
+        row.style.display =
+            (type=="deposit" || type=="withdrawal")
+            ? ""
+            : "none";
+
+    });
+
+
+}
+
+
+
+// Tabs click
+
+document.querySelectorAll(".tab-btn")
+.forEach(button=>{
+
+
+button.addEventListener("click",function(){
+
+
+let target=this.dataset.target;
+
+
+
+document.querySelectorAll(".tab-btn")
+.forEach(btn=>{
+    btn.classList.remove("active");
+});
+
+
+this.classList.add("active");
+
+
+
+
+
+// hide columns
+
+document.querySelectorAll(
+    ".col-deposit,"+
+    ".col-withdrawal,"+
+    ".col-profit,"+
+    ".col-commission"
+)
+.forEach(col=>{
+    col.classList.add("hidden");
+});
+
+
+
+
+
+let columns={
+
+
+deposit:[
+    "col-deposit"
+],
+
+
+withdrawal:[
+    "col-withdrawal",
+    "col-profit",
+    "col-commission"
+],
+
+
+profit:[
+    "col-profit"
+],
+
+
+commission:[
+    "col-commission"
+]
+
+
+};
+
+
+
+
+
+columns[target].forEach(col=>{
+
+
+document.querySelectorAll("." + col)
+.forEach(el=>{
+    el.classList.remove("hidden");
+});
+
+
+});
+
+
+
+
+
+
+// rows filter
+
+document.querySelectorAll("tbody tr")
+.forEach(row=>{
+
+
+let type=row.dataset.rowType;
+
+
+row.style.display =
+    type==target
+    ? ""
+    : "none";
+
+
+});
+
+
+});
+
+
+});
+
+
+
+
+// Initial page load
+showAllDefault();
+
+
 </script>

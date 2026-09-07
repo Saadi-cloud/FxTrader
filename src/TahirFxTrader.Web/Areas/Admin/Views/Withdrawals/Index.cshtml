@@ -45,8 +45,8 @@
                         <th>User</th>
                         <th>Reference</th>
                         <th>Wallet</th>
-                        <th>Method</th>
-                        <th>Destination</th>
+                       @*  <th>Method</th>
+                        <th>Destination</th> *@
                         <th>Amount</th>
                         <th>Receive</th>
                         <th>Status</th>
@@ -65,7 +65,8 @@
                                 <br>
                                 <small style="color:var(--text-muted)">@row.UserEmail</small>
                             </td>
-                            <td class="mono">@row.ReferenceNo</td>
+                            
+                            <td> <small style="color:var(--text-muted)">@row.ReferenceNo</small></td>
 @*                             <td>@(row.WalletSource == "Investment" ? "Investment" : "Profit + Commission")</td>
                              *@    <td>
                                 @(row.WalletSource == "Investment"
@@ -74,8 +75,8 @@
                                         ? "Commission"
                                         : "Profit")
                             </td>
-                            <td>@row.PaymentMethodName</td>
-                            <td>@row.DestinationDisplay</td>
+                           @*  <td>@row.PaymentMethodName</td>
+                            <td>@row.DestinationDisplay</td> *@
                             <td class="mono">$@row.Amount.ToString("N2")</td>
                             <td class="mono">$@row.NetAmount.ToString("N2")</td>
                             <td>

@@ -101,18 +101,15 @@
     }
 
     @@keyframes yt-pulse {
-        0%, 100%
+        0%, 100% {
+            transform: scale(1);
+            filter: drop-shadow(0 0 0 rgba(255, 0, 0, 0));
+        }
 
-    {
-        transform: scale(1);
-        filter: drop-shadow(0 0 0 rgba(255, 0, 0, 0));
-    }
-
-    50% {
-        transform: scale(1.08);
-        filter: drop-shadow(0 0 6px rgba(255, 0, 0, 0.55));
-    }
-
+        50% {
+            transform: scale(1.08);
+            filter: drop-shadow(0 0 6px rgba(255, 0, 0, 0.55));
+        }
     }
 
     .trade-social-grid .sp.youtube:hover span svg {
@@ -128,12 +125,9 @@
     }
 
     @@media (prefers-reduced-motion: reduce) {
-        .trade-social-grid .sp.youtube span svg
-
-    {
-        animation: none;
-    }
-
+        .trade-social-grid .sp.youtube span svg {
+            animation: none;
+        }
     }
 
     .trade-share.wa {
@@ -199,7 +193,7 @@
     <section class="trade-hero" id="tradeHero">
         <div class="trade-hero-grid">
             <div class="trade-hero-main">
-            <div class="trade-uid" title="@Model.UserTraceId">
+                <div class="trade-uid" title="@Model.UserTraceId">
                     <span>UID:@compactUserId</span>
                     <button type="button" data-copy-value="@compactUserId" aria-label="Copy full user ID">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg><em class="uid-copy-label"></em>
@@ -207,8 +201,8 @@
                 </div>
                 <div class="trade-eyebrow"><span class="trade-live-dot"></span> Portfolio overview</div>
                 <h1>Welcome, <span>@Model.FullName</span></h1>
-                
-               @*  <div class="trade-portfolio-label">Total Avalible Balance</div>
+
+                @*  <div class="trade-portfolio-label">Total Avalible Balance</div>
                 <div class="trade-portfolio-value mono">$@totalPortfolio.ToString("N2") <small>USD</small></div> *@
                 <div class="trade-portfolio-label">Available Balance:</div>
                 <div class="trade-portfolio-value mono">
@@ -220,8 +214,8 @@
                     </button>
                 </div>
                 <div class="trade-hero-actions">
-                    <a asp-controller="Deposit" asp-action="Create" class="trade-btn trade-btn-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>Deposit</a>
-                    <a asp-controller="Withdrawal" asp-action="Create" class="trade-btn trade-btn-dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>Withdraw</a>
+                    <a asp-controller="Deposit" asp-action="Create" class="trade-btn trade-btn-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7" /></svg>Deposit</a>
+                    <a asp-controller="Withdrawal" asp-action="Create" class="trade-btn trade-btn-dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7" /></svg>Withdraw</a>
                 </div>
             </div>
             <div class="trade-hero-side mt-3">
@@ -230,10 +224,10 @@
                     <div class="trade-pnl-value mono">@pnlPrefix$@pnlAmount.ToString("N2")</div>
                     <div class="trade-pnl-sub">Profit-wallet movement today</div>
                     <div class="trade-sparkline">
-                        <svg viewBox="0 0 320 70" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="tradeSparkFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#18d990" stop-opacity=".35"/><stop offset="1" stop-color="#18d990" stop-opacity="0"/></linearGradient></defs><path class="trade-spark-area" d="M0 58 C30 58,36 47,62 50 S95 64,122 41 S159 51,184 30 S221 42,248 20 S281 27,320 8 L320 70 L0 70 Z"/><path class="trade-spark-line" d="M0 58 C30 58,36 47,62 50 S95 64,122 41 S159 51,184 30 S221 42,248 20 S281 27,320 8"/></svg>
+                        <svg viewBox="0 0 320 70" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="tradeSparkFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#18d990" stop-opacity=".35" /><stop offset="1" stop-color="#18d990" stop-opacity="0" /></linearGradient></defs><path class="trade-spark-area" d="M0 58 C30 58,36 47,62 50 S95 64,122 41 S159 51,184 30 S221 42,248 20 S281 27,320 8 L320 70 L0 70 Z" /><path class="trade-spark-line" d="M0 58 C30 58,36 47,62 50 S95 64,122 41 S159 51,184 30 S221 42,248 20 S281 27,320 8" /></svg>
                     </div>
                 </article>
-              @*   <div class="trade-quick-row">
+                @*   <div class="trade-quick-row">
                     <div><span>Pending deposits</span><strong>@Model.PendingDeposits</strong></div>
                     <div><span>Pending withdrawals</span><strong>@Model.PendingWithdrawals</strong></div>
                 </div> *@
@@ -256,8 +250,8 @@
                      style="--investment-end:@ringInvestmentCss%; --profit-end:@ringProfitCss%;">
 
                     <div>
-@*                         <span style="text-transform: none;">Total Available Balance</span>
- *@                        <strong class="mono">$@totalPortfolio.ToString("N2")</strong>
+                        <span style="text-transform: none;">Portfolio Distribution</span>
+                        <strong class="mono">$@totalPortfolio.ToString("N2")</strong>
                     </div>
                 </div>                <div class="trade-wallet-list">
                     <div class="trade-wallet-item"><div class="trade-wallet-row"><i class="invest"></i><span>Investment Wallet<small>@investmentPercent.ToString("0.0")% of portfolio</small></span><strong class="mono">$@Model.InvestmentBalance.ToString("N2")</strong></div><div class="trade-wallet-bar"><b style="width:@investmentCss%"></b></div></div>
@@ -273,7 +267,7 @@
                 <div class="trade-referral-poster"><img src="~/images/referral/olx-referral-og.jpg" alt="OLX Trade referral preview image"></div>
                 <!-- <div class="trade-referral-qr"><div class="trade-qr-label">Scan to register</div><div class="trade-qr-code" data-qr-text="@Model.ReferralRegisterUrl" data-qr-size="91" aria-label="QR code for referral registration"></div><small>Code auto-filled</small></div> -->
             </div>
-            <div class="trade-referral-copy"><span class="mono">@Model.ReferralLink</span><button type="button" data-copy-value="@Model.ReferralLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><em class="uid-copy-label"></em></button></div>
+            <div class="trade-referral-copy"><span class="mono">@Model.ReferralLink</span><button type="button" data-copy-value="@Model.ReferralLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg><em class="uid-copy-label"></em></button></div>
             <div class="trade-share-row">
                 <a class="trade-share wa"
                    href="https://wa.me/?text=@whatsappMessage"
@@ -297,32 +291,182 @@
 
                 </a>
                 <button type="button" class="trade-share native" data-native-share data-share-url="@Model.ReferralLink" data-share-title="OLX Trade — 5% Referral Commission" data-share-text="">Share</button>
-@*                 <a class="trade-share preview" href="@Model.ReferralLink" target="_blank" rel="noopener">Open preview</a>
+                @*                 <a class="trade-share preview" href="@Model.ReferralLink" target="_blank" rel="noopener">Open preview</a>
  *@            </div>
-            <div class="trade-referral-stats"><div><span>Total referrals</span><strong>@Model.TotalReferralCount</strong></div><div><span>Active Referral</span><strong class="mono">@Model.SuccessfulReferralCount</strong></div></div>
+         @*    <div class="trade-referral-stats">
+                <div><span>Total referrals</span><strong>@Model.TotalReferralCount</strong></div>
+                <div><span>Active Referral</span><strong class="mono">@Model.SuccessfulReferralCount</strong></div>
+            </div> *@
+
+            @{
+                var referralList = Model.Referrals ?? Array.Empty<TahirFxTrader.Application.Models.UserReferralItem>();
+                var activeReferrals = referralList.Where(x => x.IsQualified).ToList();
+            }
+            <div class="trade-referral-detail" data-referral-detail>
+                <div class="trade-referral-tabs" role="tablist">
+                    <button type="button" class="is-active" data-referral-tab="all" role="tab" aria-selected="true">
+                        Total Referrals <em>@referralList.Count</em>
+                    </button>
+                    <button type="button" data-referral-tab="active" role="tab" aria-selected="false">
+                        Active Referral <em>@activeReferrals.Count</em>
+                    </button>
+                </div>
+
+                <div class="trade-referral-listwrap" data-referral-pane="all">
+                    @if (referralList.Count == 0)
+                    {
+                        <p class="trade-referral-empty">No referrals yet. Share your link above to get started.</p>
+                    }
+                    else
+                    {
+                        <ul class="trade-referral-list">
+                            @foreach (var item in referralList)
+                            {
+                                <li>
+                                    <i class="@(item.IsQualified ? "ok" : "wait")" aria-hidden="true"></i>
+                                    <span>
+                                        @item.ReferredName
+                                        <small>Joined @item.RegisteredAtUtc.ToLocalTime().ToString("dd MMM yyyy")</small>
+                                    </span>
+                                    <b class="@(item.IsQualified ? "ok" : "wait")">@(item.IsQualified ? "Active" : "Pending")</b>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+
+                <div class="trade-referral-listwrap" data-referral-pane="active" hidden>
+                    @if (activeReferrals.Count == 0)
+                    {
+                        <p class="trade-referral-empty">No active referrals yet. A referral becomes active after their first approved deposit.</p>
+                    }
+                    else
+                    {
+                        <ul class="trade-referral-list">
+                            @foreach (var item in activeReferrals)
+                            {
+                                <li>
+                                    <i class="ok" aria-hidden="true"></i>
+                                    <span>
+                                        @item.ReferredName
+                                        <small>Deposited @(item.QualifiedAtUtc.HasValue? item.QualifiedAtUtc.Value.ToLocalTime().ToString("dd MMM yyyy") : "—")</small>
+                                    </span>
+                                    <b class="mono">$@item.FirstDepositAmount.ToString("N2")</b>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
         </article>
     </section>
 
     <section class="trade-lower-grid">
-@*         <article class="trade-panel">
-            <div class="trade-panel-head"><div><h2>Account Status</h2><p>Pending actions and account availability.</p></div></div>
-            <div class="trade-activity-list">
-                <div><i class="gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 19V5M5 12l7-7 7 7"/></svg></i><span>Pending Deposits<small>Waiting for verification</small></span><strong>@Model.PendingDeposits</strong></div>
-                <div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12l7 7 7-7"/></svg></i><span>Pending Withdrawals<small>Payment processing queue</small></span><strong>@Model.PendingWithdrawals</strong></div>
-                <div><i class="green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 4 4L19 6"/><circle cx="12" cy="12" r="9"/></svg></i><span>Account Verification<small>Email verified and active</small></span><strong class="active">Active</strong></div>
-            </div>
-        </article> *@
+   
+
 
         <article class="trade-panel">
             <div class="trade-panel-head"><div><h2>Connect with OLX Trade</h2><p>Official channels, announcements and support.</p></div></div>
             <div class="trade-social-grid">
-                <a class="wa" href="https://whatsapp.com/channel/0029VbCuWm0LY6d1ZmRsAM2u" target="_blank" rel="noopener"><span>W</span>WhatsApp</a>
-                <a class="fb" href="https://www.facebook.com/share/1DB4gHAxuo/" target="_blank" rel="noopener"><span>f</span>Facebook</a>
-                <a class="ig" href="https://www.instagram.com/olxtrade?igsh=ZHpkdHl3Z3FlOGl3" target="_blank" rel="noopener"><span>◎</span>Instagram</a>
-                <a class="tt" href="https://vt.tiktok.com/ZSX5r5xFf/" target="_blank" rel="noopener"><span>♪</span>TikTok</a>
-                <a class="tg" href="https://t.me/olxtradeofficial" target="_blank" rel="noopener"><span>➤</span>Telegram</a>
-                <a class="th" href="https://www.threads.com/@@olxtrade" target="_blank" rel="noopener"><span>@@</span>Threads</a>
-                <a class="dc" href="https://discord.gg/GQrmrafAc" target="_blank" rel="noopener"><span>◉</span>Discord</a>
+                <a class="wa"
+                   href="https://whatsapp.com/channel/0029VbCuWm0LY6d1ZmRsAM2u"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Join our WhatsApp channel">
+                    <span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.695.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12.05 21.785h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884a9.82 9.82 0 0 1 6.988 2.896 9.82 9.82 0 0 1 2.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.359.101 11.945c0 2.096.549 4.142 1.595 5.945L0 24l6.335-1.652a11.9 11.9 0 0 0 5.71 1.454h.006c6.585 0 11.946-5.36 11.949-11.945a11.9 11.9 0 0 0-3.48-8.408" />
+                        </svg>
+                    </span>
+                    WhatsApp
+                </a>
+                <a class="sp twitter"
+                   href="https://x.com/olxtrade"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Visit our X (Twitter) page">
+                    <span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill="#fff" d="M18.9 1.5h3.68l-8.04 9.19L24 22.5h-7.41l-5.8-7.58-6.64 7.58H.46l8.6-9.83L0 1.5h7.6l5.24 6.93L18.9 1.5Zm-1.29 18.8h2.04L6.49 3.6H4.3l13.31 16.7Z" />
+                        </svg>
+                    </span>
+                    Twitter
+                </a>
+                <a class="fb"
+                   href="https://www.facebook.com/share/1DB4gHAxuo/"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Visit our Facebook page">
+                    <span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill="currentColor" d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.412c0-3.026 1.792-4.697 4.533-4.697 1.313 0 2.686.236 2.686.236v2.971H15.83c-1.49 0-1.955.931-1.955 1.886v2.265h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073Z" />
+                        </svg>
+                    </span>
+                    Facebook
+                </a>
+                <a class="ig"
+                   href="https://www.instagram.com/olxtrade?igsh=ZHpkdHl3Z3FlOGl3"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Visit our Instagram profile">
+                    <span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill="currentColor" d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.741 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.741 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.259 0 12 0Zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03Zm0 3.678a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 1 0 0-12.324ZM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4Zm7.846-10.405a1.441 1.441 0 0 1-2.88 0 1.44 1.44 0 0 1 2.88 0Z" />
+                        </svg>
+                    </span>
+                    Instagram
+                </a>
+                <a class="tt"
+                   href="https://vt.tiktok.com/ZSX5r5xFf/"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Visit our TikTok profile">
+                    <span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill="currentColor" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07Z" />
+                        </svg>
+                    </span>
+                    TikTok
+                </a>
+
+                <a class="tg"
+                   href="https://t.me/olxtradeofficial"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Join our Telegram channel">
+                    <span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill="currentColor" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+                        </svg>
+                    </span>
+                    Telegram
+                </a>
+
+                <a class="th"
+                   href="https://www.threads.com/@@olxtrade"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Visit our Threads profile">
+                    <span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill="currentColor" d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.5 12.01v-.017c.001-3.576.85-6.43 2.495-8.481C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.226 6.5 3.6 8.94 3.6 12c0 3.06.626 5.5 1.855 7.164 1.43 1.78 3.63 2.695 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.617-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.104-2.14 1.708-3.73 1.798-1.202.068-2.36-.216-3.259-.798-1.063-.688-1.685-1.74-1.752-2.963-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291 1.079-.062 2.089.014 3.02.22-.124-.744-.373-1.334-.744-1.76-.51-.586-1.298-.885-2.343-.892h-.03c-.84 0-1.98.23-2.707 1.31L7.58 8.502c.975-1.446 2.559-2.242 4.464-2.242h.045c3.186.02 5.084 1.973 5.273 5.376.108.045.216.093.32.142 1.475.694 2.555 1.744 3.123 3.036.792 1.799.865 4.73-1.522 7.068-1.824 1.787-4.041 2.593-7.075 2.616h-.022zm1.045-13.129c-.33 0-.665.01-1.007.03-1.835.104-2.977.947-2.913 2.15.067 1.26 1.457 1.845 2.795 1.772 1.23-.066 2.83-.545 3.098-3.72a8.5 8.5 0 0 0-1.973-.232z" />
+                        </svg>
+                    </span>
+                    Threads
+                </a>
+
+                <a class="dc"
+                   href="https://discord.gg/GQrmrafAc"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Join our Discord server">
+                    <span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill="currentColor" d="M20.317 4.3698a19.79 19.79 0 0 0-4.8851-1.5152.0741.0741 0 0 0-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 0 0-.0785-.037 19.7363 19.7363 0 0 0-4.8852 1.515.0699.0699 0 0 0-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 0 0 .0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 0 0 .0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 0 0-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 0 1-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 0 1 .0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 0 1 .0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 0 1-.0066.1276 12.2986 12.2986 0 0 1-1.873.8914.0766.0766 0 0 0-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 0 0 .0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 0 0 .0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 0 0-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" />
+                        </svg>
+                    </span>
+                    Discord
+                </a>
 
                 <a class="sp youtube"
                    href="https://www.youtube.com/shorts/Nx47MYamFC4"
@@ -352,6 +496,32 @@
                     </span>
                     Google
                 </a>
+                <a class="gm"
+                   href="https://maps.app.goo.gl/YOUR_PLACE_LINK"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Find us on Google Maps">
+                    <span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill="#EA4335" d="M12 0C7.31 0 3.5 3.81 3.5 8.5c0 6.38 8.5 15.5 8.5 15.5s8.5-9.12 8.5-15.5C20.5 3.81 16.69 0 12 0Z" />
+                            <circle cx="12" cy="8.5" r="3.2" fill="#fff" />
+                        </svg>
+                    </span>
+                    Maps
+                </a>
+                <a class="tp"
+                   href="https://www.trustpilot.com/review/olxtrade.com"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Read our Trustpilot reviews">
+                    <span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill="currentColor" d="M23.735 9.153h-9.058L11.883.5 9.075 9.157.017 9.15l7.33 5.352-2.809 8.653 7.331-5.348 7.326 5.348-2.798-8.653 7.338-5.348z" />
+                        </svg>
+                    </span>
+                    Trustpilot
+                </a>
+
 
             </div>
         </article>
@@ -364,7 +534,7 @@
 }
 
 <div class="ci-page">
-@*     <nav class="ci-breadcrumb" aria-label="Breadcrumb">
+    @*     <nav class="ci-breadcrumb" aria-label="Breadcrumb">
         <a asp-controller="Dashboard" asp-action="Index">Home</a>
         <span class="ci-breadcrumb-sep">›</span>
         <span>About Us</span>
@@ -396,7 +566,7 @@
                     <span>Switzerland</span>
                 </div>
             </article>
-           
+
             <article class="ci-office-card">
                 <span class="ci-office-accent" style="--dot:#22c55e"></span>
                 <img class="ci-flag" src="~/images/flags/ae.svg" alt="" width="44" height="44">
@@ -509,7 +679,7 @@
                     <span>Philippines</span>
                 </div>
             </article>
-         
+
             <article class="ci-office-card">
                 <span class="ci-office-accent" style="--dot:#F0B90B"></span>
                 <img class="ci-flag" src="~/images/flags/pk.svg" alt="" width="44" height="44">
@@ -525,11 +695,7 @@
         <div class="ci-about-copy">
             <h1 class="ci-heading">About OLX Trade</h1>
             <p>
-                OLX Trade is an investment company focused on creating opportunities through professionally
-                managed gold and silver trading. Investors provide capital, our team uses that capital in
-                planned precious-metals trading activities, and eligible profits are distributed according
-                to the agreed investment terms and actual performance. Investment returns are not guaranteed,
-                and all investments involve risk.
+                OLX Trade provides a secure and flexible way to participate in professionally managed gold and silver trading. With experienced market professionals managing trading activities, investors can benefit from potential returns while enjoying a simple and hassle-free investment experience. Our focus is on responsible trading practices, transparency, and easy access to funds, allowing investors to withdraw their available balance conveniently whenever needed.
             </p>
         </div>
         <div class="ci-about-logo" aria-hidden="true">

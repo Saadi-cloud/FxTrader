@@ -6,6 +6,7 @@ public interface IDashboardRepository
     Task<DashboardData> GetUserDashboardAsync(long userId, CancellationToken ct = default);
     Task<AdminDashboardData> GetAdminDashboardAsync(CancellationToken ct = default);
     Task<IReadOnlyList<LedgerEntry>> GetStatementAsync(long userId, CancellationToken ct = default);
+    Task<IReadOnlyList<UserReferralItem>> GetUserReferralsAsync(long userId, CancellationToken ct = default);
     Task<SystemSettingsModel> GetSettingsAsync(CancellationToken ct = default);
     Task SaveSettingsAsync(SystemSettingsModel model, long adminId, CancellationToken ct = default);
     Task<CompanyLedgerPageModel> GetCompanyLedgerAsync(CancellationToken ct = default);
